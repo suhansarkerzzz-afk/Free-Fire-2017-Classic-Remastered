@@ -51,6 +51,7 @@ public class GameBootstrap : MonoBehaviour
         if (follow == null) follow = cameraObject.AddComponent<FollowCamera>();
         follow.target = player.transform;
         if (cameraObject.GetComponent<TouchCameraLook>() == null) cameraObject.AddComponent<TouchCameraLook>();
+        if (cameraObject.GetComponent<WeaponView>() == null) cameraObject.AddComponent<WeaponView>();
         cameraObject.transform.position = player.transform.position + follow.offset;
 
         for (int i = 0; i < 5; i++)
