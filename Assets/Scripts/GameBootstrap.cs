@@ -85,6 +85,7 @@ public class GameBootstrap : MonoBehaviour
         CreateMoveButton(canvas.transform, "FORWARD", new Vector2(0.21f, 0.29f), new Vector2(0f, 1f));
         CreateMoveButton(canvas.transform, "BACK", new Vector2(0.21f, 0.07f), new Vector2(0f, -1f));
         CreateFireButton(canvas.transform);
+        CreateHealthDisplay(canvas.transform);
 
         GameObject hint = new GameObject("ControlHint", typeof(RectTransform), typeof(Text));
         hint.transform.SetParent(canvas.transform, false);
@@ -95,6 +96,29 @@ public class GameBootstrap : MonoBehaviour
         text.font = Resources.GetBuiltinResource<Font>("Arial.ttf");
         text.text = "TRAINING MATCH  |  WASD / ARROW KEYS OR TOUCH BUTTONS";
         text.fontSize = 20; text.alignment = TextAnchor.MiddleCenter; text.color = Color.white;
+    }
+
+    private void CreateHealthDisplay(Transform parent)
+    {
+        GameObject healthObject = new GameObject("HealthDisplay", typeof(RectTransform), typeof(Text));
+        healthObject.transform.SetParent(parent, false);
+        RectTransform rect = healthObject.GetComponent<RectTransform>();
+        rect.anchorMin = new Vector2(0.5f, 0.87f);
+        rect.anchorMax = new Vector2(0.5f, 0.87f);
+        rect.sizeDelta = new Vector2(360f, 48f);
+        Text label = healthObject.GetComponent<Text>();
+        label.font = Resources.GetBuiltinResource<Font>("Arial.ttf");
+        label.fontSize = 26;
+        label.alignment = TextAnchor.MiddleCenter;
+        label.color = new Color(0.35f, 1f, 0.4f);
+        HealthSystem health = FindObjectOfType<PlayerCombat>().GetComponent<HealthSystem>();
+        label.text = "HP: 100 / 100";
+        health.OnHealthChanged += (current, maximum) =>
+        {
+            label.text = "HP: " + Mathf.CeilToInt(current) + " / " + Mathf.CeilToInt(maximum);
+            label.color = current <= maximum * 0.25f ? Color.red : new Color(0.35f, 1f, 0.4f);
+        };
+        health.OnDied += () => { label.text = "YOU ARE ELIMINATED"; label.color = Color.red; };
     }
 
     private void CreateFireButton(Transform parent)
