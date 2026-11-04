@@ -11,6 +11,7 @@ An original, fan-inspired low-poly battle-royale prototype. This is not an offic
 - Five simple training bots that follow and attack the player.
 - Two selectable weapons: RIFLE and PISTOL, each with separate damage, range, fire rate and ammo.
 - Separate magazine/reserve ammo and reload timing for each weapon, with ammo/weapon HUD and mobile RELOAD/SWAP buttons.
+- Procedural low-poly rifle and pistol view models, firing recoil, brief muzzle flash and generated prototype shot sounds.
 - Health and elimination HUD prototype.
 - Unity UI package manifest and editor version metadata.
 
@@ -31,8 +32,7 @@ In Unity, select **File > Build Settings > Android > Switch Platform**. Set a pa
 - The current arena and bots are prototype placeholders, not a finished multiplayer game.
 
 ## Planned next milestones
-1. Weapon models, firing animations and sound effects.
-2. Better arena, character visuals and bot behavior.
-3. Lobby and local Wi-Fi multiplayer.
-4. Performance profiling on 2 GB RAM Android devices.
-5. Windows build after the Android prototype is stable.
+1. Better arena, character visuals and bot behavior.
+2. Lobby and local Wi-Fi multiplayer.
+3. Performance profiling on 2 GB RAM Android devices.
+4. Windows build after the Android prototype is stable.
