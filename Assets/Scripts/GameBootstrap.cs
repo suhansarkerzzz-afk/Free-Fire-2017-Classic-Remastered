@@ -84,6 +84,8 @@ public class GameBootstrap : MonoBehaviour
         CreateJoystick(canvas.transform);
         CreateFireButton(canvas.transform);
         CreateReloadButton(canvas.transform);
+        CreateWeaponSwitchButton(canvas.transform);
+        CreateWeaponDisplay(canvas.transform);
         CreateAmmoDisplay(canvas.transform);
         CreateHealthDisplay(canvas.transform);
 
@@ -226,6 +228,56 @@ public class GameBootstrap : MonoBehaviour
         {
             PlayerCombat combat = FindObjectOfType<PlayerCombat>();
             if (combat != null) combat.Reload();
+        });
+    }
+
+
+    private void CreateWeaponDisplay(Transform parent)
+    {
+        GameObject weaponObject = new GameObject("WeaponDisplay", typeof(RectTransform), typeof(Text));
+        weaponObject.transform.SetParent(parent, false);
+        RectTransform rect = weaponObject.GetComponent<RectTransform>();
+        rect.anchorMin = new Vector2(0.87f, 0.50f);
+        rect.anchorMax = new Vector2(0.87f, 0.50f);
+        rect.sizeDelta = new Vector2(220f, 44f);
+
+        Text label = weaponObject.GetComponent<Text>();
+        label.font = Resources.GetBuiltinResource<Font>("Arial.ttf");
+        label.fontSize = 23;
+        label.alignment = TextAnchor.MiddleCenter;
+        label.color = new Color(1f, 0.85f, 0.3f);
+
+        PlayerCombat combat = FindObjectOfType<PlayerCombat>();
+        if (combat == null) return;
+        label.text = "RIFLE";
+        combat.OnWeaponChanged += (weaponName) => { label.text = weaponName; };
+    }
+
+    private void CreateWeaponSwitchButton(Transform parent)
+    {
+        GameObject buttonObject = new GameObject("SWAP", typeof(RectTransform), typeof(Image), typeof(Button));
+        buttonObject.transform.SetParent(parent, false);
+        RectTransform rect = buttonObject.GetComponent<RectTransform>();
+        rect.anchorMin = new Vector2(0.87f, 0.61f);
+        rect.anchorMax = new Vector2(0.87f, 0.61f);
+        rect.sizeDelta = new Vector2(125f, 64f);
+        buttonObject.GetComponent<Image>().color = new Color(0.28f, 0.32f, 0.18f, 0.9f);
+
+        Text label = new GameObject("Label", typeof(RectTransform), typeof(Text)).GetComponent<Text>();
+        label.transform.SetParent(buttonObject.transform, false);
+        label.font = Resources.GetBuiltinResource<Font>("Arial.ttf");
+        label.text = "SWAP";
+        label.fontSize = 20;
+        label.alignment = TextAnchor.MiddleCenter;
+        label.color = Color.white;
+        RectTransform labelRect = label.rectTransform;
+        labelRect.anchorMin = Vector2.zero; labelRect.anchorMax = Vector2.one;
+        labelRect.offsetMin = Vector2.zero; labelRect.offsetMax = Vector2.zero;
+
+        buttonObject.GetComponent<Button>().onClick.AddListener(() =>
+        {
+            PlayerCombat combat = FindObjectOfType<PlayerCombat>();
+            if (combat != null) combat.SwitchWeapon();
         });
     }
 
