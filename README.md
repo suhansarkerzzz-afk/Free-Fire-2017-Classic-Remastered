@@ -25,6 +25,15 @@ An original, fan-inspired low-poly battle-royale prototype. This is not an offic
 ## Android APK
 After running **Tools > Classic Remastered > Prepare Android Build**, install Android Build Support (SDK, NDK and OpenJDK) through Unity Hub. Select **File > Build Settings > Android** and click **Build** to create the APK. The repository includes an Editor setup helper, but no APK has been compiled or device-tested yet. Unity Editor and Android Build Support must be installed on a build machine.
 
+## Build APK with GitHub Actions
+1. In GitHub, open **Settings > Secrets and variables > Actions > New repository secret**.
+2. Add a secret named `UNITY_LICENSE` containing the Unity license file contents for the Unity account used to build.
+3. Open the repository's **Actions** tab and select **Android APK Build**.
+4. Click **Run workflow** and wait for the job to finish.
+5. Open the completed run and download the artifact named `FreeFire2017ClassicRemastered-Android-APK`.
+
+The workflow runs Unity 2022.3.62f1 in Android mode and uploads the APK as a build artifact. A valid Unity license secret is required. If the workflow fails, open its build log and share the error so it can be fixed. This workflow has been added but has not yet been run or verified.
+
 ## Controls
 - PC: WASD / arrow keys to move; right-mouse drag to look; press R to reload and Q to switch weapons.
 - Android: use the left-side virtual joystick to move, drag on the right side to rotate the camera, tap FIRE to shoot, RELOAD to reload and SWAP to change weapon.
