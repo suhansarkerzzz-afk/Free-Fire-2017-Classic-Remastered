@@ -38,6 +38,8 @@ public class GameBootstrap : MonoBehaviour
         CharacterController cc = player.AddComponent<CharacterController>();
         cc.height = 2f; cc.radius = 0.45f; cc.center = new Vector3(0f, 0f, 0f);
         player.AddComponent<PlayerMovement>();
+        player.AddComponent<HealthSystem>();
+        player.AddComponent<PlayerCombat>();
         player.GetComponent<Renderer>().material.color = new Color(0.1f, 0.45f, 0.9f);
 
         GameObject cameraObject = Camera.main ? Camera.main.gameObject : new GameObject("Main Camera");
@@ -59,6 +61,9 @@ public class GameBootstrap : MonoBehaviour
             bot.GetComponent<Renderer>().material.color = new Color(0.75f, 0.2f, 0.16f);
             BasicBotAI ai = bot.AddComponent<BasicBotAI>();
             ai.target = player.transform;
+            bot.AddComponent<HealthSystem>();
+            BotCombat combat = bot.AddComponent<BotCombat>();
+            combat.target = player.transform;
         }
 
         CreateControls();
@@ -79,6 +84,7 @@ public class GameBootstrap : MonoBehaviour
         CreateMoveButton(canvas.transform, "RIGHT", new Vector2(0.30f, 0.18f), new Vector2(1f, 0f));
         CreateMoveButton(canvas.transform, "FORWARD", new Vector2(0.21f, 0.29f), new Vector2(0f, 1f));
         CreateMoveButton(canvas.transform, "BACK", new Vector2(0.21f, 0.07f), new Vector2(0f, -1f));
+        CreateFireButton(canvas.transform);
 
         GameObject hint = new GameObject("ControlHint", typeof(RectTransform), typeof(Text));
         hint.transform.SetParent(canvas.transform, false);
@@ -89,6 +95,32 @@ public class GameBootstrap : MonoBehaviour
         text.font = Resources.GetBuiltinResource<Font>("Arial.ttf");
         text.text = "TRAINING MATCH  |  WASD / ARROW KEYS OR TOUCH BUTTONS";
         text.fontSize = 20; text.alignment = TextAnchor.MiddleCenter; text.color = Color.white;
+    }
+
+    private void CreateFireButton(Transform parent)
+    {
+        GameObject buttonObject = new GameObject("FIRE", typeof(RectTransform), typeof(Image), typeof(Button));
+        buttonObject.transform.SetParent(parent, false);
+        RectTransform rect = buttonObject.GetComponent<RectTransform>();
+        rect.anchorMin = new Vector2(0.87f, 0.18f);
+        rect.anchorMax = new Vector2(0.87f, 0.18f);
+        rect.sizeDelta = new Vector2(125f, 100f);
+        buttonObject.GetComponent<Image>().color = new Color(0.8f, 0.12f, 0.08f, 0.85f);
+        Text label = new GameObject("Label", typeof(RectTransform), typeof(Text)).GetComponent<Text>();
+        label.transform.SetParent(buttonObject.transform, false);
+        label.font = Resources.GetBuiltinResource<Font>("Arial.ttf");
+        label.text = "FIRE";
+        label.fontSize = 24;
+        label.alignment = TextAnchor.MiddleCenter;
+        label.color = Color.white;
+        RectTransform labelRect = label.rectTransform;
+        labelRect.anchorMin = Vector2.zero; labelRect.anchorMax = Vector2.one;
+        labelRect.offsetMin = Vector2.zero; labelRect.offsetMax = Vector2.zero;
+        buttonObject.GetComponent<Button>().onClick.AddListener(() =>
+        {
+            PlayerCombat combat = FindObjectOfType<PlayerCombat>();
+            if (combat != null) combat.Fire();
+        });
     }
 
     private void CreateMoveButton(Transform parent, string label, Vector2 anchor, Vector2 direction)
