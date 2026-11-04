@@ -1,0 +1,119 @@
+using UnityEngine;
+using UnityEngine.UI;
+using UnityEngine.EventSystems;
+
+public class GameBootstrap : MonoBehaviour
+{
+    private static bool started;
+
+    public static void StartMatch()
+    {
+        if (started) return;
+        started = true;
+        foreach (Canvas canvas in FindObjectsOfType<Canvas>()) canvas.gameObject.SetActive(false);
+        new GameObject("ClassicMatch").AddComponent<GameBootstrap>();
+    }
+
+    private void Start()
+    {
+        if (FindObjectOfType<Light>() == null)
+        {
+            GameObject sun = new GameObject("Sun");
+            Light light = sun.AddComponent<Light>();
+            light.type = LightType.Directional;
+            light.intensity = 1.1f;
+            sun.transform.rotation = Quaternion.Euler(50f, -30f, 0f);
+        }
+
+        RenderSettings.ambientLight = new Color(0.55f, 0.58f, 0.62f);
+        GameObject ground = GameObject.CreatePrimitive(PrimitiveType.Plane);
+        ground.name = "TrainingIsland";
+        ground.transform.localScale = new Vector3(12f, 1f, 12f);
+        ground.GetComponent<Renderer>().material.color = new Color(0.25f, 0.38f, 0.22f);
+
+        GameObject player = GameObject.CreatePrimitive(PrimitiveType.Capsule);
+        player.name = "Player";
+        player.transform.position = new Vector3(0f, 1.1f, 0f);
+        player.GetComponent<Collider>().enabled = false;
+        CharacterController cc = player.AddComponent<CharacterController>();
+        cc.height = 2f; cc.radius = 0.45f; cc.center = new Vector3(0f, 0f, 0f);
+        player.AddComponent<PlayerMovement>();
+        player.GetComponent<Renderer>().material.color = new Color(0.1f, 0.45f, 0.9f);
+
+        GameObject cameraObject = Camera.main ? Camera.main.gameObject : new GameObject("Main Camera");
+        Camera camera = cameraObject.GetComponent<Camera>();
+        if (camera == null) camera = cameraObject.AddComponent<Camera>();
+        camera.tag = "MainCamera";
+        if (cameraObject.GetComponent<AudioListener>() == null) cameraObject.AddComponent<AudioListener>();
+        FollowCamera follow = cameraObject.GetComponent<FollowCamera>();
+        if (follow == null) follow = cameraObject.AddComponent<FollowCamera>();
+        follow.target = player.transform;
+        cameraObject.transform.position = player.transform.position + follow.offset;
+
+        for (int i = 0; i < 5; i++)
+        {
+            Vector2 p = Random.insideUnitCircle * 22f;
+            GameObject bot = GameObject.CreatePrimitive(PrimitiveType.Capsule);
+            bot.name = "TrainingBot_" + (i + 1);
+            bot.transform.position = new Vector3(p.x, 1f, p.y);
+            bot.GetComponent<Renderer>().material.color = new Color(0.75f, 0.2f, 0.16f);
+            BasicBotAI ai = bot.AddComponent<BasicBotAI>();
+            ai.target = player.transform;
+        }
+
+        CreateControls();
+    }
+
+    private void CreateControls()
+    {
+        EventSystem es = FindObjectOfType<EventSystem>();
+        if (es == null) new GameObject("EventSystem", typeof(EventSystem), typeof(StandaloneInputModule));
+        GameObject canvasObject = new GameObject("MobileControls", typeof(Canvas), typeof(CanvasScaler), typeof(GraphicRaycaster));
+        Canvas canvas = canvasObject.GetComponent<Canvas>();
+        canvas.renderMode = RenderMode.ScreenSpaceOverlay;
+        CanvasScaler scaler = canvasObject.GetComponent<CanvasScaler>();
+        scaler.uiScaleMode = CanvasScaler.ScaleMode.ScaleWithScreenSize;
+        scaler.referenceResolution = new Vector2(1280, 720);
+
+        CreateMoveButton(canvas.transform, "LEFT", new Vector2(0.12f, 0.18f), new Vector2(-1f, 0f));
+        CreateMoveButton(canvas.transform, "RIGHT", new Vector2(0.30f, 0.18f), new Vector2(1f, 0f));
+        CreateMoveButton(canvas.transform, "FORWARD", new Vector2(0.21f, 0.29f), new Vector2(0f, 1f));
+        CreateMoveButton(canvas.transform, "BACK", new Vector2(0.21f, 0.07f), new Vector2(0f, -1f));
+
+        GameObject hint = new GameObject("ControlHint", typeof(RectTransform), typeof(Text));
+        hint.transform.SetParent(canvas.transform, false);
+        RectTransform rect = hint.GetComponent<RectTransform>();
+        rect.anchorMin = new Vector2(0.5f, 0.94f); rect.anchorMax = new Vector2(0.5f, 0.94f);
+        rect.sizeDelta = new Vector2(600f, 50f);
+        Text text = hint.GetComponent<Text>();
+        text.font = Resources.GetBuiltinResource<Font>("Arial.ttf");
+        text.text = "TRAINING MATCH  |  WASD / ARROW KEYS OR TOUCH BUTTONS";
+        text.fontSize = 20; text.alignment = TextAnchor.MiddleCenter; text.color = Color.white;
+    }
+
+    private void CreateMoveButton(Transform parent, string label, Vector2 anchor, Vector2 direction)
+    {
+        GameObject buttonObject = new GameObject(label, typeof(RectTransform), typeof(Image), typeof(Button), typeof(EventTrigger));
+        buttonObject.transform.SetParent(parent, false);
+        RectTransform rect = buttonObject.GetComponent<RectTransform>();
+        rect.anchorMin = anchor; rect.anchorMax = anchor; rect.sizeDelta = new Vector2(105f, 85f);
+        Image image = buttonObject.GetComponent<Image>();
+        image.color = new Color(0.05f, 0.08f, 0.12f, 0.65f);
+        Text labelText = new GameObject("Label", typeof(RectTransform), typeof(Text)).GetComponent<Text>();
+        labelText.transform.SetParent(buttonObject.transform, false);
+        labelText.font = Resources.GetBuiltinResource<Font>("Arial.ttf");
+        labelText.text = label; labelText.fontSize = 18; labelText.alignment = TextAnchor.MiddleCenter; labelText.color = Color.white;
+        RectTransform labelRect = labelText.rectTransform; labelRect.anchorMin = Vector2.zero; labelRect.anchorMax = Vector2.one; labelRect.offsetMin = Vector2.zero; labelRect.offsetMax = Vector2.zero;
+
+        EventTrigger trigger = buttonObject.GetComponent<EventTrigger>();
+        EventTrigger.Entry down = new EventTrigger.Entry(); down.eventID = EventTriggerType.PointerDown;
+        down.callback.AddListener((data) => PlayerMovement.SetMobileMove(direction));
+        trigger.triggers.Add(down);
+        EventTrigger.Entry up = new EventTrigger.Entry(); up.eventID = EventTriggerType.PointerUp;
+        up.callback.AddListener((data) => PlayerMovement.SetMobileMove(Vector2.zero));
+        trigger.triggers.Add(up);
+        EventTrigger.Entry exit = new EventTrigger.Entry(); exit.eventID = EventTriggerType.PointerExit;
+        exit.callback.AddListener((data) => PlayerMovement.SetMobileMove(Vector2.zero));
+        trigger.triggers.Add(exit);
+    }
+}
