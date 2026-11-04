@@ -116,6 +116,7 @@ public class GameBootstrap : MonoBehaviour
         handleRect.sizeDelta = new Vector2(76f, 76f);
         Image handleImage = handleObject.GetComponent<Image>();
         handleImage.color = new Color(0.8f, 0.85f, 0.9f, 0.78f);
+        handleImage.raycastTarget = false;
         baseObject.GetComponent<MobileJoystick>().handle = handleRect;
     }
 
