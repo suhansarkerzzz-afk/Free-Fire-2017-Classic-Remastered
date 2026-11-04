@@ -54,7 +54,7 @@ public class MainMenuBootstrap : MonoBehaviour
             new Vector2(0.5f, 0.72f), new Vector2(0.5f, 0.72f), canvas.transform);
 
         CreateButton("TAP TO START", new Vector2(0.5f, 0.43f),
-            () => Debug.Log("Start Game"));
+            GameBootstrap.StartMatch);
         CreateButton("GRAPHICS SETTINGS", new Vector2(0.5f, 0.31f), ShowSettings);
         CreateButton("MULTIPLAYER", new Vector2(0.5f, 0.19f),
             () => Debug.Log("Multiplayer Coming Soon"));
