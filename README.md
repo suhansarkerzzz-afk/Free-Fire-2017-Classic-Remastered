@@ -23,7 +23,7 @@ An original, fan-inspired low-poly battle-royale prototype. This is not an offic
 5. Press Play to test the menu and training arena.
 
 ## Android APK
-In Unity, select **File > Build Settings > Android > Switch Platform**. Set a package identifier under Player Settings, choose ARM64, then use **Build** to create an APK. The project has not yet been built or device-tested; configure Android SDK/NDK through Unity Hub first.
+After running **Tools > Classic Remastered > Prepare Android Build**, install Android Build Support (SDK, NDK and OpenJDK) through Unity Hub. Select **File > Build Settings > Android** and click **Build** to create the APK. The repository includes an Editor setup helper, but no APK has been compiled or device-tested yet. Unity Editor and Android Build Support must be installed on a build machine.
 
 ## Controls
 - PC: WASD / arrow keys to move; right-mouse drag to look; press R to reload and Q to switch weapons.
