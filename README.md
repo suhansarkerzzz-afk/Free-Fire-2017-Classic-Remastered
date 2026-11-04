@@ -9,8 +9,8 @@ An original, fan-inspired low-poly battle-royale prototype. This is not an offic
 - Mobile virtual joystick for movement.
 - PC keyboard movement (WASD / arrow keys) and mouse drag camera look in the Editor/Standalone.
 - Five simple training bots that follow and attack the player.
-- Basic raycast shooting with a mobile FIRE button.
-- 30-round magazine, 90 reserve rounds, timed reload, ammo HUD and mobile RELOAD button.
+- Two selectable weapons: RIFLE and PISTOL, each with separate damage, range, fire rate and ammo.
+- Separate magazine/reserve ammo and reload timing for each weapon, with ammo/weapon HUD and mobile RELOAD/SWAP buttons.
 - Health and elimination HUD prototype.
 - Unity UI package manifest and editor version metadata.
 
@@ -25,13 +25,13 @@ An original, fan-inspired low-poly battle-royale prototype. This is not an offic
 In Unity, select **File > Build Settings > Android > Switch Platform**. Set a package identifier under Player Settings, choose ARM64, then use **Build** to create an APK. The project has not yet been built or device-tested; configure Android SDK/NDK through Unity Hub first.
 
 ## Controls
-- PC: WASD / arrow keys to move; right-mouse drag to look; press R to reload.
-- Android: use the left-side virtual joystick to move, drag on the right side to rotate the camera, tap FIRE to shoot, and tap RELOAD when needed.
+- PC: WASD / arrow keys to move; right-mouse drag to look; press R to reload and Q to switch weapons.
+- Android: use the left-side virtual joystick to move, drag on the right side to rotate the camera, tap FIRE to shoot, RELOAD to reload and SWAP to change weapon.
 - UI buttons are excluded from camera-drag input.
 - The current arena and bots are prototype placeholders, not a finished multiplayer game.
 
 ## Planned next milestones
-1. Weapon ammo, reload and weapon switching.
+1. Weapon models, firing animations and sound effects.
 2. Better arena, character visuals and bot behavior.
 3. Lobby and local Wi-Fi multiplayer.
 4. Performance profiling on 2 GB RAM Android devices.
