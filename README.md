@@ -8,7 +8,7 @@ An original, fan-inspired low-poly battle-royale prototype. This is not an offic
 - Third-person follow camera.
 - CharacterController movement (WASD / arrow keys).
 - On-screen touch movement buttons for Android testing.
-- Five simple training bots that follow the player.
+- Five simple training bots that follow and attack the player.\n- Basic raycast shooting with a mobile FIRE button.\n- Health and elimination HUD prototype.
 - Unity UI package manifest and editor version metadata.
 
 ## Open in Unity
