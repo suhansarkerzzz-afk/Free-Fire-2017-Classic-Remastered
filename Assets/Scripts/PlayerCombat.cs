@@ -20,6 +20,9 @@ public class PlayerCombat : MonoBehaviour
     public event Action<int, int> OnAmmoChanged;
     public event Action<bool> OnReloadStateChanged;
     public event Action<string> OnWeaponChanged;
+    public event Action OnFired;
+
+    public string CurrentWeaponName { get { return weapons != null && weapons.Length > 0 ? ActiveWeapon.weaponName : "RIFLE"; } }
 
     private WeaponData[] weapons;
     private int activeWeaponIndex;
@@ -63,6 +66,7 @@ public class PlayerCombat : MonoBehaviour
 
         nextFireTime = Time.time + weapon.fireCooldown;
         weapon.currentAmmo--;
+        OnFired?.Invoke();
         NotifyAmmo();
 
         if (aimCamera == null) aimCamera = Camera.main;
