@@ -50,6 +50,7 @@ public class GameBootstrap : MonoBehaviour
         FollowCamera follow = cameraObject.GetComponent<FollowCamera>();
         if (follow == null) follow = cameraObject.AddComponent<FollowCamera>();
         follow.target = player.transform;
+        if (cameraObject.GetComponent<TouchCameraLook>() == null) cameraObject.AddComponent<TouchCameraLook>();
         cameraObject.transform.position = player.transform.position + follow.offset;
 
         for (int i = 0; i < 5; i++)
@@ -80,10 +81,7 @@ public class GameBootstrap : MonoBehaviour
         scaler.uiScaleMode = CanvasScaler.ScaleMode.ScaleWithScreenSize;
         scaler.referenceResolution = new Vector2(1280, 720);
 
-        CreateMoveButton(canvas.transform, "LEFT", new Vector2(0.12f, 0.18f), new Vector2(-1f, 0f));
-        CreateMoveButton(canvas.transform, "RIGHT", new Vector2(0.30f, 0.18f), new Vector2(1f, 0f));
-        CreateMoveButton(canvas.transform, "FORWARD", new Vector2(0.21f, 0.29f), new Vector2(0f, 1f));
-        CreateMoveButton(canvas.transform, "BACK", new Vector2(0.21f, 0.07f), new Vector2(0f, -1f));
+        CreateJoystick(canvas.transform);
         CreateFireButton(canvas.transform);
         CreateHealthDisplay(canvas.transform);
 
@@ -94,8 +92,31 @@ public class GameBootstrap : MonoBehaviour
         rect.sizeDelta = new Vector2(600f, 50f);
         Text text = hint.GetComponent<Text>();
         text.font = Resources.GetBuiltinResource<Font>("Arial.ttf");
-        text.text = "TRAINING MATCH  |  WASD / ARROW KEYS OR TOUCH BUTTONS";
+        text.text = "TRAINING MATCH  |  LEFT: MOVE JOYSTICK  |  RIGHT: DRAG TO LOOK";
         text.fontSize = 20; text.alignment = TextAnchor.MiddleCenter; text.color = Color.white;
+    }
+
+
+    private void CreateJoystick(Transform parent)
+    {
+        GameObject baseObject = new GameObject("MOVE_JOYSTICK", typeof(RectTransform), typeof(Image), typeof(MobileJoystick));
+        baseObject.transform.SetParent(parent, false);
+        RectTransform baseRect = baseObject.GetComponent<RectTransform>();
+        baseRect.anchorMin = new Vector2(0.16f, 0.19f);
+        baseRect.anchorMax = new Vector2(0.16f, 0.19f);
+        baseRect.sizeDelta = new Vector2(180f, 180f);
+        Image baseImage = baseObject.GetComponent<Image>();
+        baseImage.color = new Color(0.05f, 0.08f, 0.12f, 0.38f);
+
+        GameObject handleObject = new GameObject("HANDLE", typeof(RectTransform), typeof(Image));
+        handleObject.transform.SetParent(baseObject.transform, false);
+        RectTransform handleRect = handleObject.GetComponent<RectTransform>();
+        handleRect.anchorMin = new Vector2(0.5f, 0.5f);
+        handleRect.anchorMax = new Vector2(0.5f, 0.5f);
+        handleRect.sizeDelta = new Vector2(76f, 76f);
+        Image handleImage = handleObject.GetComponent<Image>();
+        handleImage.color = new Color(0.8f, 0.85f, 0.9f, 0.78f);
+        baseObject.GetComponent<MobileJoystick>().handle = handleRect;
     }
 
     private void CreateHealthDisplay(Transform parent)
