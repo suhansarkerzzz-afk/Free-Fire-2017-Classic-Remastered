@@ -83,6 +83,8 @@ public class GameBootstrap : MonoBehaviour
 
         CreateJoystick(canvas.transform);
         CreateFireButton(canvas.transform);
+        CreateReloadButton(canvas.transform);
+        CreateAmmoDisplay(canvas.transform);
         CreateHealthDisplay(canvas.transform);
 
         GameObject hint = new GameObject("ControlHint", typeof(RectTransform), typeof(Text));
@@ -166,6 +168,64 @@ public class GameBootstrap : MonoBehaviour
         {
             PlayerCombat combat = FindObjectOfType<PlayerCombat>();
             if (combat != null) combat.Fire();
+        });
+    }
+
+
+    private void CreateAmmoDisplay(Transform parent)
+    {
+        GameObject ammoObject = new GameObject("AmmoDisplay", typeof(RectTransform), typeof(Text));
+        ammoObject.transform.SetParent(parent, false);
+        RectTransform rect = ammoObject.GetComponent<RectTransform>();
+        rect.anchorMin = new Vector2(0.87f, 0.42f);
+        rect.anchorMax = new Vector2(0.87f, 0.42f);
+        rect.sizeDelta = new Vector2(220f, 48f);
+
+        Text label = ammoObject.GetComponent<Text>();
+        label.font = Resources.GetBuiltinResource<Font>("Arial.ttf");
+        label.fontSize = 24;
+        label.alignment = TextAnchor.MiddleCenter;
+        label.color = Color.white;
+
+        PlayerCombat combat = FindObjectOfType<PlayerCombat>();
+        if (combat == null) return;
+        label.text = "AMMO: 30 / 90";
+        combat.OnAmmoChanged += (current, reserve) =>
+        {
+            label.text = "AMMO: " + current + " / " + reserve;
+            label.color = current <= 5 ? new Color(1f, 0.35f, 0.25f) : Color.white;
+        };
+        combat.OnReloadStateChanged += (reloading) =>
+        {
+            if (reloading) label.text = "RELOADING...";
+        };
+    }
+
+    private void CreateReloadButton(Transform parent)
+    {
+        GameObject buttonObject = new GameObject("RELOAD", typeof(RectTransform), typeof(Image), typeof(Button));
+        buttonObject.transform.SetParent(parent, false);
+        RectTransform rect = buttonObject.GetComponent<RectTransform>();
+        rect.anchorMin = new Vector2(0.87f, 0.32f);
+        rect.anchorMax = new Vector2(0.87f, 0.32f);
+        rect.sizeDelta = new Vector2(125f, 70f);
+        buttonObject.GetComponent<Image>().color = new Color(0.12f, 0.28f, 0.55f, 0.88f);
+
+        Text label = new GameObject("Label", typeof(RectTransform), typeof(Text)).GetComponent<Text>();
+        label.transform.SetParent(buttonObject.transform, false);
+        label.font = Resources.GetBuiltinResource<Font>("Arial.ttf");
+        label.text = "RELOAD";
+        label.fontSize = 20;
+        label.alignment = TextAnchor.MiddleCenter;
+        label.color = Color.white;
+        RectTransform labelRect = label.rectTransform;
+        labelRect.anchorMin = Vector2.zero; labelRect.anchorMax = Vector2.one;
+        labelRect.offsetMin = Vector2.zero; labelRect.offsetMax = Vector2.zero;
+
+        buttonObject.GetComponent<Button>().onClick.AddListener(() =>
+        {
+            PlayerCombat combat = FindObjectOfType<PlayerCombat>();
+            if (combat != null) combat.Reload();
         });
     }
 
