@@ -1,4 +1,3 @@
-
 using UnityEngine;
 using UnityEngine.UI;
 using UnityEngine.EventSystems;
@@ -10,70 +9,58 @@ public class MainMenuBootstrap : MonoBehaviour
     private Canvas canvas;
     private GameObject settingsPanel;
 
-    [RuntimeInitializeOnLoadMethod(
-        RuntimeInitializeLoadType.AfterSceneLoad)]
+    [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.AfterSceneLoad)]
     private static void StartMenu()
     {
         if (FindObjectOfType<MainMenuBootstrap>() == null)
-        {
-            new GameObject("ClassicMainMenu")
-                .AddComponent<MainMenuBootstrap>();
-        }
+            new GameObject("ClassicMainMenu").AddComponent<MainMenuBootstrap>();
     }
 
     private void Start()
     {
         font = Resources.GetBuiltinResource<Font>("Arial.ttf");
 
-        if (FindObjectOfType<EventSystem>() == null)
-            new GameObject("EventSystem")
-                .AddComponent<EventSystem>();
+        EventSystem eventSystem = FindObjectOfType<EventSystem>();
+        if (eventSystem == null)
+        {
+            GameObject eventObject = new GameObject("EventSystem");
+            eventSystem = eventObject.AddComponent<EventSystem>();
+        }
 
-        var input = new GameObject("UIInput");
-        input.AddComponent<StandaloneInputModule>();
+        if (eventSystem.GetComponent<StandaloneInputModule>() == null)
+            eventSystem.gameObject.AddComponent<StandaloneInputModule>();
 
-        var canvasObject = new GameObject("MainCanvas");
+        GameObject canvasObject = new GameObject("MainCanvas");
         canvas = canvasObject.AddComponent<Canvas>();
         canvas.renderMode = RenderMode.ScreenSpaceOverlay;
 
-        var scaler = canvasObject.AddComponent<CanvasScaler>();
+        CanvasScaler scaler = canvasObject.AddComponent<CanvasScaler>();
         scaler.uiScaleMode = CanvasScaler.ScaleMode.ScaleWithScreenSize;
         scaler.referenceResolution = new Vector2(1280, 720);
         scaler.matchWidthOrHeight = 0.5f;
-
         canvasObject.AddComponent<GraphicRaycaster>();
 
-        Image background = CreateImage(
-            "Background", canvas.transform,
+        Image background = CreateImage("Background", canvas.transform,
             new Color(0.035f, 0.09f, 0.15f));
-
         background.rectTransform.anchorMin = Vector2.zero;
         background.rectTransform.anchorMax = Vector2.one;
         background.rectTransform.offsetMin = Vector2.zero;
         background.rectTransform.offsetMax = Vector2.zero;
 
         CreateText("FREE FIRE", 65, Color.white,
-            new Vector2(0.5f, 0.82f),
-            new Vector2(0.5f, 0.82f), canvas.transform);
-
+            new Vector2(0.5f, 0.82f), new Vector2(0.5f, 0.82f), canvas.transform);
         CreateText("2017 CLASSIC REMASTERED", 27,
             new Color(1f, 0.72f, 0.12f),
-            new Vector2(0.5f, 0.72f),
-            new Vector2(0.5f, 0.72f), canvas.transform);
+            new Vector2(0.5f, 0.72f), new Vector2(0.5f, 0.72f), canvas.transform);
 
         CreateButton("TAP TO START", new Vector2(0.5f, 0.43f),
             () => Debug.Log("Start Game"));
-
-        CreateButton("GRAPHICS SETTINGS", new Vector2(0.5f, 0.31f),
-            ShowSettings);
-
+        CreateButton("GRAPHICS SETTINGS", new Vector2(0.5f, 0.31f), ShowSettings);
         CreateButton("MULTIPLAYER", new Vector2(0.5f, 0.19f),
             () => Debug.Log("Multiplayer Coming Soon"));
 
-        CreateText("CLASSIC BATTLE EXPERIENCE",
-            18, Color.white,
-            new Vector2(0.5f, 0.06f),
-            new Vector2(0.5f, 0.06f), canvas.transform);
+        CreateText("CLASSIC BATTLE EXPERIENCE", 18, Color.white,
+            new Vector2(0.5f, 0.06f), new Vector2(0.5f, 0.06f), canvas.transform);
 
         CreateSettings();
     }
@@ -82,7 +69,6 @@ public class MainMenuBootstrap : MonoBehaviour
     {
         GameObject obj = new GameObject(name);
         obj.transform.SetParent(parent, false);
-
         Image image = obj.AddComponent<Image>();
         image.color = color;
         return image;
@@ -93,7 +79,6 @@ public class MainMenuBootstrap : MonoBehaviour
     {
         GameObject obj = new GameObject(value);
         obj.transform.SetParent(parent, false);
-
         Text text = obj.AddComponent<Text>();
         text.font = font;
         text.text = value;
@@ -105,15 +90,14 @@ public class MainMenuBootstrap : MonoBehaviour
         rect.anchorMin = anchorMin;
         rect.anchorMax = anchorMax;
         rect.sizeDelta = new Vector2(800, 100);
-
         return text;
     }
 
-    private void CreateButton(string label, Vector2 position,
-        Action action)
+    private void CreateButton(string label, Vector2 position, Action action,
+        Transform parent = null)
     {
         GameObject obj = new GameObject(label);
-        obj.transform.SetParent(canvas.transform, false);
+        obj.transform.SetParent(parent != null ? parent : canvas.transform, false);
 
         Image image = obj.AddComponent<Image>();
         image.color = new Color(0.85f, 0.48f, 0.08f);
@@ -128,7 +112,6 @@ public class MainMenuBootstrap : MonoBehaviour
 
         Text text = CreateText(label, 23, Color.white,
             Vector2.zero, Vector2.one, obj.transform);
-
         text.rectTransform.sizeDelta = Vector2.zero;
     }
 
@@ -147,17 +130,13 @@ public class MainMenuBootstrap : MonoBehaviour
         rect.offsetMax = Vector2.zero;
 
         CreateText("GRAPHICS SETTINGS", 30, Color.white,
-            new Vector2(0.5f, 0.75f),
-            new Vector2(0.5f, 0.75f), settingsPanel.transform);
-
+            new Vector2(0.5f, 0.75f), new Vector2(0.5f, 0.75f), settingsPanel.transform);
         CreateButton("LOW", new Vector2(0.5f, 0.55f),
-            () => SetGraphics(0));
-
+            () => SetGraphics(0), settingsPanel.transform);
         CreateButton("BALANCED", new Vector2(0.5f, 0.38f),
-            () => SetGraphics(1));
-
+            () => SetGraphics(1), settingsPanel.transform);
         CreateButton("HIGH", new Vector2(0.5f, 0.21f),
-            () => SetGraphics(2));
+            () => SetGraphics(2), settingsPanel.transform);
 
         settingsPanel.SetActive(false);
     }
@@ -169,8 +148,17 @@ public class MainMenuBootstrap : MonoBehaviour
 
     private void SetGraphics(int level)
     {
-        QualitySettings.SetQualityLevel(level, true);
-        Debug.Log("Graphics Level: " + level);
+        int qualityCount = QualitySettings.names.Length;
+        if (qualityCount == 0)
+        {
+            Debug.LogWarning("No quality levels are configured in Project Settings.");
+            settingsPanel.SetActive(false);
+            return;
+        }
+
+        int safeLevel = Mathf.Clamp(level, 0, qualityCount - 1);
+        QualitySettings.SetQualityLevel(safeLevel, true);
+        Debug.Log("Graphics Level: " + QualitySettings.names[safeLevel]);
         settingsPanel.SetActive(false);
     }
 }
