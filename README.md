@@ -10,6 +10,7 @@ An original, fan-inspired low-poly battle-royale prototype. This is not an offic
 - PC keyboard movement (WASD / arrow keys) and mouse drag camera look in the Editor/Standalone.
 - Five simple training bots that follow and attack the player.
 - Basic raycast shooting with a mobile FIRE button.
+- 30-round magazine, 90 reserve rounds, timed reload, ammo HUD and mobile RELOAD button.
 - Health and elimination HUD prototype.
 - Unity UI package manifest and editor version metadata.
 
@@ -24,8 +25,8 @@ An original, fan-inspired low-poly battle-royale prototype. This is not an offic
 In Unity, select **File > Build Settings > Android > Switch Platform**. Set a package identifier under Player Settings, choose ARM64, then use **Build** to create an APK. The project has not yet been built or device-tested; configure Android SDK/NDK through Unity Hub first.
 
 ## Controls
-- PC: WASD / arrow keys to move; drag with the mouse on the right side of the screen to look.
-- Android: use the left-side virtual joystick to move, drag on the right side to rotate the camera, and tap FIRE to shoot.
+- PC: WASD / arrow keys to move; right-mouse drag to look; press R to reload.
+- Android: use the left-side virtual joystick to move, drag on the right side to rotate the camera, tap FIRE to shoot, and tap RELOAD when needed.
 - UI buttons are excluded from camera-drag input.
 - The current arena and bots are prototype placeholders, not a finished multiplayer game.
 
