@@ -32,7 +32,7 @@ After running **Tools > Classic Remastered > Prepare Android Build**, install An
 4. Click **Run workflow** and wait for the job to finish.
 5. Open the completed run and download the artifact named `FreeFire2017ClassicRemastered-Android-APK`.
 
-The workflow runs Unity 2022.3.62f1 in Android mode and uploads the APK as a build artifact. A valid Unity license secret is required. If the workflow fails, open its build log and share the error so it can be fixed. This workflow has been added but has not yet been run or verified.
+The workflow runs Unity 2022.3.62f2 in Android mode and uploads the APK as a build artifact. A valid Unity license secret is required. If the workflow fails, open its build log and share the error so it can be fixed. This workflow has been added but has not yet been run or verified.
 
 ## Controls
 - PC: WASD / arrow keys to move; right-mouse drag to look; press R to reload and Q to switch weapons.
