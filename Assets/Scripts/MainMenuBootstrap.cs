@@ -69,18 +69,20 @@ public class MainMenuBootstrap : MonoBehaviour
             new Color(1f, 0.72f, 0.12f),
             new Vector2(0.5f, 0.72f), new Vector2(0.5f, 0.72f), canvas.transform);
 
-        CreateButton("OFFLINE SOLO (49 BOTS)", new Vector2(0.5f, 0.46f),
+        CreateButton("OFFLINE SOLO (49 BOTS)", new Vector2(0.5f, 0.54f),
             GameBootstrap.StartMatch);
-        CreateButton("LOCAL WI-FI / HOTSPOT (BETA)", new Vector2(0.5f, 0.33f),
+        CreateButton("LOCAL WI-FI / HOTSPOT (BETA)", new Vector2(0.5f, 0.42f),
             GameBootstrap.StartLocalMultiplayer);
-        CreateButton("GRAPHICS SETTINGS", new Vector2(0.5f, 0.20f), ShowSettings);
-        CreateButton("CHARACTER SELECT", new Vector2(0.5f, 0.08f), ShowCharacters);
+        CreateButton("GRAPHICS SETTINGS", new Vector2(0.5f, 0.30f), ShowSettings);
+        CreateButton("CHARACTER SELECT", new Vector2(0.5f, 0.18f), ShowCharacters);
 
         CreateText("CLASSIC BATTLE EXPERIENCE", 16, Color.white,
             new Vector2(0.5f, 0.96f), new Vector2(0.5f, 0.96f), canvas.transform);
 
         CreateSettings();
         CreateCharacterPanel();
+        // Bluetooth is optional nearby-device discovery only; it never carries gameplay traffic.
+        gameObject.AddComponent<BluetoothDiscoveryUI>();
         if (GameBootstrap.ConsumeAutoStart()) GameBootstrap.StartMatch();
     }
 
