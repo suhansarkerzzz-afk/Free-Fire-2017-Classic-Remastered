@@ -15,6 +15,8 @@ public class ParachuteDeployment : MonoBehaviour
     private void Start()
     {
         controller = GetComponent<CharacterController>();
+        PlayerMovement playerMovement = GetComponent<PlayerMovement>();
+        if (playerMovement != null) playerMovement.enabled = false;
         transform.position = new Vector3(0f, dropHeight, -24f);
         drift = Vector3.forward;
         if (controller != null) controller.enabled = false;
@@ -39,9 +41,11 @@ public class ParachuteDeployment : MonoBehaviour
         delay += Time.deltaTime;
         if (delay < deploymentDelay) return;
         if (controller != null && !controller.enabled) controller.enabled = true;
-        Vector3 horizontal = drift * glideSpeed;
+        Vector2 steer = PlayerMovement.CurrentMobileMove;
+        Vector3 horizontal = drift * glideSpeed + new Vector3(steer.x, 0f, steer.y) * 2.2f;
 #if ENABLE_LEGACY_INPUT_MANAGER
-        horizontal += new Vector3(Input.GetAxisRaw("Horizontal"), 0f, Input.GetAxisRaw("Vertical")) * 2f;
+        if (steer.sqrMagnitude < 0.01f)
+            horizontal += new Vector3(Input.GetAxisRaw("Horizontal"), 0f, Input.GetAxisRaw("Vertical")) * 2f;
 #endif
         Vector3 motion = horizontal + Vector3.down * descentSpeed;
         if (controller != null) controller.Move(motion * Time.deltaTime);
