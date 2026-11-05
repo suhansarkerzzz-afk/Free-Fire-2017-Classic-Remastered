@@ -8,8 +8,12 @@ public class EmoteController : MonoBehaviour
     private int activeEmote;
     private void Start()
     {
-        ClassicCharacterVisual visual = GetComponent<ClassicCharacterVisual>();
-        if (visual != null) model = transform.Find("ClassicCharacterModel");
+        ResolveModel();
+    }
+    private void ResolveModel()
+    {
+        if (GetComponent<ClassicCharacterVisual>() != null)
+            model = transform.Find("ClassicCharacterModel");
     }
     public void PlayEmote(int emote)
     {
@@ -18,6 +22,8 @@ public class EmoteController : MonoBehaviour
     }
     private void Update()
     {
+        // Component Start order is not guaranteed; retry after the visual component creates its model.
+        if (model == null) ResolveModel();
         if (model == null) return;
         if (Time.time > emoteUntil) { model.localRotation = Quaternion.Slerp(model.localRotation, Quaternion.identity, Time.deltaTime * 5f); return; }
         float phase = (Time.time * 8f);
