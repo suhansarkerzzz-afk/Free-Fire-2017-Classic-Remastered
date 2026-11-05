@@ -16,7 +16,7 @@ This is the active work plan for the Godot 4.4.1 Android prototype. Work from th
 - [x] Add player-death Game Over panel and Play Again scene restart (Build #15 pending); add pause/settings menu later.
 - [ ] Improve character visuals: modular outfits, weapon holding pose, hit/death animations.
 - [ ] Add optimized weapon models, muzzle flash, impact effects and sound.
-- [ ] Add loot pickups, ammo, medkits and inventory.
+- [x] Add proximity ammo crates, medkit pickups, medkit inventory counter and healing button (CI pending).
 - [ ] Build a more detailed classic-inspired island with terrain height, shoreline, water, roads and recognizable POIs.
 - [ ] Add LOD, visibility ranges, texture compression/atlases and baked lighting.
 - [ ] Add graphics presets: Low (2 GB), Medium (4 GB), High (6 GB); profile actual RAM/FPS on devices.
