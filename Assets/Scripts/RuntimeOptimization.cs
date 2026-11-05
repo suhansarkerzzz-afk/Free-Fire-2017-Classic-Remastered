@@ -13,6 +13,11 @@ public class RuntimeOptimization : MonoBehaviour
     private void Awake()
     {
         Application.lowMemory += OnLowMemory;
+    }
+
+    private void Start()
+    {
+        // GameBootstrap creates the camera later in its Start method.
         if (SystemInfo.systemMemorySize <= 3072 && Camera.main != null)
             Camera.main.farClipPlane = 150f;
     }
