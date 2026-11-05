@@ -104,20 +104,54 @@ func _make_box(label: String, pos: Vector3, size: Vector3, color: Color, collisi
     return body
 
 func _make_actor_body(actor: CharacterBody3D, color: Color, bot: bool) -> void:
+    # One capsule collider keeps movement inexpensive; visuals are a simple low-poly humanoid.
     var collision := CollisionShape3D.new()
     var capsule := CapsuleShape3D.new()
     capsule.radius = 0.42 if not bot else 0.43
     capsule.height = 1.85
     collision.shape = capsule
     actor.add_child(collision)
-    var visual := MeshInstance3D.new()
-    var mesh := CapsuleMesh.new()
-    mesh.radius = 0.42
-    mesh.height = 1.85
-    visual.mesh = mesh
-    visual.material_override = _make_material(color)
-    visual.position.y = 0.02
-    actor.add_child(visual)
+
+    var body_material := _make_material(color)
+    var skin_material := _make_material(Color(0.16, 0.19, 0.23) if bot else Color(0.78, 0.55, 0.38))
+    var dark_material := _make_material(Color(0.055, 0.065, 0.08))
+
+    var torso := MeshInstance3D.new()
+    var torso_mesh := BoxMesh.new()
+    torso_mesh.size = Vector3(0.68, 0.78, 0.38)
+    torso.mesh = torso_mesh
+    torso.material_override = body_material
+    torso.position = Vector3(0, 0.25, 0)
+    actor.add_child(torso)
+
+    var head := MeshInstance3D.new()
+    var head_mesh := SphereMesh.new()
+    head_mesh.radius = 0.25
+    head_mesh.height = 0.5
+    head.mesh = head_mesh
+    head.material_override = dark_material if bot else skin_material
+    head.position = Vector3(0, 0.88, 0)
+    actor.add_child(head)
+
+    for side in [-1.0, 1.0]:
+        var arm := MeshInstance3D.new()
+        var arm_mesh := CapsuleMesh.new()
+        arm_mesh.radius = 0.13
+        arm_mesh.height = 0.78
+        arm.mesh = arm_mesh
+        arm.material_override = body_material
+        arm.position = Vector3(side * 0.46, 0.22, 0)
+        arm.rotation_degrees.z = -side * 12.0
+        actor.add_child(arm)
+
+        var leg := MeshInstance3D.new()
+        var leg_mesh := CapsuleMesh.new()
+        leg_mesh.radius = 0.15
+        leg_mesh.height = 0.78
+        leg.mesh = leg_mesh
+        leg.material_override = dark_material
+        leg.position = Vector3(side * 0.19, -0.48, 0)
+        actor.add_child(leg)
 
 func _build_player_visual(actor: CharacterBody3D) -> void:
     _make_actor_body(actor, Color(0.12, 0.38, 0.72), false)
