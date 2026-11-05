@@ -17,7 +17,8 @@ An original, fan-inspired battle-royale prototype with a 2017-era visual directi
 - One player creates a room and shares its six-character room code; friends join on the same Wi-Fi or phone hotspot.
 - Uses local UDP discovery and player transform replication; no internet matchmaking or dedicated server.
 - Current implementation is an early networking prototype: remote player movement/appearance is replicated, but authoritative health, damage, shooting, loot, bot state, match phase, reconnect and host migration are not synchronized. Do not describe this as finished multiplayer or a complete Mini Militia-style match yet.
-- Bluetooth is not used for gameplay transport.
+- Bluetooth Classic RFCOMM direct phone-to-phone transport prototype is included separately from Wi-Fi. The menu can scan, host a Bluetooth link, connect to the last discovered device, and exchange newline-delimited text messages.
+- Bluetooth direct transport is not yet wired into authoritative match-state replication. Do not claim full Bluetooth gameplay until player movement, health, damage, weapons, teams, bots and match lifecycle are synchronized over that transport.
 
 ## Performance and build setup
 
@@ -64,4 +65,5 @@ The workflow has not yet been run or verified. A valid Unity license secret and 
 - Full minimap and battle HUD.
 - Better bot navigation, cover use and low-memory optimisation for 2 GB phones.
 - Finish authoritative LAN combat/health/loot/match synchronization, reconnect and room lifecycle.
+- Integrate Bluetooth RFCOMM transport with the same match protocol and add multi-device lobby / team assignment.
 - Complete sound, animation and match flow.
