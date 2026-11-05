@@ -311,7 +311,7 @@ public class GameBootstrap : MonoBehaviour
         label.alignment = TextAnchor.MiddleCenter;
         label.color = new Color(0.35f, 1f, 0.4f);
         HealthSystem health = FindObjectOfType<PlayerCombat>().GetComponent<HealthSystem>();
-        label.text = "HP: 100 / 100";
+        label.text = "HP: " + Mathf.CeilToInt(health.CurrentHealth) + " / " + Mathf.CeilToInt(health.maxHealth);
         health.OnHealthChanged += (current, maximum) =>
         {
             label.text = "HP: " + Mathf.CeilToInt(current) + " / " + Mathf.CeilToInt(maximum);
