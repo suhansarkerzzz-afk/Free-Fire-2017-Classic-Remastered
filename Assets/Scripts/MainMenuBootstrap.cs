@@ -74,7 +74,7 @@ public class MainMenuBootstrap : MonoBehaviour
         CreateButton("LOCAL WI-FI / HOTSPOT (BETA)", new Vector2(0.5f, 0.42f),
             GameBootstrap.StartLocalMultiplayer);
         CreateButton("GRAPHICS SETTINGS", new Vector2(0.5f, 0.30f), ShowSettings);
-        CreateButton("CHARACTER SELECT", new Vector2(0.5f, 0.18f), ShowCharacters);
+        CreateButton("CHARACTER SELECT", new Vector2(0.5f, 0.20f), ShowCharacters);
 
         CreateText("CLASSIC BATTLE EXPERIENCE", 16, Color.white,
             new Vector2(0.5f, 0.96f), new Vector2(0.5f, 0.96f), canvas.transform);
