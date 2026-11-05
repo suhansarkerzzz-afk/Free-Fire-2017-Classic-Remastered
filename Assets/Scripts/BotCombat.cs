@@ -31,7 +31,7 @@ public class BotCombat : MonoBehaviour
         {
             HealthSystem hitHealth = hit.collider.GetComponentInParent<HealthSystem>();
             if (hitHealth == targetHealth)
-                targetHealth.TakeDamage(damage * Random.Range(1f - aimSpread, 1f + aimSpread));
+                targetHealth.TakeDamage(damage * Random.Range(1f - aimSpread, 1f + aimSpread), gameObject);
         }
     }
 }
