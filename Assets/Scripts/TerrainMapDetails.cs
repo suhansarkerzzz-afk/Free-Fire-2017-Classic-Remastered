@@ -62,13 +62,14 @@ public class TerrainMapDetails : MonoBehaviour
         Cube("Blue_River", new Vector3(-15f, 0.015f, 0f), new Vector3(7.2f, 0.12f, 108f), waterMat, false);
         Cube("River_Bank_West", new Vector3(-19f, 0.02f, 0f), new Vector3(1.0f, 0.14f, 108f), woodMat, false);
         Cube("River_Bank_East", new Vector3(-11f, 0.02f, 0f), new Vector3(1.0f, 0.14f, 108f), woodMat, false);
+        // The river runs north-south (along Z), so the bridge must span it along X.
         for (int i = 0; i < 11; i++)
         {
-            float z = -10f + i * 0.95f;
-            Cube("Bridge_Deck_" + i, new Vector3(-15f, 0.28f, z), new Vector3(10.5f, 0.28f, 0.82f), woodMat, true);
+            float x = -20f + i * 0.95f;
+            Cube("Bridge_Deck_" + i, new Vector3(x, 0.28f, 0f), new Vector3(0.82f, 0.28f, 8.5f), woodMat, true);
         }
-        Cube("Bridge_Rail_Left", new Vector3(-15f, 0.82f, -0.1f), new Vector3(10.5f, 0.16f, 0.16f), woodMat, true);
-        Cube("Bridge_Rail_Right", new Vector3(-15f, 0.82f, -9.2f), new Vector3(10.5f, 0.16f, 0.16f), woodMat, true);
+        Cube("Bridge_Rail_Left", new Vector3(-20.35f, 0.82f, 0f), new Vector3(0.16f, 0.16f, 8.5f), woodMat, true);
+        Cube("Bridge_Rail_Right", new Vector3(-9.65f, 0.82f, 0f), new Vector3(0.16f, 0.16f, 8.5f), woodMat, true);
     }
 
     private void BuildVillageDetails()
