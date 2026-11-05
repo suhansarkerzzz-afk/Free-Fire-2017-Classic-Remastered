@@ -31,7 +31,7 @@ public class LocalMultiplayerUI : MonoBehaviour
         panel.SetActive(OpenOnStart);
         OpenOnStart = false;
 
-        AddButton("LAN ROOM", new Vector2(0.5f, 0.08f), TogglePanel, canvas.transform);
+        AddButton("LAN ROOM", new Vector2(0.5f, 0.90f), TogglePanel, canvas.transform);
     }
 
     private Text AddText(string value, int size, Vector2 anchor, Transform parent)
