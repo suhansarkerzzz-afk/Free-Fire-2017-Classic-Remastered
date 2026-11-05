@@ -44,16 +44,23 @@ public class BasicBotAI : MonoBehaviour
 
         Vector3 destinationDirection = Vector3.zero;
         bool chasing = false;
+        bool holdingPosition = false;
         if (target != null)
         {
             Vector3 toTarget = target.position - transform.position;
             toTarget.y = 0f;
-            if (toTarget.magnitude <= engageDistance && toTarget.magnitude > stopDistance)
+            if (toTarget.magnitude <= engageDistance)
             {
-                destinationDirection = toTarget.normalized;
-                chasing = true;
+                if (toTarget.magnitude > stopDistance)
+                {
+                    destinationDirection = toTarget.normalized;
+                    chasing = true;
+                }
+                else holdingPosition = true;
             }
         }
+
+        if (holdingPosition) return;
 
         if (!chasing)
         {
