@@ -41,7 +41,7 @@ public static class AndroidBuildSetup
         Debug.Log("Android build setup complete. Select File > Build Settings > Android, then Build.");
         EditorUtility.DisplayDialog(
             "Android Build Setup Complete",
-            "Bootstrap scene created and added to Build Settings. Android is configured for ARM64 and IL2CPP. Install Android Build Support in Unity Hub, then use File > Build Settings > Build.",
+            "Bootstrap scene created and added to Build Settings. Android is configured for ARMv7 + ARM64 and IL2CPP. Install Android Build Support in Unity Hub, then use File > Build Settings > Build.",
             "OK");
     }
 
@@ -54,6 +54,8 @@ public static class AndroidBuildSetup
         Scene scene = EditorSceneManager.NewScene(NewSceneSetup.EmptyScene, NewSceneMode.Single);
         scene.name = "Bootstrap";
         EditorSceneManager.SaveScene(scene, ScenePath);
+        AssetDatabase.SaveAssets();
+        AssetDatabase.Refresh();
         EditorBuildSettings.scenes = new[]
         {
             new EditorBuildSettingsScene(ScenePath, true)
@@ -65,7 +67,7 @@ public static class AndroidBuildSetup
         PlayerSettings.SetApplicationIdentifier(BuildTargetGroup.Android, "com.classicremastered.freefire2017");
         PlayerSettings.defaultInterfaceOrientation = UIOrientation.LandscapeLeft;
         PlayerSettings.Android.minSdkVersion = AndroidSdkVersions.AndroidApiLevel23;
-        PlayerSettings.Android.targetArchitectures = AndroidArchitecture.ARM64;
+        PlayerSettings.Android.targetArchitectures = AndroidArchitecture.ARMv7 | AndroidArchitecture.ARM64;
         PlayerSettings.SetScriptingBackend(BuildTargetGroup.Android, ScriptingImplementation.IL2CPP);
         PlayerSettings.stripEngineCode = true;
 
