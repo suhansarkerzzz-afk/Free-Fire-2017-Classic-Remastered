@@ -16,7 +16,7 @@ public class PetCompanion : MonoBehaviour
         pet.name = petName;
         pet.transform.SetParent(transform, false);
         pet.transform.localScale = new Vector3(0.65f, 0.58f, 0.85f);
-        pet.GetComponent<Renderer>().material.color = new Color(0.88f, 0.52f, 0.18f);
+        pet.GetComponent<Renderer>().material.color = PetLoadout.CurrentColor;
         Collider col = pet.GetComponent<Collider>();
         if (col != null) Destroy(col);
         visual = pet.transform;
