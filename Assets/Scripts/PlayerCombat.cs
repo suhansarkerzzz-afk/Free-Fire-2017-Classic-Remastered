@@ -104,6 +104,7 @@ public class PlayerCombat : MonoBehaviour
             int availableAmmo = Mathf.Max(0, bonusAmmo);
             weapons[i].currentAmmo = Mathf.Min(weapons[i].magazineSize, availableAmmo);
             weapons[i].reserveAmmo = Mathf.Min(240, weapons[i].reserveAmmo + Mathf.Max(0, availableAmmo - weapons[i].currentAmmo));
+            CancelReload();
             activeWeaponIndex = i;
             NotifyWeapon();
             NotifyAmmo();
@@ -119,6 +120,7 @@ public class PlayerCombat : MonoBehaviour
         foreach (WeaponData item in weapons) if (item.unlocked) unlockedCount++;
         if (unlockedCount <= 1 || !ActiveWeapon.unlocked) return false;
 
+        CancelReload();
         WeaponData dropped = ActiveWeapon;
         GameObject pickup = GameObject.CreatePrimitive(PrimitiveType.Cube);
         pickup.name = "Dropped_" + dropped.weaponName;
@@ -155,6 +157,14 @@ public class PlayerCombat : MonoBehaviour
         return true;
     }
 
+    private void CancelReload()
+    {
+        if (!isReloading) return;
+        StopAllCoroutines();
+        isReloading = false;
+        OnReloadStateChanged?.Invoke(false);
+    }
+
     public void Reload()
     {
         if (weapons == null || isReloading || ActiveWeapon.currentAmmo >= ActiveWeapon.magazineSize || ActiveWeapon.reserveAmmo <= 0) return;
@@ -181,9 +191,7 @@ public class PlayerCombat : MonoBehaviour
     public void SwitchWeapon()
     {
         if (weapons == null || weapons.Length < 2) return;
-        StopAllCoroutines();
-        isReloading = false;
-        OnReloadStateChanged?.Invoke(false);
+        CancelReload();
         for (int step = 1; step <= weapons.Length; step++)
         {
             int candidate = (activeWeaponIndex + step) % weapons.Length;
