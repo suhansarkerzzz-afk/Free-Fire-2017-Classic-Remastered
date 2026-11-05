@@ -100,8 +100,11 @@ public class GameBootstrap : MonoBehaviour
             pickup.name = "WeaponAmmoPickup_" + (i + 1);
             pickup.transform.position = new Vector3(p.x, 0.55f, p.y);
             pickup.transform.localScale = new Vector3(0.8f, 0.5f, 0.8f);
-            pickup.GetComponent<Renderer>().material.color = new Color(0.95f, 0.75f, 0.12f);
-            pickup.AddComponent<WeaponPickup>();
+            WeaponPickup weapon = pickup.AddComponent<WeaponPickup>();
+            string[] types = { "SMG", "SHOTGUN", "SNIPER", "RIFLE" };
+            weapon.weaponName = types[i % types.Length];
+            weapon.ammoAmount = 30;
+            pickup.GetComponent<Renderer>().material.color = i % 4 == 2 ? new Color(0.22f, 0.48f, 0.9f) : new Color(0.95f, 0.75f, 0.12f);
         }
     }
 
