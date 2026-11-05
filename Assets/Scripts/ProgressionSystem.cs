@@ -50,6 +50,11 @@ public class ProgressionSystem : MonoBehaviour
     }
     private void Refresh()
     {
-        if (label != null) label.text = "RANK POINTS: " + RankPoints + "  |  TOTAL KILLS: " + TotalKills + "  |  MISSION: 10 KILLS";
+        if (label != null)
+        {
+            int progress = TotalKills % 10;
+            label.text = "RANK POINTS: " + RankPoints + "  |  TOTAL KILLS: " + TotalKills +
+                "  |  MISSION: " + progress + "/10 KILLS";
+        }
     }
 }
