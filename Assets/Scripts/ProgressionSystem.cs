@@ -12,7 +12,11 @@ public class ProgressionSystem : MonoBehaviour
         TotalKills = PlayerPrefs.GetInt("Classic_TotalKills", 0);
         RankPoints = PlayerPrefs.GetInt("Classic_RankPoints", 0);
         BattleRoyaleMatchManager match = FindObjectOfType<BattleRoyaleMatchManager>();
-        if (match != null) match.OnElimination += RegisterElimination;
+        if (match != null)
+        {
+            match.OnElimination += RegisterElimination;
+            match.OnMatchFinished += RegisterMatchResult;
+        }
         Canvas canvas = FindObjectOfType<Canvas>();
         if (canvas != null)
         {
