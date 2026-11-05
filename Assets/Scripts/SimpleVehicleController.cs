@@ -4,6 +4,22 @@ using UnityEngine.UI;
 // Arcade vehicle with enter/exit interaction; intended for local offline play.
 public class SimpleVehicleController : MonoBehaviour
 {
+    private static SimpleVehicleController activeVehicle;
+    public static void ToggleNearest()
+    {
+        SimpleVehicleController[] vehicles = FindObjectsOfType<SimpleVehicleController>();
+        SimpleVehicleController nearest = null;
+        float best = 4f;
+        foreach (SimpleVehicleController vehicle in vehicles)
+        {
+            if (vehicle.occupied) { vehicle.ExitVehicle(); return; }
+            GameObject playerObject = GameObject.Find("Player");
+            if (playerObject == null) continue;
+            float distance = Vector3.Distance(playerObject.transform.position, vehicle.transform.position);
+            if (distance < best) { best = distance; nearest = vehicle; }
+        }
+        if (nearest != null) nearest.EnterVehicle();
+    }
     public float driveSpeed = 13f;
     public float turnSpeed = 85f;
     private Transform player;
@@ -16,6 +32,7 @@ public class SimpleVehicleController : MonoBehaviour
     private void Start()
     {
         parkedPosition = transform.position;
+        activeVehicle = this;
         Canvas canvas = FindObjectOfType<Canvas>();
         if (canvas != null)
         {
