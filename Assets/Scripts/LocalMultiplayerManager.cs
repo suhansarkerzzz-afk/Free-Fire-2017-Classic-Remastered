@@ -270,24 +270,27 @@ public class LocalMultiplayerManager : MonoBehaviour
 
     public void StopRoom()
     {
+        if (socket != null && IsConnected && !IsHost && !string.IsNullOrEmpty(hostPeerId))
+            SendTo(hostEndpoint, "LEAVE|" + RoomCode + "|" + localId);
+
         IsConnected = false;
         IsHost = false;
         RoomCode = null;
         StatusMessage = "DISCONNECTED";
         hostEndpoint = null;
         peers.Clear();
-        foreach (Transform remote in remotePlayers.Values) if (remote != null) Destroy(remote.gameObject);
+        foreach (Transform remote in remotePlayers.Values)
+            if (remote != null) Destroy(remote.gameObject);
         remotePlayers.Clear();
         targetPositions.Clear();
         lastSeenAt.Clear();
+        hostPeerId = null;
+
         if (socket != null)
         {
-            if (IsConnected && !IsHost && !string.IsNullOrEmpty(hostPeerId))
-                SendTo(hostEndpoint, "LEAVE|" + RoomCode + "|" + localId);
             socket.Close();
             socket = null;
         }
-        hostPeerId = null;
     }
 
     private void OnDestroy() { StopRoom(); }
