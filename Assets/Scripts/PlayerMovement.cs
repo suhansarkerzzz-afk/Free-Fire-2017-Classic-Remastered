@@ -8,6 +8,7 @@ public class PlayerMovement : MonoBehaviour
     private CharacterController controller;
     private static Vector2 mobileMove;
 
+    public static Vector2 CurrentMobileMove { get { return mobileMove; } }
     public static void SetMobileMove(Vector2 value) { mobileMove = Vector2.ClampMagnitude(value, 1f); }
 
     private void Awake() { controller = GetComponent<CharacterController>(); }
