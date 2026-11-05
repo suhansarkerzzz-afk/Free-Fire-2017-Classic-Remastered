@@ -81,7 +81,7 @@ public class PlayerCombat : MonoBehaviour
         {
             HealthSystem health = hit.collider.GetComponentInParent<HealthSystem>();
             if (health != null && health.gameObject != gameObject)
-                health.TakeDamage(weapon.damage);
+                health.TakeDamage(weapon.damage, gameObject);
             Debug.DrawLine(ray.origin, hit.point, Color.red, 0.5f);
         }
         else Debug.DrawRay(ray.origin, ray.direction * weapon.range, Color.red, 0.5f);
