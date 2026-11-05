@@ -4,8 +4,8 @@ public class BotCombat : MonoBehaviour
 {
     public Transform target;
     public float attackRange = 18f;
-    public float damage = 7f;
-    public float attackInterval = 1.65f;
+    public float damage = 12f;
+    public float attackInterval = 1.45f;
     public float aimSpread = 0.18f;
     private float nextAttack;
 
