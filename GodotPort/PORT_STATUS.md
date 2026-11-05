@@ -1,36 +1,44 @@
 # Godot Port — Development Status
 
-This is a new Godot 4.4.1 project being built alongside the legacy Unity prototype. The Unity files are intentionally retained and are not part of the Godot Android build.
+This is the active Android project, built with Godot 4.4.1 alongside the retained legacy Unity prototype. The Unity files are reference code and are not included in the Godot Android APK.
 
-## First playable foundation in this commit
+## Implemented prototype foundation
 
-- Godot 4.4.1 project with Compatibility renderer for broad Android device support.
-- Procedural low-poly island ground, roads, simple houses, trees and named district labels.
-- Offline Solo match entry menu.
-- Third-person player controller with keyboard and touch-look / virtual movement input.
-- 200 player HP, 30-round rifle magazine, reserve ammo and reload.
-- 49 basic villain bots, each with 200 HP, chase movement and close-range damage.
-- Basic raycast shooting and elimination count.
-- Android debug APK export preset for ARMv7 and ARM64.
-- GitHub Actions workflow to export a debug APK without a Unity license.
+- Godot 4.4.1 project using the Compatibility renderer.
+- Procedural low-poly island ground, two crossing roads, simple houses, trees and 12 district labels.
+- Third-person player with keyboard movement for desktop testing and touch-drag movement/look on Android.
+- Player health (200 HP), 30-round rifle magazine, reserve ammo, reload and raycast shooting.
+- 49 basic villain bots, each with 200 HP, chase movement and close-range attacks.
+- HUD for health, ammo, enemy count and match status.
+- Landscape Android export preset for ARMv7 and ARM64.
+- GitHub Actions workflow for a debug APK; no Unity license secret is needed.
 
-## Not yet ported / incomplete
+## Verified Android CI build
 
-- Full historical Bermuda map geometry and all 20 named POIs.
-- Original weapon roster, pickup/drop inventory, medkits and loot.
-- Parachute / plane, jeep, safe-zone ring and full battle HUD.
-- Local Wi-Fi / hotspot room discovery and Bluetooth direct link.
-- Authoritative multiplayer synchronization.
-- Full mobile joystick and touch button UX polish, audio, animations and performance tuning.
+- Workflow run: [#10 — Godot Android APK Build](https://github.com/suhansarkerzzz-afk/Free-Fire-2017-Classic-Remastered/actions/runs/42046524963)
+- Commit: `6955558aa166beea4c0880c808eda7bda306a75e`
+- Result: success — Godot import, headless runtime validation, APK export, signing and artifact upload all completed.
+- Artifact: `FreeFire2017ClassicRemastered-Godot-Android-APK` (about 53.8 MB).
+- [Download the APK artifact](https://github.com/suhansarkerzzz-afk/Free-Fire-2017-Classic-Remastered/actions/runs/42046524963/artifacts/13424856526)
 
-## Build status
+CI success confirms project import, script validation, export and packaging. It does not confirm installation, touch behaviour, performance or gameplay on a physical phone. Those still require device testing.
 
-The project files and workflow have been committed, but no Godot import, script parse, runtime, Android export, APK install or real-device test has been performed yet. The first CI export must be run to reveal any Godot-version, export-template or Android SDK issues.
+## Known limitations and next work
 
-## Android CI export configuration update
+- The current MOVE circle is a visual guide, not a movable analog joystick; movement uses left-side touch dragging.
+- Bots do not use guns yet; they chase and attack at close range.
+- No visible weapon model, weapon pickup/drop system, medkits or loot in the Godot port.
+- The island is a flat procedural prototype, not the full Bermuda map or its faithful terrain/POIs.
+- No plane/parachute, jeep, shrinking safe zone, minimap, animation or finished audio.
+- No Wi-Fi/hotspot room discovery, Bluetooth transport or multiplayer synchronization in the Godot port.
+- No measured 2 GB / 4 GB / 6 GB device performance results yet.
+- The export log reports that no project icon is configured; this is non-fatal, and the APK still exported successfully.
 
-- GitHub Actions now writes Godot 4 editor settings for the runner's Java 17 and Android SDK paths.
-- CI generates a temporary Android debug keystore and supplies the documented Godot debug-signing environment variables.
-- A headless runtime validation step now runs before APK export.
-- APK export is required to produce a non-empty file before artifact upload.
-- This configuration change is pending a fresh CI run; it is not yet a verified successful APK build.
+## Controls
+
+- Desktop: WASD move, Shift sprint, Space jump, F fire, R reload, right-mouse drag to look.
+- Android: drag on the left side to move, drag on the right side to look, and use FIRE / RELOAD / JUMP / SPRINT buttons.
+
+## Build
+
+The workflow runs on pushes affecting `GodotPort/**` or its workflow file, and can also be started manually from GitHub Actions. The uploaded debug artifact is retained for 14 days.
