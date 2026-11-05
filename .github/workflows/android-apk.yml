@@ -22,7 +22,7 @@ jobs:
           projectPath: .
           unityVersion: 2022.3.62f2
           targetPlatform: Android
-          customParameters: -executeMethod AndroidBuildSetup.BuildAndroid
+          buildMethod: AndroidBuildSetup.BuildAndroid
 
       - name: Upload APK
         uses: actions/upload-artifact@v4
