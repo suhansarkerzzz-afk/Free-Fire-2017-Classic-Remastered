@@ -78,6 +78,7 @@ public class GameBootstrap : MonoBehaviour
         lan.localPlayer = player.transform;
         LocalMultiplayerUI lanUI = gameObject.AddComponent<LocalMultiplayerUI>();
         lanUI.manager = lan;
+        gameObject.AddComponent<BluetoothDiscoveryUI>();
     }
 
     private void CreateVehicle(Vector3 position)
