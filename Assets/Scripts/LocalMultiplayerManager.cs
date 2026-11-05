@@ -23,6 +23,8 @@ public class LocalMultiplayerManager : MonoBehaviour
     private readonly Dictionary<string, IPEndPoint> peers = new Dictionary<string, IPEndPoint>();
     private readonly Dictionary<string, Transform> remotePlayers = new Dictionary<string, Transform>();
     private readonly Dictionary<string, Vector3> targetPositions = new Dictionary<string, Vector3>();
+    private readonly Dictionary<string, float> lastSeenAt = new Dictionary<string, float>();
+    private const float PeerTimeoutSeconds = 6f;
     private string localId;
     private float sendTimer;
     private float discoveryTimer;
@@ -83,6 +85,7 @@ public class LocalMultiplayerManager : MonoBehaviour
             if (remotePlayers.TryGetValue(item.Key, out Transform remote) && remote != null)
                 remote.position = Vector3.Lerp(remote.position, item.Value, Time.deltaTime * 12f);
         }
+        RemoveTimedOutPeers();
     }
 
     private void ReceivePackets()
@@ -129,6 +132,7 @@ public class LocalMultiplayerManager : MonoBehaviour
                 return;
             }
             peers[p[2]] = sender;
+            lastSeenAt[p[2]] = Time.unscaledTime;
             StatusMessage = "PLAYER JOINED - " + peers.Count + " REMOTE";
             SendTo(sender, "WELCOME|" + RoomCode + "|" + localId);
             return;
@@ -152,12 +156,55 @@ public class LocalMultiplayerManager : MonoBehaviour
         {
             string id = p[2];
             if (id == localId) return;
+            lastSeenAt[id] = Time.unscaledTime;
             if (IsHost)
             {
                 peers[id] = sender;
                 Relay(message, sender);
             }
             UpdateRemote(id, p);
+            return;
+        }
+        if (p[0] == "LEAVE" && p.Length >= 3 && p[1] == RoomCode)
+        {
+            RemovePeer(p[2]);
+        }
+    }
+
+    private void RemoveTimedOutPeers()
+    {
+        List<string> expired = new List<string>();
+        foreach (KeyValuePair<string, float> peer in lastSeenAt)
+            if (Time.unscaledTime - peer.Value > PeerTimeoutSeconds) expired.Add(peer.Key);
+
+        foreach (string id in expired)
+        {
+            if (IsHost)
+            {
+                Relay("LEAVE|" + RoomCode + "|" + id, null);
+                peers.Remove(id);
+                StatusMessage = "PLAYER LEFT - " + peers.Count + " REMOTE";
+            }
+            else if (remotePlayers.ContainsKey(id) && remotePlayers[id] != null)
+            {
+                IsConnected = false;
+                hostEndpoint = null;
+                StatusMessage = "HOST CONNECTION LOST";
+            }
+            RemovePeer(id);
+        }
+    }
+
+    private void RemovePeer(string id)
+    {
+        if (string.IsNullOrEmpty(id)) return;
+        lastSeenAt.Remove(id);
+        peers.Remove(id);
+        targetPositions.Remove(id);
+        if (remotePlayers.TryGetValue(id, out Transform remote))
+        {
+            if (remote != null) Destroy(remote.gameObject);
+            remotePlayers.Remove(id);
         }
     }
 
@@ -228,6 +275,7 @@ public class LocalMultiplayerManager : MonoBehaviour
         foreach (Transform remote in remotePlayers.Values) if (remote != null) Destroy(remote.gameObject);
         remotePlayers.Clear();
         targetPositions.Clear();
+        lastSeenAt.Clear();
         if (socket != null) { socket.Close(); socket = null; }
     }
 
