@@ -16,8 +16,8 @@ An original, fan-inspired battle-royale prototype with a 2017-era visual directi
 - A separate opt-in menu mode; Solo Offline remains completely independent.
 - One player creates a room and shares its six-character room code; friends join on the same Wi-Fi or phone hotspot.
 - Uses local UDP discovery and player transform replication; no internet matchmaking or dedicated server.
-- Current implementation is an early networking prototype: remote player movement/appearance is replicated, but authoritative health, damage, shooting, loot, bot state, match phase, reconnect and host migration are not synchronized. Do not describe this as finished multiplayer or a complete Mini Militia-style match yet.
-- Bluetooth is not used for gameplay transport.
+- Bluetooth Classic RFCOMM offers an optional direct 1-to-1 phone link. After scanning, one phone hosts and the other connects; player position, rotation and team ID are exchanged as lightweight state packets.
+- Both transports remain prototypes: authoritative health/damage, shooting, loot, bot state, match phase, multi-client Bluetooth rooms, reconnect and host migration are not synchronized. This is not yet a complete synchronized battle-royale match.
 
 ## Performance and build setup
 
