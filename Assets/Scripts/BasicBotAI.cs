@@ -1,4 +1,5 @@
 using UnityEngine;
+using System.Collections.Generic;
 
 public class BasicBotAI : MonoBehaviour
 {
@@ -19,19 +20,21 @@ public class BasicBotAI : MonoBehaviour
         targetScanTimer -= Time.deltaTime;
         if (targetScanTimer <= 0f)
         {
-            targetScanTimer = Random.Range(1.1f, 1.8f);
-            HealthSystem[] candidates = FindObjectsOfType<HealthSystem>();
+            targetScanTimer = Random.Range(1.4f, 2.0f);
+            target = null;
             float nearest = 34f;
-            foreach (HealthSystem candidate in candidates)
+            TeamAffiliation mine = GetComponent<TeamAffiliation>();
+            List<HealthSystem> candidates = HealthSystem.ActiveActors;
+            for (int i = 0; i < candidates.Count; i++)
             {
+                HealthSystem candidate = candidates[i];
                 if (candidate == null || candidate.gameObject == gameObject || candidate.IsDead) continue;
-                TeamAffiliation mine = GetComponent<TeamAffiliation>();
                 TeamAffiliation theirs = candidate.GetComponent<TeamAffiliation>();
                 if (mine != null && mine.IsFriendly(theirs)) continue;
-                float distance = Vector3.Distance(transform.position, candidate.transform.position);
-                if (distance < nearest)
+                float distance = (candidate.transform.position - transform.position).sqrMagnitude;
+                if (distance < nearest * nearest)
                 {
-                    nearest = distance;
+                    nearest = Mathf.Sqrt(distance);
                     target = candidate.transform;
                 }
             }
