@@ -20,7 +20,13 @@ public class PlayerMovement : MonoBehaviour
     public static void SetMobileSprint(bool value) { mobileSprint = value; }
     public static void RequestJump() { mobileJump = true; }
 
-    private void Awake() { controller = GetComponent<CharacterController>(); }
+    private void Awake()
+    {
+        controller = GetComponent<CharacterController>();
+        mobileMove = Vector2.zero;
+        mobileSprint = false;
+        mobileJump = false;
+    }
 
     private void Update()
     {
