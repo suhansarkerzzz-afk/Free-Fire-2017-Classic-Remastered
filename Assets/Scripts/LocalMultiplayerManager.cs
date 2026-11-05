@@ -15,6 +15,8 @@ public class LocalMultiplayerManager : MonoBehaviour
     public string RoomCode { get; private set; }
     public bool IsHost { get; private set; }
     public bool IsConnected { get; private set; }
+    public string StatusMessage { get; private set; }
+    public int RemotePlayerCount { get { return remotePlayers.Count; } }
     private UdpClient socket;
     private IPEndPoint anyEndpoint = new IPEndPoint(IPAddress.Any, 0);
     private IPEndPoint hostEndpoint;
@@ -35,13 +37,14 @@ public class LocalMultiplayerManager : MonoBehaviour
         socket.Client.Blocking = false;
         IsHost = true;
         IsConnected = true;
+        StatusMessage = "HOSTING ROOM: " + RoomCode;
         return RoomCode;
     }
 
     public void JoinRoom(string code)
     {
         StopRoom();
-        if (!LocalRoomCode.IsValid(code)) { Debug.LogWarning("Invalid room code."); return; }
+        if (!LocalRoomCode.IsValid(code)) { StatusMessage = "INVALID ROOM CODE"; Debug.LogWarning("Invalid room code."); return; }
         RoomCode = code.ToUpperInvariant();
         localId = Guid.NewGuid().ToString("N").Substring(0, 8);
         socket = new UdpClient(0);
@@ -50,6 +53,7 @@ public class LocalMultiplayerManager : MonoBehaviour
         IsHost = false;
         IsConnected = false;
         discoveryTimer = 0f;
+        StatusMessage = "SEARCHING FOR ROOM " + RoomCode;
     }
 
     private void Update()
@@ -113,6 +117,7 @@ public class LocalMultiplayerManager : MonoBehaviour
         if (p[0] == "ROOM" && !IsHost && p.Length >= 3 && p[1] == RoomCode && !IsConnected)
         {
             hostEndpoint = sender;
+            StatusMessage = "ROOM FOUND - CONNECTING...";
             SendTo(hostEndpoint, "JOIN|" + RoomCode + "|" + localId);
             return;
         }
@@ -124,6 +129,7 @@ public class LocalMultiplayerManager : MonoBehaviour
                 return;
             }
             peers[p[2]] = sender;
+            StatusMessage = "PLAYER JOINED - " + peers.Count + " REMOTE";
             SendTo(sender, "WELCOME|" + RoomCode + "|" + localId);
             return;
         }
@@ -131,6 +137,7 @@ public class LocalMultiplayerManager : MonoBehaviour
         {
             IsConnected = false;
             hostEndpoint = null;
+            StatusMessage = "ROOM FULL - TRY ANOTHER HOST";
             Debug.LogWarning("LAN room is full.");
             return;
         }
@@ -138,6 +145,7 @@ public class LocalMultiplayerManager : MonoBehaviour
         {
             hostEndpoint = sender;
             IsConnected = true;
+            StatusMessage = "CONNECTED TO ROOM: " + RoomCode;
             return;
         }
         if (p[0] == "STATE" && p.Length >= 9 && p[1] == RoomCode)
@@ -214,6 +222,7 @@ public class LocalMultiplayerManager : MonoBehaviour
         IsConnected = false;
         IsHost = false;
         RoomCode = null;
+        StatusMessage = "DISCONNECTED";
         hostEndpoint = null;
         peers.Clear();
         foreach (Transform remote in remotePlayers.Values) if (remote != null) Destroy(remote.gameObject);
