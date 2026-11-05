@@ -1,0 +1,51 @@
+name: Godot Android APK Build
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  build-android:
+    name: Export Godot Android APK
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Java
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '17'
+
+      - name: Set up Android SDK
+        uses: android-actions/setup-android@v3
+
+      - name: Install Android SDK packages
+        run: |
+          sdkmanager "platform-tools" "platforms;android-35" "build-tools;35.0.0"
+
+      - name: Set up Godot and export templates
+        uses: chickensoft-games/setup-godot@v2
+        with:
+          version: 4.4.1
+          use-dotnet: false
+          include-templates: true
+
+      - name: Import Godot project
+        run: godot --headless --editor --path GodotPort --quit
+
+      - name: Export debug APK
+        run: |
+          mkdir -p Build/Android
+          godot --headless --path GodotPort --export-debug "Android" "${{ github.workspace }}/Build/Android/FreeFire2017ClassicRemastered-Godot.apk"
+
+      - name: Upload APK artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: FreeFire2017ClassicRemastered-Godot-Android-APK
+          path: Build/Android/FreeFire2017ClassicRemastered-Godot.apk
+          if-no-files-found: error
+          retention-days: 14
