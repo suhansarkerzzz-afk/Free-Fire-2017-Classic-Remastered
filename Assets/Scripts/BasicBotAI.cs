@@ -7,7 +7,7 @@ public class BasicBotAI : MonoBehaviour
     public float moveSpeed = 2.1f;
     public float stopDistance = 4.5f;
     public float engageDistance = 32f;
-    public float turnSpeed = 7f;
+    public float turnSpeed = 9f;
     private float roamTimer;
     private float targetScanTimer;
     private Vector3 roamDirection;
@@ -22,9 +22,9 @@ public class BasicBotAI : MonoBehaviour
         targetScanTimer -= Time.deltaTime;
         if (targetScanTimer <= 0f)
         {
-            targetScanTimer = Random.Range(0.75f, 1.1f);
+            targetScanTimer = Random.Range(0.45f, 0.7f);
             target = null;
-            float nearest = 42f;
+            float nearest = 48f;
             TeamAffiliation mine = GetComponent<TeamAffiliation>();
             List<HealthSystem> candidates = HealthSystem.ActiveActors;
             for (int i = 0; i < candidates.Count; i++)
