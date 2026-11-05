@@ -25,6 +25,9 @@ public class BasicBotAI : MonoBehaviour
             foreach (HealthSystem candidate in candidates)
             {
                 if (candidate == null || candidate.gameObject == gameObject || candidate.IsDead) continue;
+                TeamAffiliation mine = GetComponent<TeamAffiliation>();
+                TeamAffiliation theirs = candidate.GetComponent<TeamAffiliation>();
+                if (mine != null && mine.IsFriendly(theirs)) continue;
                 float distance = Vector3.Distance(transform.position, candidate.transform.position);
                 if (distance < nearest)
                 {
