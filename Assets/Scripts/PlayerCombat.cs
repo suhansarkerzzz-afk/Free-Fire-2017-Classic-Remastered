@@ -15,6 +15,7 @@ public class PlayerCombat : MonoBehaviour
         public int reserveAmmo;
         public float reloadDuration;
         [NonSerialized] public int currentAmmo;
+        public bool unlocked;
     }
 
     public event Action<int, int> OnAmmoChanged;
@@ -37,8 +38,11 @@ public class PlayerCombat : MonoBehaviour
         aimCamera = Camera.main;
         weapons = new WeaponData[]
         {
-            new WeaponData { weaponName = "RIFLE", damage = 25f, range = 55f, fireCooldown = 0.16f, magazineSize = 30, reserveAmmo = 120, reloadDuration = 1.6f },
-            new WeaponData { weaponName = "PISTOL", damage = 40f, range = 32f, fireCooldown = 0.38f, magazineSize = 12, reserveAmmo = 48, reloadDuration = 1.2f }
+            new WeaponData { weaponName = "RIFLE", damage = 25f, range = 55f, fireCooldown = 0.16f, magazineSize = 30, reserveAmmo = 120, reloadDuration = 1.6f, unlocked = true },
+            new WeaponData { weaponName = "PISTOL", damage = 40f, range = 32f, fireCooldown = 0.38f, magazineSize = 12, reserveAmmo = 48, reloadDuration = 1.2f, unlocked = true },
+            new WeaponData { weaponName = "SMG", damage = 17f, range = 38f, fireCooldown = 0.09f, magazineSize = 35, reserveAmmo = 105, reloadDuration = 1.5f },
+            new WeaponData { weaponName = "SHOTGUN", damage = 13f, range = 18f, fireCooldown = 0.8f, magazineSize = 6, reserveAmmo = 30, reloadDuration = 2.0f },
+            new WeaponData { weaponName = "SNIPER", damage = 75f, range = 95f, fireCooldown = 1.1f, magazineSize = 5, reserveAmmo = 25, reloadDuration = 2.2f }
         };
         foreach (WeaponData weapon in weapons) weapon.currentAmmo = weapon.magazineSize;
         NotifyWeapon();
@@ -83,6 +87,28 @@ public class PlayerCombat : MonoBehaviour
         else Debug.DrawRay(ray.origin, ray.direction * weapon.range, Color.red, 0.5f);
     }
 
+    public bool AddWeapon(string weaponName)
+    {
+        if (weapons == null || string.IsNullOrEmpty(weaponName)) return false;
+        for (int i = 0; i < weapons.Length; i++)
+        {
+            if (!string.Equals(weapons[i].weaponName, weaponName, StringComparison.OrdinalIgnoreCase)) continue;
+            if (weapons[i].unlocked)
+            {
+                weapons[i].reserveAmmo = Mathf.Min(240, weapons[i].reserveAmmo + 30);
+                if (i == activeWeaponIndex) NotifyAmmo();
+                return true;
+            }
+            weapons[i].unlocked = true;
+            weapons[i].currentAmmo = weapons[i].magazineSize;
+            activeWeaponIndex = i;
+            NotifyWeapon();
+            NotifyAmmo();
+            return true;
+        }
+        return false;
+    }
+
     public bool AddReserveAmmo(int amount)
     {
         if (weapons == null || amount <= 0) return false;
@@ -122,7 +148,11 @@ public class PlayerCombat : MonoBehaviour
         StopAllCoroutines();
         isReloading = false;
         OnReloadStateChanged?.Invoke(false);
-        activeWeaponIndex = (activeWeaponIndex + 1) % weapons.Length;
+        for (int step = 1; step <= weapons.Length; step++)
+        {
+            int candidate = (activeWeaponIndex + step) % weapons.Length;
+            if (weapons[candidate].unlocked) { activeWeaponIndex = candidate; break; }
+        }
         nextFireTime = 0f;
         NotifyWeapon();
         NotifyAmmo();
