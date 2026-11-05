@@ -33,6 +33,7 @@ public class GameBootstrap : MonoBehaviour
         ground.GetComponent<Renderer>().material.color = new Color(0.25f, 0.38f, 0.22f);
 
         CreateTrainingEnvironment();
+        gameObject.AddComponent<TerrainMapDetails>();
 
         GameObject player = GameObject.CreatePrimitive(PrimitiveType.Capsule);
         player.name = "Player";
@@ -43,6 +44,7 @@ public class GameBootstrap : MonoBehaviour
         player.AddComponent<PlayerMovement>();
         player.AddComponent<ClassicCharacterVisual>();
         player.AddComponent<HealthSystem>();
+        TeamAffiliation.Assign(player, 0);
         player.AddComponent<PlayerCombat>();
         player.AddComponent<InventorySystem>();
         player.AddComponent<EmoteController>();
