@@ -14,7 +14,7 @@ permissions:
 
 jobs:
   build-android:
-    name: Export Godot Android APK
+    name: Validate and export Godot Android APK
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
@@ -27,9 +27,9 @@ jobs:
           java-version: '17'
 
       - name: Prepare Android SDK
+        shell: bash
         run: |
-          echo "$ANDROID_HOME"
-          yes | "$ANDROID_HOME/cmdline-tools/latest/bin/sdkmanager" --licenses || true
+          yes | "$ANDROID_HOME/cmdline-tools/latest/bin/sdkmanager" --licenses >/dev/null || true
           "$ANDROID_HOME/cmdline-tools/latest/bin/sdkmanager" "platform-tools" "platforms;android-35" "build-tools;35.0.0"
 
       - name: Set up Godot and export templates
@@ -39,13 +39,43 @@ jobs:
           use-dotnet: false
           include-templates: true
 
+      - name: Configure Godot Android export settings
+        shell: bash
+        run: |
+          mkdir -p "$HOME/.config/godot" "$RUNNER_TEMP/android"
+          keytool -genkeypair -v \
+            -keystore "$RUNNER_TEMP/android/debug.keystore" \
+            -storepass android \
+            -alias androiddebugkey \
+            -keypass android \
+            -keyalg RSA -keysize 2048 -validity 10000 \
+            -dname "CN=Android Debug,O=Android,C=US"
+          cat > "$HOME/.config/godot/editor_settings-4.tres" <<EOF
+          [gd_resource type="EditorSettings" format=3]
+
+          [resource]
+          export/android/java_sdk_path = "$JAVA_HOME"
+          export/android/android_sdk_path = "$ANDROID_HOME"
+          export/android/debug_keystore = "$RUNNER_TEMP/android/debug.keystore"
+          export/android/debug_keystore_user = "androiddebugkey"
+          export/android/debug_keystore_pass = "android"
+          EOF
+          echo "GODOT_ANDROID_KEYSTORE_DEBUG_PATH=$RUNNER_TEMP/android/debug.keystore" >> "$GITHUB_ENV"
+          echo "GODOT_ANDROID_KEYSTORE_DEBUG_USER=androiddebugkey" >> "$GITHUB_ENV"
+          echo "GODOT_ANDROID_KEYSTORE_DEBUG_PASSWORD=android" >> "$GITHUB_ENV"
+
       - name: Import Godot project
         run: godot --headless --editor --path GodotPort --quit
 
+      - name: Validate project runtime and scripts
+        run: godot --headless --path GodotPort --quit-after 5
+
       - name: Export debug APK
+        shell: bash
         run: |
           mkdir -p Build/Android
-          godot --headless --path GodotPort --export-debug "Android" "${{ github.workspace }}/Build/Android/FreeFire2017ClassicRemastered-Godot.apk"
+          godot --headless --path GodotPort --export-debug "Android" "$GITHUB_WORKSPACE/Build/Android/FreeFire2017ClassicRemastered-Godot.apk"
+          test -s Build/Android/FreeFire2017ClassicRemastered-Godot.apk
 
       - name: Upload APK artifact
         uses: actions/upload-artifact@v4
