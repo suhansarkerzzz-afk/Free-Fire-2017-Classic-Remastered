@@ -195,6 +195,8 @@ public class GameBootstrap : MonoBehaviour
         CreateWeaponDisplay(canvas.transform);
         CreateAmmoDisplay(canvas.transform);
         CreateHealthDisplay(canvas.transform);
+        CreateMedkitButton(canvas.transform);
+        CreateVehicleButton(canvas.transform);
 
         GameObject hint = new GameObject("ControlHint", typeof(RectTransform), typeof(Text));
         hint.transform.SetParent(canvas.transform, false);
@@ -386,6 +388,36 @@ public class GameBootstrap : MonoBehaviour
             PlayerCombat combat = FindObjectOfType<PlayerCombat>();
             if (combat != null) combat.SwitchWeapon();
         });
+    }
+
+    private void CreateMedkitButton(Transform parent)
+    {
+        CreateActionButton("MEDKIT", parent, new Vector2(0.72f, 0.18f), () =>
+        {
+            InventorySystem inventory = FindObjectOfType<InventorySystem>();
+            if (inventory != null) inventory.UseMedkit();
+        });
+    }
+
+    private void CreateVehicleButton(Transform parent)
+    {
+        CreateActionButton("DRIVE", parent, new Vector2(0.72f, 0.31f), SimpleVehicleController.ToggleNearest);
+    }
+
+    private void CreateActionButton(string title, Transform parent, Vector2 anchor, UnityEngine.Events.UnityAction action)
+    {
+        GameObject buttonObject = new GameObject(title, typeof(RectTransform), typeof(Image), typeof(Button));
+        buttonObject.transform.SetParent(parent, false);
+        RectTransform rect = buttonObject.GetComponent<RectTransform>();
+        rect.anchorMin = anchor; rect.anchorMax = anchor; rect.sizeDelta = new Vector2(112f, 62f);
+        buttonObject.GetComponent<Image>().color = new Color(0.12f, 0.24f, 0.32f, 0.88f);
+        Text label = new GameObject("Label", typeof(RectTransform), typeof(Text)).GetComponent<Text>();
+        label.transform.SetParent(buttonObject.transform, false);
+        label.font = Resources.GetBuiltinResource<Font>("Arial.ttf");
+        label.text = title; label.fontSize = 18; label.alignment = TextAnchor.MiddleCenter; label.color = Color.white;
+        label.rectTransform.anchorMin = Vector2.zero; label.rectTransform.anchorMax = Vector2.one;
+        label.rectTransform.offsetMin = Vector2.zero; label.rectTransform.offsetMax = Vector2.zero;
+        buttonObject.GetComponent<Button>().onClick.AddListener(action);
     }
 
     private void CreateMoveButton(Transform parent, string label, Vector2 anchor, Vector2 direction)
