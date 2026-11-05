@@ -66,10 +66,10 @@ public class TerrainMapDetails : MonoBehaviour
         for (int i = 0; i < 11; i++)
         {
             float x = -20f + i * 0.95f;
-            Cube("Bridge_Deck_" + i, new Vector3(x, 0.28f, 0f), new Vector3(0.82f, 0.28f, 8.5f), woodMat, true);
+            Cube("Bridge_Deck_" + i, new Vector3(x, 0.28f, -5f), new Vector3(0.82f, 0.28f, 8.5f), woodMat, true);
         }
-        Cube("Bridge_Rail_Left", new Vector3(-20.35f, 0.82f, 0f), new Vector3(0.16f, 0.16f, 8.5f), woodMat, true);
-        Cube("Bridge_Rail_Right", new Vector3(-9.65f, 0.82f, 0f), new Vector3(0.16f, 0.16f, 8.5f), woodMat, true);
+        Cube("Bridge_Rail_Left", new Vector3(-20.35f, 0.82f, -5f), new Vector3(0.16f, 0.16f, 8.5f), woodMat, true);
+        Cube("Bridge_Rail_Right", new Vector3(-9.65f, 0.82f, -5f), new Vector3(0.16f, 0.16f, 8.5f), woodMat, true);
     }
 
     private void BuildVillageDetails()
