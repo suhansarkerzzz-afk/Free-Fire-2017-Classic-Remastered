@@ -14,7 +14,7 @@ public class BotCombat : MonoBehaviour
         HealthSystem ownHealth = GetComponent<HealthSystem>();
         if (ownHealth != null && ownHealth.IsDead) return;
         BasicBotAI botAI = GetComponent<BasicBotAI>();
-        if (botAI != null && botAI.target != null) target = botAI.target;
+        if (botAI != null) target = botAI.target;
         if (target == null || Time.time < nextAttack) return;
 
         HealthSystem targetHealth = target.GetComponent<HealthSystem>();
