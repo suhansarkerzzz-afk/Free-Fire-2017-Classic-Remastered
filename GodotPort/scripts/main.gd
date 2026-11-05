@@ -136,6 +136,15 @@ func _make_actor_body(actor: CharacterBody3D, color: Color, bot: bool) -> void:
     head.position = Vector3(0, 0.88, 0)
     actor.add_child(head)
 
+    if bot:
+        var rifle := MeshInstance3D.new()
+        var rifle_mesh := BoxMesh.new()
+        rifle_mesh.size = Vector3(0.12, 0.13, 0.92)
+        rifle.mesh = rifle_mesh
+        rifle.material_override = dark_material
+        rifle.position = Vector3(0.36, 0.12, -0.43)
+        actor.add_child(rifle)
+
     for side in [-1.0, 1.0]:
         var arm := MeshInstance3D.new()
         var arm_mesh := CapsuleMesh.new()
