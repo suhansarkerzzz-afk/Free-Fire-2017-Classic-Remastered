@@ -239,6 +239,7 @@ public class GameBootstrap : MonoBehaviour
         CreateHealthDisplay(canvas.transform);
         CreateMedkitButton(canvas.transform);
         CreateVehicleButton(canvas.transform);
+        CreateDropWeaponButton(canvas.transform);
         CreateEmoteButton(canvas.transform);
 
         GameObject hint = new GameObject("ControlHint", typeof(RectTransform), typeof(Text));
@@ -461,6 +462,15 @@ public class GameBootstrap : MonoBehaviour
         label.rectTransform.anchorMin = Vector2.zero; label.rectTransform.anchorMax = Vector2.one;
         label.rectTransform.offsetMin = Vector2.zero; label.rectTransform.offsetMax = Vector2.zero;
         buttonObject.GetComponent<Button>().onClick.AddListener(action);
+    }
+
+    private void CreateDropWeaponButton(Transform parent)
+    {
+        CreateActionButton("DROP", parent, new Vector2(0.72f, 0.44f), () =>
+        {
+            PlayerCombat combat = FindObjectOfType<PlayerCombat>();
+            if (combat != null) combat.DropCurrentWeapon();
+        });
     }
 
     private void CreateEmoteButton(Transform parent)
