@@ -57,6 +57,7 @@ public class LocalMultiplayerUI : MonoBehaviour
         Text value = AddText("", 22, new Vector2(0.5f, 0.5f), obj.transform);
         value.color = Color.black;
         InputField input = obj.GetComponent<InputField>();
+        input.targetGraphic = obj.GetComponent<Image>();
         input.textComponent = value;
         input.characterLimit = 6;
         input.contentType = InputField.ContentType.Alphanumeric;
