@@ -36,20 +36,17 @@ public class SafeZoneController : MonoBehaviour
         float radius = Mathf.Lerp(startingRadius, finalRadius, t);
         DrawRing(radius);
 
-        if (target == null) return;
-        Vector3 flat = target.position;
-        flat.y = 0f;
-        if (flat.magnitude > radius)
+        damageTimer += Time.deltaTime;
+        if (damageTimer < 1f) return;
+        damageTimer = 0f;
+        for (int i = 0; i < HealthSystem.ActiveActors.Count; i++)
         {
-            damageTimer += Time.deltaTime;
-            if (damageTimer >= 1f)
-            {
-                damageTimer = 0f;
-                HealthSystem health = target.GetComponent<HealthSystem>();
-                if (health != null) health.TakeDamage(outsideDamagePerSecond);
-            }
+            HealthSystem health = HealthSystem.ActiveActors[i];
+            if (health == null || health.IsDead) continue;
+            Vector3 flat = health.transform.position;
+            flat.y = 0f;
+            if (flat.magnitude > radius) health.TakeDamage(outsideDamagePerSecond);
         }
-        else damageTimer = 0f;
     }
 
     private void DrawRing(float radius)
