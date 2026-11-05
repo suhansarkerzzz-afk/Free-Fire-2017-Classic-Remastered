@@ -79,8 +79,8 @@ public class LocalMultiplayerUI : MonoBehaviour
     private void Update()
     {
         if (manager == null || status == null || !panel.activeSelf) return;
-        if (manager.IsHost) status.text = "HOSTING ROOM: " + manager.RoomCode + "  |  WAITING FOR PLAYERS";
-        else if (manager.IsConnected) status.text = "CONNECTED TO ROOM: " + manager.RoomCode;
+        if (manager.IsHost) status.text = "HOSTING ROOM: " + manager.RoomCode + "  |  PLAYERS: " + (manager.RemotePlayerCount + 1);
+        else if (!string.IsNullOrEmpty(manager.StatusMessage)) status.text = manager.StatusMessage;
     }
 
     private void TogglePanel() { panel.SetActive(!panel.activeSelf); }
