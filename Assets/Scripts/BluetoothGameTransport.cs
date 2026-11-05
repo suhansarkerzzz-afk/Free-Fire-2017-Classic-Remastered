@@ -16,8 +16,8 @@ public class BluetoothGameTransport : MonoBehaviour
     {
         Canvas canvas = FindObjectOfType<Canvas>();
         if (canvas == null) return;
-        CreateButton(canvas.transform, "BT HOST", new Vector2(0.39f, 0.17f), StartHost);
-        connectButton = CreateButton(canvas.transform, "BT CONNECT", new Vector2(0.61f, 0.17f), ConnectLastDevice);
+        CreateButton(canvas.transform, "BT HOST", new Vector2(0.35f, 0.10f), StartHost);
+        connectButton = CreateButton(canvas.transform, "BT CONNECT", new Vector2(0.65f, 0.10f), ConnectLastDevice);
         GameObject label = new GameObject("BluetoothTransportStatus", typeof(RectTransform), typeof(Text));
         label.transform.SetParent(canvas.transform, false);
         RectTransform rect = label.GetComponent<RectTransform>();
