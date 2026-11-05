@@ -265,12 +265,12 @@ public class GameBootstrap : MonoBehaviour
         GameObject hint = new GameObject("ControlHint", typeof(RectTransform), typeof(Text));
         hint.transform.SetParent(canvas.transform, false);
         RectTransform rect = hint.GetComponent<RectTransform>();
-        rect.anchorMin = new Vector2(0.5f, 0.94f); rect.anchorMax = new Vector2(0.5f, 0.94f);
-        rect.sizeDelta = new Vector2(600f, 50f);
+        rect.anchorMin = new Vector2(0.5f, 0.90f); rect.anchorMax = new Vector2(0.5f, 0.90f);
+        rect.sizeDelta = new Vector2(600f, 34f);
         Text text = hint.GetComponent<Text>();
         text.font = Resources.GetBuiltinResource<Font>("Arial.ttf");
         text.text = "TRAINING MATCH  |  LEFT: MOVE JOYSTICK  |  RIGHT: DRAG TO LOOK";
-        text.fontSize = 20; text.alignment = TextAnchor.MiddleCenter; text.color = Color.white;
+        text.fontSize = 16; text.alignment = TextAnchor.MiddleCenter; text.color = Color.white;
     }
 
 
