@@ -22,7 +22,7 @@ An original, fan-inspired classic battle-royale prototype with a 2017-era visual
 - Shrinking safe-zone boundary and outside-zone damage.
 - Ammo, medkit and weapon pickups.
 - Inventory readout and medkit use.
-- Alive count, elimination count and win/lose state.
+- Alive count, player-attributed kill count, win/lose state, and an interactive result panel with Play Again / Main Menu actions.
 - Basic local rank points, kill progression and match-result rewards.
 - Simple vehicle model with enter/exit and keyboard/mobile joystick driving.
 - Cosmetic pet companion and procedural emotes.
@@ -32,7 +32,7 @@ An original, fan-inspired classic battle-royale prototype with a 2017-era visual
 - UDP same-Wi-Fi room discovery, host/join flow and basic player transform synchronisation.
 - Android network permissions are included in the custom manifest.
 - This is an early LAN prototype, not internet matchmaking. Player transforms are synchronised, but authoritative combat, reconnection, and robust lobby management still need development.
-- Optional Android Bluetooth device discovery is included as a separate nearby-device scan. It does not carry gameplay traffic; Wi-Fi/hotspot remains the gameplay transport.
+- Optional Android Bluetooth device discovery is included as a separate nearby-device scan, with Android 12+ nearby-device permission handling. It does not carry gameplay traffic; Wi-Fi/hotspot remains the gameplay transport.
 - Voice chat is intentionally out of scope.
 
 ### Performance and build setup
@@ -52,7 +52,7 @@ The code has been committed to GitHub, but **Unity compilation, gameplay testing
 2. Clone or download this repository.
 3. Open the repository folder in Unity Hub.
 4. Allow Unity to import the project.
-5. The menu is generated when a scene loads.
+5. The menu is generated when a scene loads. The Bluetooth Java source plug-in is configured for Android only.
 
 ## Android APK with GitHub Actions
 
@@ -72,7 +72,7 @@ The workflow has not yet been run or verified. A valid Unity license secret and 
 
 ## Planned after the first compile pass
 
-- Fix all compiler errors and gameplay bugs.
+- Fix all compiler errors and gameplay bugs in the first compile pass.
 - Improve bot-vs-bot combat, navigation and cover usage.
 - Complete LAN reliability, reconnection, team play and network authority.
 - Bluetooth discovery is a nearby-device helper only; no Bluetooth gameplay transport is planned.
