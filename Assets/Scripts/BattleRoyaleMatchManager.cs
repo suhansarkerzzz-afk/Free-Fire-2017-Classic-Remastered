@@ -13,6 +13,8 @@ public class BattleRoyaleMatchManager : MonoBehaviour
     private bool matchEnded;
 
     public System.Action OnElimination;
+    public System.Action OnPlayerKill;
+    private int playerEliminations;
     public System.Action<bool> OnMatchFinished;
     public int AliveParticipants { get { return (player != null && player.GetComponent<HealthSystem>() != null && !player.GetComponent<HealthSystem>().IsDead ? 1 : 0) + aliveBots; } }
     public int Eliminations { get { return eliminations; } }
@@ -72,6 +74,12 @@ public class BattleRoyaleMatchManager : MonoBehaviour
         if (bot == null) return;
         aliveBots = Mathf.Max(0, aliveBots - 1);
         eliminations++;
+        HealthSystem defeatedHealth = bot.GetComponent<HealthSystem>();
+        if (defeatedHealth != null && player != null && defeatedHealth.LastDamageSource == player.gameObject)
+        {
+            playerEliminations++;
+            OnPlayerKill?.Invoke();
+        }
         OnElimination?.Invoke();
         bot.SetActive(false);
         RefreshHud();
@@ -89,7 +97,7 @@ public class BattleRoyaleMatchManager : MonoBehaviour
         OnMatchFinished?.Invoke(won);
         if (statusLabel != null)
         {
-            statusLabel.text = won ? "BOOYAH!  |  ELIMINATIONS: " + eliminations : "ELIMINATED  |  ELIMINATIONS: " + eliminations;
+            statusLabel.text = won ? "BOOYAH!  |  KILLS: " + playerEliminations : "ELIMINATED  |  KILLS: " + playerEliminations;
             statusLabel.color = won ? new Color(1f, 0.78f, 0.12f) : Color.red;
         }
         Time.timeScale = 0.0f;
@@ -97,7 +105,7 @@ public class BattleRoyaleMatchManager : MonoBehaviour
 
     private void RefreshHud()
     {
-        if (statusLabel != null) statusLabel.text = "ALIVE: " + AliveParticipants + "  |  KILLS: " + eliminations;
+        if (statusLabel != null) statusLabel.text = "ALIVE: " + AliveParticipants + "  |  KILLS: " + playerEliminations;
     }
 
     private void SpawnLoot()
