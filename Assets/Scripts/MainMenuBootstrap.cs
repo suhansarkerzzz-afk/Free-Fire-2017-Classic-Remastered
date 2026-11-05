@@ -54,10 +54,12 @@ public class MainMenuBootstrap : MonoBehaviour
             new Color(1f, 0.72f, 0.12f),
             new Vector2(0.5f, 0.72f), new Vector2(0.5f, 0.72f), canvas.transform);
 
-        CreateButton("TAP TO START", new Vector2(0.5f, 0.43f),
+        CreateButton("OFFLINE SOLO (49 BOTS)", new Vector2(0.5f, 0.46f),
             GameBootstrap.StartMatch);
-        CreateButton("GRAPHICS SETTINGS", new Vector2(0.5f, 0.31f), ShowSettings);
-        CreateButton("CHARACTER SELECT", new Vector2(0.5f, 0.19f), ShowCharacters);
+        CreateButton("LOCAL WI-FI / HOTSPOT (BETA)", new Vector2(0.5f, 0.33f),
+            GameBootstrap.StartLocalMultiplayer);
+        CreateButton("GRAPHICS SETTINGS", new Vector2(0.5f, 0.20f), ShowSettings);
+        CreateButton("CHARACTER SELECT", new Vector2(0.5f, 0.08f), ShowCharacters);
 
         CreateText("CLASSIC BATTLE EXPERIENCE", 16, Color.white,
             new Vector2(0.5f, 0.96f), new Vector2(0.5f, 0.96f), canvas.transform);
