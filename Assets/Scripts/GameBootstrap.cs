@@ -31,10 +31,23 @@ public class GameBootstrap : MonoBehaviour
         SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex);
     }
 
+    private static bool localWifiMode;
+
     public static void StartMatch()
+    {
+        StartMatch(false);
+    }
+
+    public static void StartLocalMultiplayer()
+    {
+        StartMatch(true);
+    }
+
+    private static void StartMatch(bool useLocalWifi)
     {
         if (started) return;
         started = true;
+        localWifiMode = useLocalWifi;
         foreach (Canvas canvas in FindObjectsOfType<Canvas>()) canvas.gameObject.SetActive(false);
         new GameObject("ClassicMatch").AddComponent<GameBootstrap>();
     }
@@ -91,6 +104,17 @@ public class GameBootstrap : MonoBehaviour
         cameraObject.transform.position = player.transform.position + follow.offset;
 
         CreateControls();
+
+        // LAN networking is opt-in. Solo Offline never opens a socket or searches the network.
+        if (localWifiMode)
+        {
+            LocalMultiplayerManager lanManager = gameObject.AddComponent<LocalMultiplayerManager>();
+            lanManager.localPlayer = player.transform;
+            LocalMultiplayerUI.OpenOnStart = true;
+            LocalMultiplayerUI lanUI = gameObject.AddComponent<LocalMultiplayerUI>();
+            lanUI.manager = lanManager;
+        }
+
         CreateVehicle(new Vector3(10f, 0.7f, -12f));
         CreateWeaponPickups();
         BattleRoyaleMatchManager match = gameObject.AddComponent<BattleRoyaleMatchManager>();
