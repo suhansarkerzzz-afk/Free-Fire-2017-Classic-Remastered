@@ -35,13 +35,23 @@ public class LocalMultiplayerManager : MonoBehaviour
         StopRoom();
         RoomCode = LocalRoomCode.CreateCode();
         localId = Guid.NewGuid().ToString("N").Substring(0, 8);
-        socket = new UdpClient(port);
-        socket.EnableBroadcast = true;
-        socket.Client.Blocking = false;
-        IsHost = true;
-        IsConnected = true;
-        StatusMessage = "HOSTING ROOM: " + RoomCode;
-        return RoomCode;
+        try
+        {
+            socket = new UdpClient(port);
+            socket.EnableBroadcast = true;
+            socket.Client.Blocking = false;
+            IsHost = true;
+            IsConnected = true;
+            StatusMessage = "HOSTING ROOM: " + RoomCode;
+            return RoomCode;
+        }
+        catch (SocketException ex)
+        {
+            StopRoom();
+            StatusMessage = "ROOM CREATE FAILED: " + ex.SocketErrorCode;
+            Debug.LogWarning(StatusMessage);
+            return string.Empty;
+        }
     }
 
     public void JoinRoom(string code)
@@ -50,13 +60,22 @@ public class LocalMultiplayerManager : MonoBehaviour
         if (!LocalRoomCode.IsValid(code)) { StatusMessage = "INVALID ROOM CODE"; Debug.LogWarning("Invalid room code."); return; }
         RoomCode = code.ToUpperInvariant();
         localId = Guid.NewGuid().ToString("N").Substring(0, 8);
-        socket = new UdpClient(0);
-        socket.EnableBroadcast = true;
-        socket.Client.Blocking = false;
-        IsHost = false;
-        IsConnected = false;
-        discoveryTimer = 0f;
-        StatusMessage = "SEARCHING FOR ROOM " + RoomCode;
+        try
+        {
+            socket = new UdpClient(0);
+            socket.EnableBroadcast = true;
+            socket.Client.Blocking = false;
+            IsHost = false;
+            IsConnected = false;
+            discoveryTimer = 0f;
+            StatusMessage = "SEARCHING FOR ROOM " + RoomCode;
+        }
+        catch (SocketException ex)
+        {
+            StopRoom();
+            StatusMessage = "ROOM JOIN FAILED: " + ex.SocketErrorCode;
+            Debug.LogWarning(StatusMessage);
+        }
     }
 
     private void Update()
@@ -120,7 +139,7 @@ public class LocalMultiplayerManager : MonoBehaviour
         }
         if (p[0] == "ROOM" && !IsHost && p.Length >= 3 && p[1] == RoomCode && !IsConnected)
         {
-            hostEndpoint = sender;
+            hostEndpoint = new IPEndPoint(sender.Address, sender.Port);
             StatusMessage = "ROOM FOUND - CONNECTING...";
             SendTo(hostEndpoint, "JOIN|" + RoomCode + "|" + localId);
             return;
@@ -132,7 +151,7 @@ public class LocalMultiplayerManager : MonoBehaviour
                 SendTo(sender, "FULL|" + RoomCode);
                 return;
             }
-            peers[p[2]] = sender;
+            peers[p[2]] = new IPEndPoint(sender.Address, sender.Port);
             lastSeenAt[p[2]] = Time.unscaledTime;
             StatusMessage = "PLAYER JOINED - " + peers.Count + " REMOTE";
             SendTo(sender, "WELCOME|" + RoomCode + "|" + localId);
@@ -257,15 +276,33 @@ public class LocalMultiplayerManager : MonoBehaviour
     private void SendBroadcast(string message)
     {
         if (socket == null) return;
-        byte[] bytes = Encoding.UTF8.GetBytes(message);
-        socket.Send(bytes, bytes.Length, new IPEndPoint(IPAddress.Broadcast, port));
+        try
+        {
+            byte[] bytes = Encoding.UTF8.GetBytes(message);
+            socket.Send(bytes, bytes.Length, new IPEndPoint(IPAddress.Broadcast, port));
+        }
+        catch (SocketException ex)
+        {
+            StatusMessage = "LAN BROADCAST ERROR: " + ex.SocketErrorCode;
+            Debug.LogWarning(StatusMessage);
+        }
+        catch (ObjectDisposedException) { }
     }
 
     private void SendTo(IPEndPoint endpoint, string message)
     {
         if (socket == null || endpoint == null) return;
-        byte[] bytes = Encoding.UTF8.GetBytes(message);
-        socket.Send(bytes, bytes.Length, endpoint);
+        try
+        {
+            byte[] bytes = Encoding.UTF8.GetBytes(message);
+            socket.Send(bytes, bytes.Length, endpoint);
+        }
+        catch (SocketException ex)
+        {
+            StatusMessage = "LAN SEND ERROR: " + ex.SocketErrorCode;
+            Debug.LogWarning(StatusMessage);
+        }
+        catch (ObjectDisposedException) { }
     }
 
     public void StopRoom()
