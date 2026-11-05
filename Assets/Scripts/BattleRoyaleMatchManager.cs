@@ -40,7 +40,8 @@ public class BattleRoyaleMatchManager : MonoBehaviour
             TeamAffiliation.Assign(bot, (i / 4) + 1);
             BasicBotAI ai = bot.AddComponent<BasicBotAI>();
             ai.target = player;
-            ai.moveSpeed = Random.Range(1.7f, 2.35f);
+            ai.engageDistance = 40f;
+            ai.moveSpeed = Random.Range(2.4f, 2.8f);
             HealthSystem health = bot.AddComponent<HealthSystem>();
             health.OnDied += () => OnBotDied(bot);
             BotCombat combat = bot.AddComponent<BotCombat>();
