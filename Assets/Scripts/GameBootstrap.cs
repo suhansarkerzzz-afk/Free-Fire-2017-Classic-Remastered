@@ -28,6 +28,7 @@ public class GameBootstrap : MonoBehaviour
         Time.timeScale = 1f;
         started = false;
         startAfterReload = false;
+        localWifiMode = false;
         SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex);
     }
 
@@ -35,7 +36,8 @@ public class GameBootstrap : MonoBehaviour
 
     public static void StartMatch()
     {
-        StartMatch(false);
+        // Preserve the selected local-Wi-Fi mode when restarting the current match.
+        StartMatch(localWifiMode);
     }
 
     public static void StartLocalMultiplayer()
