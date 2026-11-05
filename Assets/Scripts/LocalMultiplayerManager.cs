@@ -26,6 +26,7 @@ public class LocalMultiplayerManager : MonoBehaviour
     private readonly Dictionary<string, float> lastSeenAt = new Dictionary<string, float>();
     private const float PeerTimeoutSeconds = 6f;
     private string localId;
+    private string hostPeerId;
     private float sendTimer;
     private float discoveryTimer;
 
@@ -148,6 +149,7 @@ public class LocalMultiplayerManager : MonoBehaviour
         if (p[0] == "WELCOME" && !IsHost && p.Length >= 3 && p[1] == RoomCode)
         {
             hostEndpoint = sender;
+            hostPeerId = p[2];
             IsConnected = true;
             StatusMessage = "CONNECTED TO ROOM: " + RoomCode;
             return;
@@ -167,6 +169,7 @@ public class LocalMultiplayerManager : MonoBehaviour
         }
         if (p[0] == "LEAVE" && p.Length >= 3 && p[1] == RoomCode)
         {
+            if (IsHost) Relay(message, sender);
             RemovePeer(p[2]);
         }
     }
@@ -185,10 +188,11 @@ public class LocalMultiplayerManager : MonoBehaviour
                 peers.Remove(id);
                 StatusMessage = "PLAYER LEFT - " + peers.Count + " REMOTE";
             }
-            else if (remotePlayers.ContainsKey(id) && remotePlayers[id] != null)
+            else if (id == hostPeerId)
             {
                 IsConnected = false;
                 hostEndpoint = null;
+                hostPeerId = null;
                 StatusMessage = "HOST CONNECTION LOST";
             }
             RemovePeer(id);
@@ -276,7 +280,14 @@ public class LocalMultiplayerManager : MonoBehaviour
         remotePlayers.Clear();
         targetPositions.Clear();
         lastSeenAt.Clear();
-        if (socket != null) { socket.Close(); socket = null; }
+        if (socket != null)
+        {
+            if (IsConnected && !IsHost && !string.IsNullOrEmpty(hostPeerId))
+                SendTo(hostEndpoint, "LEAVE|" + RoomCode + "|" + localId);
+            socket.Close();
+            socket = null;
+        }
+        hostPeerId = null;
     }
 
     private void OnDestroy() { StopRoom(); }
