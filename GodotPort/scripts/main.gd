@@ -245,10 +245,38 @@ func _build_hud() -> void:
     status_label.anchor_left = 0.5
     status_label.anchor_right = 0.5
     status_label.position.x = -150
-    _make_mobile_button("FIRE", Vector2(-170, -150), Vector2(130, 100), _fire_pressed, _fire_released)
-    _make_mobile_button("RELOAD", Vector2(-315, -85), Vector2(125, 62), func(): player.reload_weapon())
-    _make_mobile_button("JUMP", Vector2(-170, -45), Vector2(110, 62), func(): _jump_player())
-    _make_mobile_button("SPRINT", Vector2(-144, -82), Vector2(120, 58), func(): player.sprinting = not player.sprinting)
+    # Keep the touch controls separated so they remain usable in landscape on phones.
+    _make_mobile_button("FIRE", Vector2(-155, -150), Vector2(130, 110), _fire_pressed, _fire_released)
+    _make_mobile_button("RELOAD", Vector2(-290, -230), Vector2(110, 60), func(): player.reload_weapon())
+    _make_mobile_button("JUMP", Vector2(-290, -155), Vector2(110, 60), func(): _jump_player())
+    _make_mobile_button("SPRINT", Vector2(-290, -80), Vector2(110, 60), func(): player.sprinting = not player.sprinting)
+    _make_move_pad()
+
+func _make_move_pad() -> void:
+    # Visual guide only: touch-drag in the left 42% of the screen drives movement.
+    var pad := Panel.new()
+    pad.name = "MovePadGuide"
+    pad.anchor_top = 1
+    pad.anchor_bottom = 1
+    pad.position = Vector2(35, -185)
+    pad.size = Vector2(150, 150)
+    pad.mouse_filter = Control.MOUSE_FILTER_IGNORE
+    var style := StyleBoxFlat.new()
+    style.bg_color = Color(0.04, 0.08, 0.12, 0.38)
+    style.border_color = Color(0.85, 0.92, 1.0, 0.65)
+    style.set_border_width_all(3)
+    style.set_corner_radius_all(75)
+    pad.add_theme_stylebox_override("panel", style)
+    hud_layer.add_child(pad)
+    var caption := Label.new()
+    caption.text = "MOVE"
+    caption.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
+    caption.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+    caption.vertical_alignment = VERTICAL_ALIGNMENT_CENTER
+    caption.add_theme_color_override("font_color", Color(1, 1, 1, 0.85))
+    caption.add_theme_font_size_override("font_size", 20)
+    caption.mouse_filter = Control.MOUSE_FILTER_IGNORE
+    pad.add_child(caption)
 
 func _make_hud_label(text_value: String, pos: Vector2, size: Vector2, font_size: int) -> Label:
     var label := Label.new()
