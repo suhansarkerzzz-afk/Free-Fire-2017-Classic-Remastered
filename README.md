@@ -66,8 +66,8 @@ The workflow has not yet been run or verified. A valid Unity license secret and 
 
 ## Controls
 
-- PC prototype: WASD / arrow keys to move; right-mouse drag to look; R reload; Q switch weapon; G drop weapon; E enter/exit vehicle.
-- Android prototype: left joystick to move/steer; drag the right side to look; tap the on-screen FIRE, RELOAD, SWAP, DROP, MEDKIT, DRIVE and EMOTE buttons.
+- PC prototype: WASD / arrow keys to move; Shift sprint; Space jump; right-mouse drag to look; R reload; Q switch weapon; G drop weapon; E enter/exit vehicle.
+- Android prototype: left joystick to move/steer; SPRINT toggle and JUMP buttons; drag the right side to look; tap FIRE, RELOAD, SWAP, DROP, MEDKIT, DRIVE and EMOTE.
 - LAN room panel: create a room and share its six-character code, or enter a code to search on the same Wi-Fi/hotspot.
 
 ## Planned after the first compile pass
