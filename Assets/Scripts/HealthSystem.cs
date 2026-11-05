@@ -23,7 +23,7 @@ public class HealthSystem : MonoBehaviour
     public void TakeDamage(float amount, GameObject source = null)
     {
         if (IsDead || amount <= 0f) return;
-        if (source != null) LastDamageSource = source;
+        LastDamageSource = source;
         CurrentHealth = Mathf.Max(0f, CurrentHealth - amount);
         OnHealthChanged?.Invoke(CurrentHealth, maxHealth);
         if (CurrentHealth <= 0f)
