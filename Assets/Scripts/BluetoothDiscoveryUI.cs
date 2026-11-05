@@ -109,7 +109,17 @@ public class BluetoothDiscoveryUI : MonoBehaviour
         Debug.Log(value);
     }
 
+    private void OnDisable()
+    {
+        StopNativeDiscovery();
+    }
+
     private void OnDestroy()
+    {
+        StopNativeDiscovery();
+    }
+
+    private void StopNativeDiscovery()
     {
 #if UNITY_ANDROID && !UNITY_EDITOR
         try
