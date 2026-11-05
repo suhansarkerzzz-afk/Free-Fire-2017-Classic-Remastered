@@ -82,7 +82,7 @@ public class MainMenuBootstrap : MonoBehaviour
         CreateSettings();
         CreateCharacterPanel();
         // Bluetooth is optional nearby-device discovery only; it never carries gameplay traffic.
-        gameObject.AddComponent<BluetoothDiscoveryUI>();
+        canvasObject.AddComponent<BluetoothDiscoveryUI>();
         if (GameBootstrap.ConsumeAutoStart()) GameBootstrap.StartMatch();
     }
 
