@@ -2,66 +2,55 @@
 
 An original, fan-inspired battle-royale prototype with a 2017-era visual direction and lightweight procedural assets. This is not an official Garena product and does not use official Garena assets.
 
-## Two offline play options
+## Current Android direction: Godot Port
 
-### Offline Solo
-- Works without internet and does not open LAN sockets.
-- One local human player against 49 local AI bots.
-- Procedural Bermuda-inspired island and named POI districts.
-- Third-person movement, mobile joystick and touch camera; keyboard controls for development.
-- Plane flyover/parachute prototype, weapons, loot, health, medkits, safe zone and simple vehicle.
-- Local graphics settings and progression.
+The Android project is now being rebuilt in **Godot 4.4.1** so the APK workflow does not depend on a Unity license. The new project lives in `GodotPort/`. The previous Unity prototype is intentionally retained in the repository as a reference; it is not used by the Godot Android workflow.
 
-### Local Wi-Fi / mobile Hotspot (BETA)
-- A separate opt-in menu mode; Solo Offline remains completely independent.
-- One player creates a room and shares its six-character room code; friends join on the same Wi-Fi or phone hotspot.
-- Uses local UDP discovery and player transform replication; no internet matchmaking or dedicated server.
-- Bluetooth Classic RFCOMM offers an optional direct 1-to-1 phone link. After scanning, one phone hosts and the other connects; player position, rotation and team ID are exchanged as lightweight state packets.
-- Both transports remain prototypes: authoritative health/damage, shooting, loot, bot state, match phase, multi-client Bluetooth rooms, reconnect and host migration are not synchronized. This is not yet a complete synchronized battle-royale match.
+### Godot prototype foundation
 
-## Performance and build setup
+- Offline Solo match entry menu.
+- Procedural low-poly island ground, roads, houses, trees and named district labels.
+- Third-person player controller with keyboard input and touch movement/look handling.
+- Player health 200, rifle magazine 30, reserve ammo and reload.
+- 49 basic villain bots with 200 HP, chase movement and close-range attacks.
+- Raycast shooting and elimination counter.
+- Android debug APK export preset for ARMv7 and ARM64.
+- Godot Compatibility renderer selected for broad Android device support.
 
-- Lightweight procedural primitives; no remote asset downloads are required at runtime.
-- Memory-aware graphics profile with a 30 FPS target on devices reporting 3 GB RAM or less.
-- Android build helper and GitHub Actions workflow target Unity 2022.3.62f2.
-- Android target supports ARMv7 (32-bit) and ARM64 (64-bit), landscape, minimum API 23.
-- Android APK first; Windows PC build is a later milestone.
+See [GodotPort/PORT_STATUS.md](GodotPort/PORT_STATUS.md) for what is implemented and what remains to be ported.
 
-## Current limitations
+### Build Android APK with GitHub Actions
 
-This is a prototype, not a finished commercial game. The Bermuda layout and POIs are procedural approximations, not a faithful recreation of the original map. Plane/parachute, vehicle handling, bot navigation and combat balance need further development. Armor/helmet equipment, prone/crouch, scopes, full minimap and richer sound/animation are not yet complete. Local Wi-Fi multiplayer needs authoritative gameplay synchronization and device testing.
+1. Open repository **Actions**.
+2. Select **Godot Android APK Build**.
+3. Choose **Run workflow**.
+4. When the run succeeds, download the artifact named `FreeFire2017ClassicRemastered-Godot-Android-APK`.
 
-No Unity compilation, Play Mode, gameplay testing, Android APK generation, real-device performance testing or network testing has been run. Code has only been committed/read back from GitHub; successful build and runtime behaviour are not claimed.
+No Unity license or `UNITY_LICENSE` secret is required for this Godot workflow. The workflow is manual and has not yet been run. A successful export and phone installation are not claimed.
 
-## Open in Unity
+## Planned Godot port milestones
 
-1. Install Unity 2022.3.62f2 with Android Build Support, Android SDK & NDK Tools and OpenJDK.
-2. Clone or download this repository.
-3. Open the repository folder in Unity Hub.
-4. Allow Unity to import the project.
+1. Complete the player controller, mobile controls and stable 49-bot Solo match.
+2. Port weapon roster, pickups, inventory, medkits, loot and damage balancing.
+3. Port the Bermuda-inspired island with all 20 named districts, improved terrain and minimap.
+4. Port parachute / plane, safe zone and vehicle gameplay.
+5. Rebuild Local Wi-Fi / hotspot room discovery and Bluetooth direct-link support in Godot.
+6. Improve 2 GB RAM performance, then test on real Android phones.
+7. Windows PC build after Android stabilizes.
 
-## Android APK with GitHub Actions
+## Legacy Unity prototype (reference only)
 
-1. Open repository Settings → Secrets and variables → Actions.
-2. Add the secret named UNITY_LICENSE with the Unity license file contents for the account used to build.
-3. Open Actions → Android APK Build.
-4. Choose Run workflow.
-5. When the run succeeds, download the Android APK artifact.
+The repository still contains the original Unity implementation under `Assets/`, `Packages/` and `ProjectSettings/`. It includes:
 
-The workflow has not yet been run or verified. A valid Unity license secret and a successful Unity build are required before an APK can be downloaded.
+- Offline Solo design for one player against 49 AI bots.
+- Local Wi-Fi / mobile Hotspot BETA with room-code discovery and basic player transform replication.
+- Optional Bluetooth Classic RFCOMM direct 1-to-1 link prototype.
+- Procedural Bermuda-inspired districts, player movement, weapons, health, loot, safe zone, vehicle and parachute prototypes.
 
-## Controls
+The legacy local multiplayer is incomplete: authoritative health/damage, shooting, loot, bot state, match phase, multi-client Bluetooth rooms, reconnect and host migration are not synchronized. It is not a complete synchronized battle-royale match.
 
-- PC prototype: WASD / arrow keys to move; Shift sprint; Space jump; right-mouse drag to look; R reload; Q switch weapon; G drop weapon; E enter/exit vehicle.
-- Android prototype: left joystick to move/steer; SPRINT toggle and JUMP buttons; drag the right side to look; tap FIRE, RELOAD, SWAP, DROP, MEDKIT and DRIVE.
+The old Unity workflow `.github/workflows/android-apk.yml` remains for reference only and still requires a valid Unity license. Use `.github/workflows/godot-android-apk.yml` for the new Android direction.
 
-## Planned improvements
+## Important testing status
 
-- Complete classic-style map terrain, coastline, roads and detailed POIs.
-- Spawn island, full airplane route and controllable parachute.
-- Crouch/prone, scopes, recoil and weapon balancing.
-- Helmet/vest equipment and improved loot.
-- Full minimap and battle HUD.
-- Better bot navigation, cover use and low-memory optimisation for 2 GB phones.
-- Finish authoritative LAN combat/health/loot/match synchronization, reconnect and room lifecycle.
-- Complete sound, animation and match flow.
+No Godot import, GDScript parse, runtime gameplay test, Android APK export, APK installation, real-device performance test or network test has been performed yet. The Godot source and workflow have been committed to GitHub, but successful build or gameplay behaviour is not yet verified.
