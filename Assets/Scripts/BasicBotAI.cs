@@ -11,6 +11,8 @@ public class BasicBotAI : MonoBehaviour
     private float roamTimer;
     private float targetScanTimer;
     private Vector3 roamDirection;
+    private float obstacleCheckTimer;
+    private Vector3 avoidanceDirection;
 
     private void Update()
     {
@@ -66,15 +68,20 @@ public class BasicBotAI : MonoBehaviour
         }
 
         if (destinationDirection.sqrMagnitude < 0.01f) return;
-        Vector3 origin = transform.position + Vector3.up * 0.8f;
-        if (Physics.SphereCast(origin, 0.45f, destinationDirection, out RaycastHit hit, 1.4f))
+        obstacleCheckTimer -= Time.deltaTime;
+        if (obstacleCheckTimer <= 0f)
         {
-            if (!hit.transform.IsChildOf(transform))
+            obstacleCheckTimer = Random.Range(0.18f, 0.30f);
+            avoidanceDirection = destinationDirection;
+            Vector3 origin = transform.position + Vector3.up * 0.8f;
+            if (Physics.SphereCast(origin, 0.45f, destinationDirection, out RaycastHit hit, 1.4f) &&
+                !hit.transform.IsChildOf(transform))
             {
-                destinationDirection = Quaternion.Euler(0f, Random.Range(65f, 130f), 0f) * destinationDirection;
-                if (chasing) destinationDirection = Vector3.Cross(Vector3.up, destinationDirection).normalized;
+                avoidanceDirection = Quaternion.Euler(0f, Random.Range(65f, 130f), 0f) * destinationDirection;
+                if (chasing) avoidanceDirection = Vector3.Cross(Vector3.up, avoidanceDirection).normalized;
             }
         }
+        if (avoidanceDirection.sqrMagnitude > 0.01f) destinationDirection = avoidanceDirection;
 
         transform.position += destinationDirection * moveSpeed * Time.deltaTime;
         transform.position = new Vector3(transform.position.x, 1f, transform.position.z);
