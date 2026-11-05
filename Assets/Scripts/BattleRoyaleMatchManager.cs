@@ -116,11 +116,14 @@ public class BattleRoyaleMatchManager : MonoBehaviour
         {
             Vector2 p = Random.insideUnitCircle * 38f;
             GameObject loot = GameObject.CreatePrimitive(PrimitiveType.Cube);
-            loot.name = i % 3 == 0 ? "MedkitPickup" : "AmmoPickup";
+            LootPickup.LootKind kind = i == 5 || i == 13 ? LootPickup.LootKind.Backpack :
+                (i % 3 == 0 ? LootPickup.LootKind.Medkit : LootPickup.LootKind.Ammo);
+            loot.name = kind + "Pickup";
             loot.transform.position = new Vector3(p.x, 0.55f, p.y);
-            loot.transform.localScale = new Vector3(0.65f, 0.65f, 0.65f);
-            loot.GetComponent<Renderer>().material.color = i % 3 == 0 ? new Color(0.15f, 0.85f, 0.3f) : new Color(0.95f, 0.72f, 0.12f);
-            loot.AddComponent<LootPickup>().kind = i % 3 == 0 ? LootPickup.LootKind.Medkit : LootPickup.LootKind.Ammo;
+            loot.transform.localScale = kind == LootPickup.LootKind.Backpack ? new Vector3(0.9f, 0.8f, 0.45f) : new Vector3(0.65f, 0.65f, 0.65f);
+            loot.GetComponent<Renderer>().material.color = kind == LootPickup.LootKind.Medkit ? new Color(0.15f, 0.85f, 0.3f) :
+                (kind == LootPickup.LootKind.Backpack ? new Color(0.25f, 0.42f, 0.72f) : new Color(0.95f, 0.72f, 0.12f));
+            loot.AddComponent<LootPickup>().kind = kind;
         }
     }
 }
