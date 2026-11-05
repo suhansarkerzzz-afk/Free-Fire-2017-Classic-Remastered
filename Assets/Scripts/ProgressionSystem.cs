@@ -23,7 +23,7 @@ public class ProgressionSystem : MonoBehaviour
             GameObject obj = new GameObject("MissionProgress", typeof(RectTransform), typeof(Text));
             obj.transform.SetParent(canvas.transform, false);
             RectTransform rect = obj.GetComponent<RectTransform>();
-            rect.anchorMin = new Vector2(0.5f, 0.84f);
+            rect.anchorMin = new Vector2(0.5f, 0.70f);
             rect.anchorMax = new Vector2(0.5f, 0.84f);
             rect.sizeDelta = new Vector2(420f, 30f);
             label = obj.GetComponent<Text>();
