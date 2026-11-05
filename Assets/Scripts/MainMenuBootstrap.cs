@@ -58,8 +58,6 @@ public class MainMenuBootstrap : MonoBehaviour
             GameBootstrap.StartMatch);
         CreateButton("GRAPHICS SETTINGS", new Vector2(0.5f, 0.31f), ShowSettings);
         CreateButton("CHARACTER SELECT", new Vector2(0.5f, 0.19f), ShowCharacters);
-        CreateButton("MULTIPLAYER", new Vector2(0.5f, 0.07f),
-            () => { LocalMultiplayerUI.OpenOnStart = true; GameBootstrap.StartMatch(); });
 
         CreateText("CLASSIC BATTLE EXPERIENCE", 16, Color.white,
             new Vector2(0.5f, 0.96f), new Vector2(0.5f, 0.96f), canvas.transform);
@@ -162,11 +160,6 @@ public class MainMenuBootstrap : MonoBehaviour
         CreateButton("RANGER", new Vector2(0.5f, 0.57f), () => SelectCharacter(1), characterPanel.transform);
         CreateButton("DESERT", new Vector2(0.5f, 0.41f), () => SelectCharacter(2), characterPanel.transform);
         CreateButton("SHADOW", new Vector2(0.5f, 0.25f), () => SelectCharacter(3), characterPanel.transform);
-        CreateText("CHOOSE COMPANION", 17, new Color(1f, 0.8f, 0.35f),
-            new Vector2(0.5f, 0.15f), new Vector2(0.5f, 0.15f), characterPanel.transform);
-        CreateSmallButton("FOX", new Vector2(0.25f, 0.06f), () => PetLoadout.Select(0), characterPanel.transform);
-        CreateSmallButton("HAWK", new Vector2(0.5f, 0.06f), () => PetLoadout.Select(1), characterPanel.transform);
-        CreateSmallButton("CUB", new Vector2(0.75f, 0.06f), () => PetLoadout.Select(2), characterPanel.transform);
         characterPanel.SetActive(false);
     }
 
