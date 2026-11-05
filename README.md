@@ -24,7 +24,7 @@ An original, fan-inspired battle-royale prototype with a 2017-era visual directi
 - Lightweight procedural primitives; no remote asset downloads are required at runtime.
 - Memory-aware graphics profile with a 30 FPS target on devices reporting 3 GB RAM or less.
 - Android build helper and GitHub Actions workflow target Unity 2022.3.62f2.
-- Android target is ARM64, landscape, minimum API 23.
+- Android target supports ARMv7 (32-bit) and ARM64 (64-bit), landscape, minimum API 23.
 - Android APK first; Windows PC build is a later milestone.
 
 ## Current limitations
