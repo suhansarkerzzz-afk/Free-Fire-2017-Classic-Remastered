@@ -13,6 +13,7 @@ public class BattleRoyaleMatchManager : MonoBehaviour
     private bool matchEnded;
 
     public System.Action OnElimination;
+    public System.Action<bool> OnMatchFinished;
     public int AliveParticipants { get { return (player != null && player.GetComponent<HealthSystem>() != null && !player.GetComponent<HealthSystem>().IsDead ? 1 : 0) + aliveBots; } }
     public int Eliminations { get { return eliminations; } }
 
@@ -84,6 +85,7 @@ public class BattleRoyaleMatchManager : MonoBehaviour
     private void EndMatch(bool won)
     {
         matchEnded = true;
+        OnMatchFinished?.Invoke(won);
         if (statusLabel != null)
         {
             statusLabel.text = won ? "BOOYAH!  |  ELIMINATIONS: " + eliminations : "ELIMINATED  |  ELIMINATIONS: " + eliminations;
