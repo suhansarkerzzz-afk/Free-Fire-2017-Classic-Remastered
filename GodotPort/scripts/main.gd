@@ -65,9 +65,9 @@ func _build_world() -> void:
     _build_trees()
     player = PlayerScript.new()
     player.name = "Player"
-    add_child(player)
     player.position = Vector3(0, 1.1, 8)
     _build_player_visual(player)
+    add_child(player)
     player.health_changed.connect(_on_health_changed)
     player.ammo_changed.connect(_on_ammo_changed)
     player.died.connect(_on_player_died)
@@ -175,6 +175,7 @@ func _spawn_bots() -> void:
         var radius := rng.randf_range(14.0, 48.0)
         bot.position = Vector3(cos(angle) * radius, 1.0, sin(angle) * radius)
         bot.target = player
+        bot.died.connect(_on_bot_died)
         bot.move_speed = rng.randf_range(3.8, 4.8)
         _make_actor_body(bot, Color(0.10, 0.10, 0.13), true)
         _add_bot_visor(bot)
@@ -240,7 +241,7 @@ func _build_hud() -> void:
     _make_mobile_button("FIRE", Vector2(-170, -150), Vector2(130, 100), _fire_pressed, _fire_released)
     _make_mobile_button("RELOAD", Vector2(-315, -85), Vector2(125, 62), func(): player.reload_weapon())
     _make_mobile_button("JUMP", Vector2(-170, -45), Vector2(110, 62), func(): _jump_player())
-    _make_mobile_button("SPRINT", Vector2(24, -82), Vector2(120, 58), func(): player.sprinting = not player.sprinting)
+    _make_mobile_button("SPRINT", Vector2(-144, -82), Vector2(120, 58), func(): player.sprinting = not player.sprinting)
 
 func _make_hud_label(text_value: String, pos: Vector2, size: Vector2, font_size: int) -> Label:
     var label := Label.new()
@@ -256,7 +257,7 @@ func _make_mobile_button(text_value: String, pos: Vector2, size: Vector2, down: 
     var button := Button.new()
     button.text = text_value
     button.size = size
-    button.position = Vector2(get_viewport_rect().size.x + pos.x, get_viewport_rect().size.y + pos.y)
+    button.position = pos
     button.anchor_left = 1
     button.anchor_right = 1
     button.anchor_top = 1
@@ -308,6 +309,9 @@ func _on_ammo_changed(current: int, reserve: int) -> void:
 
 func _on_player_died() -> void:
     status_label.text = "ELIMINATED"
+
+func _on_bot_died() -> void:
+    kills += 1
 
 func _unhandled_input(event: InputEvent) -> void:
     if not match_started or not is_instance_valid(player):
