@@ -83,6 +83,16 @@ public class PlayerCombat : MonoBehaviour
         else Debug.DrawRay(ray.origin, ray.direction * weapon.range, Color.red, 0.5f);
     }
 
+    public bool AddReserveAmmo(int amount)
+    {
+        if (weapons == null || amount <= 0) return false;
+        WeaponData weapon = ActiveWeapon;
+        if (weapon.reserveAmmo >= 240) return false;
+        weapon.reserveAmmo = Mathf.Min(240, weapon.reserveAmmo + amount);
+        NotifyAmmo();
+        return true;
+    }
+
     public void Reload()
     {
         if (weapons == null || isReloading || ActiveWeapon.currentAmmo >= ActiveWeapon.magazineSize || ActiveWeapon.reserveAmmo <= 0) return;
