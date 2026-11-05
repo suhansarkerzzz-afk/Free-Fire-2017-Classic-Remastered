@@ -31,6 +31,8 @@ public class GameBootstrap : MonoBehaviour
         ground.transform.localScale = new Vector3(12f, 1f, 12f);
         ground.GetComponent<Renderer>().material.color = new Color(0.25f, 0.38f, 0.22f);
 
+        CreateTrainingEnvironment();
+
         GameObject player = GameObject.CreatePrimitive(PrimitiveType.Capsule);
         player.name = "Player";
         player.transform.position = new Vector3(0f, 1.1f, 0f);
@@ -69,6 +71,85 @@ public class GameBootstrap : MonoBehaviour
         }
 
         CreateControls();
+    }
+
+    // Lightweight, procedural cover and landmarks for the first training island.
+    // Uses built-in primitives only so the prototype needs no external assets.
+    private void CreateTrainingEnvironment()
+    {
+        Material buildingMat = new Material(Shader.Find("Standard"));
+        buildingMat.color = new Color(0.62f, 0.55f, 0.43f);
+        Material roofMat = new Material(Shader.Find("Standard"));
+        roofMat.color = new Color(0.28f, 0.20f, 0.16f);
+        Material trunkMat = new Material(Shader.Find("Standard"));
+        trunkMat.color = new Color(0.30f, 0.19f, 0.10f);
+        Material leafMat = new Material(Shader.Find("Standard"));
+        leafMat.color = new Color(0.16f, 0.36f, 0.15f);
+        Material rockMat = new Material(Shader.Find("Standard"));
+        rockMat.color = new Color(0.38f, 0.40f, 0.39f);
+
+        // Small village buildings around the playable center; leave the center open.
+        Vector3[] housePositions = {
+            new Vector3(-24f, 0f, 15f), new Vector3(23f, 0f, 18f),
+            new Vector3(-25f, 0f, -20f), new Vector3(25f, 0f, -22f)
+        };
+        for (int i = 0; i < housePositions.Length; i++)
+        {
+            GameObject house = GameObject.CreatePrimitive(PrimitiveType.Cube);
+            house.name = "Village_House_" + (i + 1);
+            house.transform.position = housePositions[i] + Vector3.up * 2f;
+            house.transform.localScale = new Vector3(8f, 4f, 7f);
+            house.GetComponent<Renderer>().material = buildingMat;
+
+            GameObject roof = GameObject.CreatePrimitive(PrimitiveType.Cube);
+            roof.name = "House_Roof_" + (i + 1);
+            roof.transform.position = housePositions[i] + Vector3.up * 4.35f;
+            roof.transform.localScale = new Vector3(8.8f, 0.8f, 7.8f);
+            roof.GetComponent<Renderer>().material = roofMat;
+        }
+
+        // Low cover pieces give the player and bots simple line-of-sight obstacles.
+        for (int i = 0; i < 8; i++)
+        {
+            float angle = i * Mathf.PI * 0.25f;
+            Vector3 position = new Vector3(Mathf.Cos(angle) * 13f, 0.8f, Mathf.Sin(angle) * 13f);
+            GameObject cover = GameObject.CreatePrimitive(PrimitiveType.Cube);
+            cover.name = "Battle_Cover_" + (i + 1);
+            cover.transform.position = position;
+            cover.transform.rotation = Quaternion.Euler(0f, -i * 22.5f, 0f);
+            cover.transform.localScale = new Vector3(3.5f, 1.6f, 0.8f);
+            cover.GetComponent<Renderer>().material = rockMat;
+        }
+
+        // Trees and rocks are placed outside the central combat ring.
+        for (int i = 0; i < 18; i++)
+        {
+            float angle = i * Mathf.PI * 2f / 18f;
+            float radius = 34f + (i % 3) * 3f;
+            Vector3 basePosition = new Vector3(Mathf.Cos(angle) * radius, 0f, Mathf.Sin(angle) * radius);
+            GameObject trunk = GameObject.CreatePrimitive(PrimitiveType.Cylinder);
+            trunk.name = "Island_Tree_Trunk_" + (i + 1);
+            trunk.transform.position = basePosition + Vector3.up * 1.5f;
+            trunk.transform.localScale = new Vector3(0.55f, 1.5f, 0.55f);
+            trunk.GetComponent<Renderer>().material = trunkMat;
+
+            GameObject leaves = GameObject.CreatePrimitive(PrimitiveType.Sphere);
+            leaves.name = "Island_Tree_Canopy_" + (i + 1);
+            leaves.transform.position = basePosition + Vector3.up * 3.7f;
+            leaves.transform.localScale = new Vector3(3.2f, 3.8f, 3.2f);
+            leaves.GetComponent<Renderer>().material = leafMat;
+        }
+
+        for (int i = 0; i < 10; i++)
+        {
+            float angle = i * Mathf.PI * 2f / 10f + 0.3f;
+            Vector3 position = new Vector3(Mathf.Cos(angle) * 29f, 0.65f, Mathf.Sin(angle) * 29f);
+            GameObject rock = GameObject.CreatePrimitive(PrimitiveType.Sphere);
+            rock.name = "Island_Rock_" + (i + 1);
+            rock.transform.position = position;
+            rock.transform.localScale = new Vector3(2.4f, 1.3f, 1.8f);
+            rock.GetComponent<Renderer>().material = rockMat;
+        }
     }
 
     private void CreateControls()
