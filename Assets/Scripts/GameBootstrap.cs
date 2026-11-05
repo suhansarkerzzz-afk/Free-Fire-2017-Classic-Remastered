@@ -40,6 +40,7 @@ public class GameBootstrap : MonoBehaviour
         CharacterController cc = player.AddComponent<CharacterController>();
         cc.height = 2f; cc.radius = 0.45f; cc.center = new Vector3(0f, 0f, 0f);
         player.AddComponent<PlayerMovement>();
+        player.AddComponent<ClassicCharacterVisual>();
         player.AddComponent<HealthSystem>();
         player.AddComponent<PlayerCombat>();
         player.GetComponent<Renderer>().material.color = new Color(0.1f, 0.45f, 0.9f);
