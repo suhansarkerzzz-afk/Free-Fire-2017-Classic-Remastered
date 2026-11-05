@@ -2,6 +2,12 @@ name: Godot Android APK Build
 
 on:
   workflow_dispatch:
+  push:
+    branches:
+      - main
+    paths:
+      - "GodotPort/**"
+      - ".github/workflows/godot-android-apk.yml"
 
 permissions:
   contents: read
