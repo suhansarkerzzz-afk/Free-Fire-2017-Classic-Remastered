@@ -30,8 +30,9 @@ An original, fan-inspired classic battle-royale prototype with a 2017-era visual
 ### Local network prototype
 - Room-code generation and validation, host capacity checks, and team identity in player state packets.
 - UDP same-Wi-Fi room discovery, host/join flow and basic player transform synchronisation.
+- LAN peers use player-state heartbeats; stale remote avatars are removed after a timeout, clients detect a missing host heartbeat, and clean client exits send a leave packet.
 - Android network permissions are included in the custom manifest.
-- This is an early LAN prototype, not internet matchmaking. Player transforms and squad identity are synchronised, but network-authoritative combat, health sync, disconnect/reconnect handling, and robust lobby management still need development.
+- This is an early LAN prototype, not internet matchmaking. Player transforms and squad identity are synchronised, but network-authoritative combat, health sync, automatic reconnect, host migration, and robust lobby management still need development.
 - Optional Android Bluetooth device discovery is included as a separate nearby-device scan, with Android 12+ nearby-device permission handling. It does not carry gameplay traffic; Wi-Fi/hotspot remains the gameplay transport.
 - Voice chat is intentionally out of scope.
 
