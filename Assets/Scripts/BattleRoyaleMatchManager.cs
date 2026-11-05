@@ -100,6 +100,8 @@ public class BattleRoyaleMatchManager : MonoBehaviour
             statusLabel.text = won ? "BOOYAH!  |  KILLS: " + playerEliminations : "ELIMINATED  |  KILLS: " + playerEliminations;
             statusLabel.color = won ? new Color(1f, 0.78f, 0.12f) : Color.red;
         }
+        MatchResultUI result = gameObject.AddComponent<MatchResultUI>();
+        result.Show(won, playerEliminations);
         Time.timeScale = 0.0f;
     }
 
