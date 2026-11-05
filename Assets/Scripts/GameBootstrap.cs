@@ -75,10 +75,6 @@ public class GameBootstrap : MonoBehaviour
         player.AddComponent<InventorySystem>();
         player.AddComponent<EmoteController>();
         player.AddComponent<ProgressionSystem>();
-        GameObject petObject = new GameObject("PlayerPet");
-        petObject.transform.position = new Vector3(1f, 1f, -1f);
-        PetCompanion petCompanion = petObject.AddComponent<PetCompanion>();
-        petCompanion.petName = PetLoadout.CurrentName;
         player.AddComponent<ParachuteDeployment>();
         player.GetComponent<Renderer>().material.color = CharacterLoadout.GetPrimaryColor();
 
@@ -100,11 +96,6 @@ public class GameBootstrap : MonoBehaviour
         BattleRoyaleMatchManager match = gameObject.AddComponent<BattleRoyaleMatchManager>();
         match.botCount = 49;
         match.Initialize(player.transform);
-        LocalMultiplayerManager lan = gameObject.AddComponent<LocalMultiplayerManager>();
-        lan.localPlayer = player.transform;
-        LocalMultiplayerUI lanUI = gameObject.AddComponent<LocalMultiplayerUI>();
-        lanUI.manager = lan;
-        gameObject.AddComponent<BluetoothDiscoveryUI>();
     }
 
     private void CreateVehicle(Vector3 position)
