@@ -1,103 +1,100 @@
 using UnityEngine;
 using System.Collections.Generic;
 
+// Aggressive villain AI: unlimited target search, fast pursuit, flanking and evasive movement.
 public class BasicBotAI : MonoBehaviour
 {
     public Transform target;
-    public float moveSpeed = 2.1f;
-    public float stopDistance = 4.5f;
-    public float engageDistance = 32f;
-    public float turnSpeed = 9f;
-    private float roamTimer;
-    private float targetScanTimer;
-    private Vector3 roamDirection;
-    private float obstacleCheckTimer;
+    public float moveSpeed = 5.6f;
+    public float stopDistance = 9f;
+    public float engageDistance = float.PositiveInfinity;
+    public float turnSpeed = 18f;
+    private float targetScanTimer, maneuverTimer, obstacleCheckTimer;
     private Vector3 avoidanceDirection;
+    private float flankSign = 1f, movementBurst = 1f;
 
     private void Update()
     {
         HealthSystem health = GetComponent<HealthSystem>();
         if (health != null && health.IsDead) return;
-
         targetScanTimer -= Time.deltaTime;
-        if (targetScanTimer <= 0f)
+        if (targetScanTimer <= 0f) { targetScanTimer = Random.Range(0.22f, 0.36f); FindNearestEnemy(); }
+        maneuverTimer -= Time.deltaTime;
+        if (maneuverTimer <= 0f)
         {
-            targetScanTimer = Random.Range(0.45f, 0.7f);
-            target = null;
-            float nearest = 48f;
-            TeamAffiliation mine = GetComponent<TeamAffiliation>();
-            List<HealthSystem> candidates = HealthSystem.ActiveActors;
-            for (int i = 0; i < candidates.Count; i++)
-            {
-                HealthSystem candidate = candidates[i];
-                if (candidate == null || candidate.gameObject == gameObject || candidate.IsDead) continue;
-                TeamAffiliation theirs = candidate.GetComponent<TeamAffiliation>();
-                if (mine != null && mine.IsFriendly(theirs)) continue;
-                float distance = (candidate.transform.position - transform.position).sqrMagnitude;
-                if (distance < nearest * nearest)
-                {
-                    nearest = Mathf.Sqrt(distance);
-                    target = candidate.transform;
-                }
-            }
+            maneuverTimer = Random.Range(1.2f, 2.4f);
+            flankSign = Random.value < 0.5f ? -1f : 1f;
+            movementBurst = Random.Range(1.0f, 1.45f);
         }
 
-        Vector3 destinationDirection = Vector3.zero;
+        Vector3 desiredDirection = Vector3.zero;
         bool chasing = false;
-        bool holdingPosition = false;
         if (target != null)
         {
-            Vector3 toTarget = target.position - transform.position;
-            toTarget.y = 0f;
-            if (toTarget.magnitude <= engageDistance)
+            HealthSystem targetHealth = target.GetComponent<HealthSystem>();
+            if (targetHealth == null || targetHealth.IsDead) target = null;
+            else
             {
-                if (toTarget.magnitude > stopDistance)
+                Vector3 toTarget = target.position - transform.position; toTarget.y = 0f;
+                float distance = toTarget.magnitude;
+                if (distance > 0.01f)
                 {
-                    destinationDirection = toTarget.normalized;
+                    Vector3 toward = toTarget / distance;
+                    if (distance <= 24f)
+                    {
+                        Vector3 strafe = Vector3.Cross(Vector3.up, toward) * flankSign;
+                        float approach = distance > stopDistance ? 0.48f : -0.12f;
+                        desiredDirection = (toward * approach + strafe * 0.92f).normalized;
+                    }
+                    else desiredDirection = (toward + Vector3.Cross(Vector3.up, toward) * flankSign * 0.22f).normalized;
                     chasing = true;
                 }
-                else holdingPosition = true;
             }
         }
-
-        if (holdingPosition)
-        {
-            obstacleCheckTimer = 0f;
-            avoidanceDirection = Vector3.zero;
-            return;
-        }
-
         if (!chasing)
         {
-            roamTimer -= Time.deltaTime;
-            if (roamTimer <= 0f)
-            {
-                roamDirection = Random.insideUnitSphere;
-                roamDirection.y = 0f;
-                roamTimer = Random.Range(2.5f, 6f);
-            }
-            destinationDirection = roamDirection.normalized;
+            if (maneuverTimer <= 0.01f) { desiredDirection = Random.insideUnitSphere; desiredDirection.y = 0f; }
+            else desiredDirection = transform.forward;
         }
+        if (desiredDirection.sqrMagnitude < 0.01f) return;
+        desiredDirection.Normalize();
 
-        if (destinationDirection.sqrMagnitude < 0.01f) return;
         obstacleCheckTimer -= Time.deltaTime;
         if (obstacleCheckTimer <= 0f)
         {
-            obstacleCheckTimer = Random.Range(0.18f, 0.30f);
-            avoidanceDirection = destinationDirection;
+            obstacleCheckTimer = Random.Range(0.12f, 0.22f);
+            avoidanceDirection = desiredDirection;
             Vector3 origin = transform.position + Vector3.up * 0.8f;
-            if (Physics.SphereCast(origin, 0.45f, destinationDirection, out RaycastHit hit, 1.4f) &&
-                !hit.transform.IsChildOf(transform))
+            if (Physics.SphereCast(origin, 0.42f, desiredDirection, out RaycastHit hit, 1.8f) && !hit.transform.IsChildOf(transform))
             {
-                avoidanceDirection = Quaternion.Euler(0f, Random.Range(65f, 130f), 0f) * destinationDirection;
-                if (chasing) avoidanceDirection = Vector3.Cross(Vector3.up, avoidanceDirection).normalized;
+                Vector3 left = Vector3.Cross(Vector3.up, desiredDirection).normalized;
+                Vector3 right = -left;
+                avoidanceDirection = Random.value < 0.5f ? left : right;
             }
         }
-        if (avoidanceDirection.sqrMagnitude > 0.01f) destinationDirection = avoidanceDirection;
-
-        transform.position += destinationDirection * moveSpeed * Time.deltaTime;
+        if (avoidanceDirection.sqrMagnitude > 0.01f) desiredDirection = avoidanceDirection.normalized;
+        transform.position += desiredDirection * moveSpeed * movementBurst * Time.deltaTime;
         transform.position = new Vector3(transform.position.x, 1f, transform.position.z);
-        Quaternion facing = Quaternion.LookRotation(destinationDirection);
-        transform.rotation = Quaternion.Slerp(transform.rotation, facing, turnSpeed * Time.deltaTime);
+        Vector3 face = target != null ? target.position - transform.position : desiredDirection;
+        face.y = 0f;
+        if (face.sqrMagnitude > 0.001f)
+            transform.rotation = Quaternion.Slerp(transform.rotation, Quaternion.LookRotation(face), turnSpeed * Time.deltaTime);
+    }
+
+    private void FindNearestEnemy()
+    {
+        target = null;
+        float nearestSqr = float.PositiveInfinity;
+        TeamAffiliation mine = GetComponent<TeamAffiliation>();
+        List<HealthSystem> candidates = HealthSystem.ActiveActors;
+        for (int i = 0; i < candidates.Count; i++)
+        {
+            HealthSystem candidate = candidates[i];
+            if (candidate == null || candidate.gameObject == gameObject || candidate.IsDead) continue;
+            TeamAffiliation theirs = candidate.GetComponent<TeamAffiliation>();
+            if (mine != null && mine.IsFriendly(theirs)) continue;
+            float distanceSqr = (candidate.transform.position - transform.position).sqrMagnitude;
+            if (distanceSqr < nearestSqr) { nearestSqr = distanceSqr; target = candidate.transform; }
+        }
     }
 }
