@@ -17,7 +17,6 @@ public static class AndroidBuildSetup
             Directory.CreateDirectory(SceneFolder);
 
         Scene scene = EditorSceneManager.NewScene(NewSceneSetup.EmptyScene, NewSceneMode.Single);
-        scene.name = "Bootstrap";
         EditorSceneManager.SaveScene(scene, ScenePath);
 
         EditorBuildSettings.scenes = new[]
@@ -52,7 +51,6 @@ public static class AndroidBuildSetup
             Directory.CreateDirectory(SceneFolder);
 
         Scene scene = EditorSceneManager.NewScene(NewSceneSetup.EmptyScene, NewSceneMode.Single);
-        scene.name = "Bootstrap";
         EditorSceneManager.SaveScene(scene, ScenePath);
         EditorBuildSettings.scenes = new[]
         {
