@@ -170,16 +170,37 @@ func _build_trees() -> void:
         add_child(crown)
 
 func _spawn_bots() -> void:
+    # Spread the 49 bots across the island and keep a clear buffer around the player.
+    var spawn_points: Array[Vector3] = []
+    for i in range(BOT_COUNT):
+        var candidate := Vector3.ZERO
+        var accepted := false
+        for attempt in range(80):
+            var angle := rng.randf_range(0.0, TAU)
+            var radius := rng.randf_range(25.0, 49.0)
+            candidate = Vector3(cos(angle) * radius, 1.0, sin(angle) * radius)
+            var clear := candidate.distance_to(player.position) >= 18.0
+            if clear:
+                for existing in spawn_points:
+                    if candidate.distance_to(existing) < 5.0:
+                        clear = false
+                        break
+            if clear:
+                accepted = true
+                break
+        if not accepted:
+            var fallback_angle := TAU * float(i) / float(BOT_COUNT)
+            candidate = Vector3(cos(fallback_angle) * 43.0, 1.0, sin(fallback_angle) * 43.0)
+        spawn_points.append(candidate)
+
     for i in range(BOT_COUNT):
         var bot: CharacterBody3D = BotScript.new()
         bot.name = "VillainBot_%02d" % (i + 1)
         add_child(bot)
-        var angle := rng.randf_range(0.0, TAU)
-        var radius := rng.randf_range(14.0, 48.0)
-        bot.position = Vector3(cos(angle) * radius, 1.0, sin(angle) * radius)
+        bot.position = spawn_points[i]
         bot.target = player
         bot.died.connect(_on_bot_died)
-        bot.move_speed = rng.randf_range(3.8, 4.8)
+        bot.move_speed = rng.randf_range(3.4, 4.1)
         _make_actor_body(bot, Color(0.10, 0.10, 0.13), true)
         _add_bot_visor(bot)
 
