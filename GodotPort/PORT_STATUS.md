@@ -26,3 +26,11 @@ This is a new Godot 4.4.1 project being built alongside the legacy Unity prototy
 ## Build status
 
 The project files and workflow have been committed, but no Godot import, script parse, runtime, Android export, APK install or real-device test has been performed yet. The first CI export must be run to reveal any Godot-version, export-template or Android SDK issues.
+
+## Android CI export configuration update
+
+- GitHub Actions now writes Godot 4 editor settings for the runner's Java 17 and Android SDK paths.
+- CI generates a temporary Android debug keystore and supplies the documented Godot debug-signing environment variables.
+- A headless runtime validation step now runs before APK export.
+- APK export is required to produce a non-empty file before artifact upload.
+- This configuration change is pending a fresh CI run; it is not yet a verified successful APK build.
