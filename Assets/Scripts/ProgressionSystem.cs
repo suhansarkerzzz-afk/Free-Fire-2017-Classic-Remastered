@@ -14,7 +14,7 @@ public class ProgressionSystem : MonoBehaviour
         BattleRoyaleMatchManager match = FindObjectOfType<BattleRoyaleMatchManager>();
         if (match != null)
         {
-            match.OnElimination += RegisterElimination;
+            match.OnPlayerKill += RegisterElimination;
             match.OnMatchFinished += RegisterMatchResult;
         }
         Canvas canvas = FindObjectOfType<Canvas>();
