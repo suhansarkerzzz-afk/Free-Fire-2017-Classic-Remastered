@@ -55,6 +55,7 @@ public class PlayerCombat : MonoBehaviour
         if (Input.GetButtonDown("Fire1")) Fire();
         if (Input.GetKeyDown(KeyCode.R)) Reload();
         if (Input.GetKeyDown(KeyCode.Q)) SwitchWeapon();
+        if (Input.GetKeyDown(KeyCode.G)) DropCurrentWeapon();
 #endif
     }
 
@@ -87,7 +88,7 @@ public class PlayerCombat : MonoBehaviour
         else Debug.DrawRay(ray.origin, ray.direction * weapon.range, Color.red, 0.5f);
     }
 
-    public bool AddWeapon(string weaponName)
+    public bool AddWeapon(string weaponName, int bonusAmmo = 30)
     {
         if (weapons == null || string.IsNullOrEmpty(weaponName)) return false;
         for (int i = 0; i < weapons.Length; i++)
@@ -95,18 +96,52 @@ public class PlayerCombat : MonoBehaviour
             if (!string.Equals(weapons[i].weaponName, weaponName, StringComparison.OrdinalIgnoreCase)) continue;
             if (weapons[i].unlocked)
             {
-                weapons[i].reserveAmmo = Mathf.Min(240, weapons[i].reserveAmmo + 30);
+                weapons[i].reserveAmmo = Mathf.Min(240, weapons[i].reserveAmmo + Mathf.Max(0, bonusAmmo));
                 if (i == activeWeaponIndex) NotifyAmmo();
                 return true;
             }
             weapons[i].unlocked = true;
             weapons[i].currentAmmo = weapons[i].magazineSize;
+            weapons[i].reserveAmmo = Mathf.Min(240, weapons[i].reserveAmmo + Mathf.Max(0, bonusAmmo));
             activeWeaponIndex = i;
             NotifyWeapon();
             NotifyAmmo();
             return true;
         }
         return false;
+    }
+
+    public bool DropCurrentWeapon()
+    {
+        if (weapons == null || weapons.Length == 0) return false;
+        int unlockedCount = 0;
+        foreach (WeaponData item in weapons) if (item.unlocked) unlockedCount++;
+        if (unlockedCount <= 1 || !ActiveWeapon.unlocked) return false;
+
+        WeaponData dropped = ActiveWeapon;
+        GameObject pickup = GameObject.CreatePrimitive(PrimitiveType.Cube);
+        pickup.name = "Dropped_" + dropped.weaponName;
+        pickup.transform.position = transform.position + transform.forward * 2.4f + Vector3.up * 0.45f;
+        pickup.transform.localScale = new Vector3(0.9f, 0.45f, 0.35f);
+        pickup.GetComponent<Renderer>().material.color = new Color(0.85f, 0.68f, 0.18f);
+        WeaponPickup pickupData = pickup.AddComponent<WeaponPickup>();
+        pickupData.weaponName = dropped.weaponName;
+        pickupData.ammoAmount = dropped.currentAmmo + dropped.reserveAmmo;
+
+        dropped.unlocked = false;
+        dropped.currentAmmo = 0;
+        dropped.reserveAmmo = 0;
+        for (int i = 0; i < weapons.Length; i++)
+        {
+            if (weapons[i].unlocked)
+            {
+                activeWeaponIndex = i;
+                break;
+            }
+        }
+        NotifyWeapon();
+        NotifyAmmo();
+        return true;
     }
 
     public bool AddReserveAmmo(int amount)
