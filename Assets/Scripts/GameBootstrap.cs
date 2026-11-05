@@ -16,6 +16,7 @@ public class GameBootstrap : MonoBehaviour
 
     private void Start()
     {
+        gameObject.AddComponent<RuntimeOptimization>();
         if (FindObjectOfType<Light>() == null)
         {
             GameObject sun = new GameObject("Sun");
@@ -44,6 +45,8 @@ public class GameBootstrap : MonoBehaviour
         player.AddComponent<HealthSystem>();
         player.AddComponent<PlayerCombat>();
         player.AddComponent<InventorySystem>();
+        player.AddComponent<EmoteController>();
+        player.AddComponent<ProgressionSystem>();
         player.AddComponent<ParachuteDeployment>();
         player.GetComponent<Renderer>().material.color = CharacterLoadout.GetPrimaryColor();
 
@@ -201,6 +204,7 @@ public class GameBootstrap : MonoBehaviour
         CreateHealthDisplay(canvas.transform);
         CreateMedkitButton(canvas.transform);
         CreateVehicleButton(canvas.transform);
+        CreateEmoteButton(canvas.transform);
 
         GameObject hint = new GameObject("ControlHint", typeof(RectTransform), typeof(Text));
         hint.transform.SetParent(canvas.transform, false);
@@ -422,6 +426,15 @@ public class GameBootstrap : MonoBehaviour
         label.rectTransform.anchorMin = Vector2.zero; label.rectTransform.anchorMax = Vector2.one;
         label.rectTransform.offsetMin = Vector2.zero; label.rectTransform.offsetMax = Vector2.zero;
         buttonObject.GetComponent<Button>().onClick.AddListener(action);
+    }
+
+    private void CreateEmoteButton(Transform parent)
+    {
+        CreateActionButton("EMOTE", parent, new Vector2(0.72f, 0.57f), () =>
+        {
+            EmoteController emote = FindObjectOfType<EmoteController>();
+            if (emote != null) emote.PlayEmote(Random.Range(0, 3));
+        });
     }
 
     private void CreateMoveButton(Transform parent, string label, Vector2 anchor, Vector2 direction)
