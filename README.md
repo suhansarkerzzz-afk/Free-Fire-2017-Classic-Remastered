@@ -1,51 +1,41 @@
 # Free Fire 2017 Classic Remastered
 
-An original, fan-inspired classic battle-royale prototype with a 2017-era visual direction and lightweight procedural assets. This is not an official Garena product and does not use official Garena assets.
+An original, fan-inspired offline battle-royale prototype with a 2017-era visual direction and lightweight procedural assets. This is not an official Garena product and does not use official Garena assets.
 
-## Implemented in the current codebase
+## Offline-first game scope
 
-### Core gameplay
-- Runtime-generated main menu and graphics settings.
-- Character selection with four original colour presets and saved companion choices (fox, hawk and cub).
-- Third-person player, procedural character model and mobile/keyboard movement.
-- Touch camera look and virtual joystick.
-- Rifle and pistol starter loadout, plus unlockable SMG, shotgun and sniper pickups; weapons can be dropped and recovered with their remaining ammunition.
-- Shooting, reload, weapon switching, ammo HUD and health system.
-- Mobile FIRE, RELOAD, SWAP, MEDKIT, DRIVE and EMOTE controls.
-- Procedural island village with houses, trees, rocks, cover, road, river, bridge, street lamps and supply crates.
-- Squad affiliation for bot groups; bots avoid targeting members of their own squad.
+The primary game mode is fully offline and does not require an account, internet connection, online matchmaking, or a dedicated server.
 
-### Offline battle-royale prototype
-- Match bootstrap configured for one human player and 49 AI bots.
-- Bot patrol, pursuit and basic line-of-sight combat.
+- One local human player against 49 local AI bots.
+- Procedural Bermuda-inspired island and named POI districts.
+- Third-person movement, mobile joystick and touch camera; keyboard controls for development.
 - Initial plane flyover and parachute descent sequence.
-- Shrinking safe-zone boundary and outside-zone damage.
-- Ammo, medkit and weapon pickups.
-- Inventory readout, medkit use, and backpack capacity upgrades.
-- Alive count, player-attributed kill count, win/lose state, and an interactive result panel with Play Again / Main Menu actions.
-- Basic local rank points, kill progression and match-result rewards.
-- Simple vehicle model with enter/exit and keyboard/mobile joystick driving.
-- Cosmetic pet companion and procedural emotes.
+- Bot patrol, pursuit and basic line-of-sight combat.
+- Rifle/pistol starter loadout, weapon pickups, shooting, reload, ammo and weapon switching.
+- Health, medkits, inventory capacity, ammo and weapon loot.
+- Shrinking safe zone and outside-zone damage.
+- Simple vehicle prototype with enter/exit and driving.
+- Alive count, player kill count, match win/lose and result panel.
+- Local graphics settings: Low, Balanced and High.
+- Local progression and match rewards.
 
-### Local network prototype
-- Room-code generation and validation, host capacity checks, and team identity in player state packets.
-- UDP same-Wi-Fi room discovery, host/join flow and basic player transform synchronisation.
-- LAN peers use player-state heartbeats; stale remote avatars are removed after a timeout, clients detect a missing host heartbeat, and clean client exits send a leave packet.
-- Android network permissions are included in the custom manifest.
-- This is an early LAN prototype, not internet matchmaking. Player transforms and squad identity are synchronised, but network-authoritative combat, health sync, automatic reconnect, host migration, and robust lobby management still need development.
-- Optional Android Bluetooth device discovery is included as a separate nearby-device scan, with Android 12+ nearby-device permission handling. It does not carry gameplay traffic; Wi-Fi/hotspot remains the gameplay transport.
-- Voice chat is intentionally out of scope.
+## Offline-only menu and startup
 
-### Performance and build setup
-- Persistent Low / Balanced / High runtime graphics profiles with a memory-aware 30 FPS target on devices reporting 3 GB RAM or less.
-- Bot targeting uses a shared actor registry; safe-zone damage applies to all living actors; kill credit is attributed to the actual last damage source.
+The main menu exposes only offline play, graphics settings and character selection. The offline match startup does not launch LAN room discovery, Bluetooth discovery, online matchmaking, or companion/pet systems. Network-related prototype scripts remain in the repository for possible separate future work, but they are not started by the offline game.
+
+## Performance and build setup
+
+- Lightweight procedural primitives; no remote asset downloads are required at runtime.
+- Memory-aware graphics profile with a 30 FPS target on devices reporting 3 GB RAM or less.
 - Android build helper and GitHub Actions workflow target Unity 2022.3.62f2.
-- Android target is ARM64, landscape, IL2CPP, minimum API 23.
-- Windows build remains a later milestone.
+- Android target is ARM64, landscape, minimum API 23.
+- Android APK first; Windows PC build is a later milestone.
 
-## Important status
+## Current limitations
 
-The code has been committed to GitHub, but **Unity compilation, gameplay testing, Android APK generation, real-device performance testing and LAN testing have intentionally not been run yet**. Some systems are prototype implementations and may need changes after the first compile/test pass. In particular, LAN networking, vehicle handling, parachute landing, AI balance and 2 GB memory use require verification.
+This is still a prototype, not a finished commercial game. The Bermuda layout and POIs are procedural approximations, not a faithful recreation of the original map. Plane/parachute, vehicle handling, bot navigation and combat balance need further development. Armor/helmet equipment, prone/crouch, scopes, full minimap and richer sound/animation are not yet complete.
+
+No Unity compilation, Play Mode, gameplay testing, Android APK generation, real-device performance testing or network testing has been run. Code has only been committed/read back from GitHub; successful build and runtime behaviour are not claimed.
 
 ## Open in Unity
 
@@ -53,30 +43,28 @@ The code has been committed to GitHub, but **Unity compilation, gameplay testing
 2. Clone or download this repository.
 3. Open the repository folder in Unity Hub.
 4. Allow Unity to import the project.
-5. The menu is generated when a scene loads. The Bluetooth Java source plug-in is configured for Android only.
 
 ## Android APK with GitHub Actions
 
-1. Open repository **Settings → Secrets and variables → Actions**.
+1. Open repository Settings → Secrets and variables → Actions.
 2. Add the secret named UNITY_LICENSE with the Unity license file contents for the account used to build.
-3. Open **Actions → Android APK Build**.
-4. Choose **Run workflow**.
-5. When the run succeeds, download the FreeFire2017ClassicRemastered-Android-APK artifact.
+3. Open Actions → Android APK Build.
+4. Choose Run workflow.
+5. When the run succeeds, download the Android APK artifact.
 
 The workflow has not yet been run or verified. A valid Unity license secret and a successful Unity build are required before an APK can be downloaded.
 
 ## Controls
 
 - PC prototype: WASD / arrow keys to move; Shift sprint; Space jump; right-mouse drag to look; R reload; Q switch weapon; G drop weapon; E enter/exit vehicle.
-- Android prototype: left joystick to move/steer; SPRINT toggle and JUMP buttons; drag the right side to look; tap FIRE, RELOAD, SWAP, DROP, MEDKIT, DRIVE and EMOTE.
-- LAN room panel: create a room and share its six-character code, or enter a code to search on the same Wi-Fi/hotspot.
+- Android prototype: left joystick to move/steer; SPRINT toggle and JUMP buttons; drag the right side to look; tap FIRE, RELOAD, SWAP, DROP, MEDKIT and DRIVE.
 
-## Planned after the first compile pass
+## Planned offline improvements
 
-- Fix all compiler errors and gameplay bugs in the first compile pass.
-- Improve bot-vs-bot combat, navigation and cover usage.
-- Complete LAN reliability, reconnection, team play and network authority.
-- Bluetooth discovery is a nearby-device helper only; no Bluetooth gameplay transport is planned.
-- Voice chat is not planned in this project phase.
-- Profile and optimise on actual 2 GB Android phones.
-- Complete APK release build, then prepare Windows PC build.
+- Complete classic-style map terrain, coastline, roads and detailed POIs.
+- Spawn island, full airplane route and controllable parachute.
+- Crouch/prone, scopes, recoil and weapon balancing.
+- Helmet/vest equipment and improved loot.
+- Full minimap and battle HUD.
+- Better bot navigation, cover use and low-memory optimisation for 2 GB phones.
+- Complete sound, animation and match flow.
