@@ -5,6 +5,7 @@ signal died
 var target: Node3D
 var health := 200.0
 var attack_timer := 0.0
+var ranged_timer := 0.0
 var move_speed := 4.0
 var dead := false
 var strafe_phase := 0.0
@@ -24,6 +25,7 @@ func _physics_process(delta: float) -> void:
         return
 
     attack_timer = maxf(0.0, attack_timer - delta)
+    ranged_timer = maxf(0.0, ranged_timer - delta)
     var offset := target.global_position - global_position
     offset.y = 0.0
     var distance := offset.length()
@@ -47,6 +49,11 @@ func _physics_process(delta: float) -> void:
         velocity.x = separation.x * move_speed * 0.65
         velocity.z = separation.z * move_speed * 0.65
 
+    # Bots use a simple hitscan rifle at medium range; walls and other actors block shots.
+    if distance > 7.0 and distance <= 28.0 and ranged_timer <= 0.0:
+        _fire_rifle_at_target()
+        ranged_timer = randf_range(1.25, 1.8)
+
     # Limit melee pressure: only the three nearest/oldest nearby bots can hit at once.
     if distance <= 3.15 and attack_timer <= 0.0 and _is_attack_slot_available():
         if target.has_method("take_damage"):
@@ -58,6 +65,17 @@ func _physics_process(delta: float) -> void:
     else:
         velocity.y = -0.5
     move_and_slide()
+
+func _fire_rifle_at_target() -> void:
+    if not is_instance_valid(target) or not target.has_method("take_damage"):
+        return
+    var origin := global_position + Vector3(0, 0.72, 0)
+    var aim_point := target.global_position + Vector3(0, 0.85, 0)
+    var query := PhysicsRayQueryParameters3D.create(origin, aim_point)
+    query.exclude = [get_rid()]
+    var hit := get_world_3d().direct_space_state.intersect_ray(query)
+    if not hit.is_empty() and hit.get("collider") == target:
+        target.take_damage(randf_range(5.0, 8.0))
 
 func _get_separation() -> Vector3:
     var push := Vector3.ZERO
