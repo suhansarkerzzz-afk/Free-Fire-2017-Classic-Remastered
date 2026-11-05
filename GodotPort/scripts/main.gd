@@ -27,6 +27,8 @@ func _ready() -> void:
     _build_menu()
     _build_hud()
     hud_layer.hide()
+    # Start the playable scene immediately on Android so the first screen is the 3D island, not a text-only menu.
+    call_deferred("start_match")
 
 func _setup_input() -> void:
     _add_key_action("move_left", KEY_A)
