@@ -48,7 +48,8 @@ func _add_key_action(action: String, key: Key) -> void:
 func _build_world() -> void:
     var environment := WorldEnvironment.new()
     var env := Environment.new()
-    env.background_mode = Environment.BG_SKY
+    env.background_mode = Environment.BG_COLOR
+    env.background_color = Color(0.48, 0.68, 0.82)
     env.ambient_light_source = Environment.AMBIENT_SOURCE_COLOR
     env.ambient_light_color = Color(0.72, 0.78, 0.82)
     env.ambient_light_energy = 0.8
@@ -322,7 +323,7 @@ func _unhandled_input(event: InputEvent) -> void:
         return
     if event is InputEventScreenTouch:
         if event.pressed:
-            if event.position.x < get_viewport_rect().size.x * 0.42 and touch_move_id == -1:
+            if event.position.x < get_viewport().get_visible_rect().size.x * 0.42 and touch_move_id == -1:
                 touch_move_id = event.index
                 move_origin = event.position
             elif touch_look_id == -1:
