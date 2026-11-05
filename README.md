@@ -9,7 +9,7 @@ An original, fan-inspired classic battle-royale prototype with a 2017-era visual
 - Character selection with four original colour presets and saved companion choices (fox, hawk and cub).
 - Third-person player, procedural character model and mobile/keyboard movement.
 - Touch camera look and virtual joystick.
-- Rifle and pistol starter loadout, plus unlockable SMG, shotgun and sniper pickup definitions.
+- Rifle and pistol starter loadout, plus unlockable SMG, shotgun and sniper pickups; weapons can be dropped and recovered with their remaining ammunition.
 - Shooting, reload, weapon switching, ammo HUD and health system.
 - Mobile FIRE, RELOAD, SWAP, MEDKIT, DRIVE and EMOTE controls.
 - Procedural island village with houses, trees, rocks, cover, road, river, bridge, street lamps and supply crates.
@@ -66,8 +66,8 @@ The workflow has not yet been run or verified. A valid Unity license secret and 
 
 ## Controls
 
-- PC prototype: WASD / arrow keys to move; right-mouse drag to look; R reload; Q switch weapon; E enter/exit vehicle.
-- Android prototype: left joystick to move/steer; drag the right side to look; tap the on-screen action buttons.
+- PC prototype: WASD / arrow keys to move; right-mouse drag to look; R reload; Q switch weapon; G drop weapon; E enter/exit vehicle.
+- Android prototype: left joystick to move/steer; drag the right side to look; tap the on-screen FIRE, RELOAD, SWAP, DROP, MEDKIT, DRIVE and EMOTE buttons.
 - LAN room panel: create a room and share its six-character code, or enter a code to search on the same Wi-Fi/hotspot.
 
 ## Planned after the first compile pass
