@@ -25,7 +25,7 @@ public class PetCompanion : MonoBehaviour
     }
     private void CreateEar(Vector3 localPosition)
     {
-        GameObject ear = GameObject.CreatePrimitive(PrimitiveType.Cone);
+        GameObject ear = GameObject.CreatePrimitive(PrimitiveType.Capsule);
         ear.name = "PetEar";
         ear.transform.SetParent(visual, false);
         ear.transform.localPosition = localPosition;
