@@ -115,6 +115,12 @@ public class GameBootstrap : MonoBehaviour
             LocalMultiplayerUI.OpenOnStart = true;
             LocalMultiplayerUI lanUI = gameObject.AddComponent<LocalMultiplayerUI>();
             lanUI.manager = lanManager;
+
+            // Bluetooth direct-link transport is optional and only created in local multiplayer mode.
+            GameObject bluetoothNode = new GameObject("LocalBluetoothMultiplayer");
+            bluetoothNode.AddComponent<BluetoothDiscoveryUI>();
+            BluetoothGameTransport bluetoothTransport = bluetoothNode.AddComponent<BluetoothGameTransport>();
+            bluetoothTransport.localPlayer = player.transform;
         }
 
         CreateVehicle(new Vector3(10f, 0.7f, -12f));
