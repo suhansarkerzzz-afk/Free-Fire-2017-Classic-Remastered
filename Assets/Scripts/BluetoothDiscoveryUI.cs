@@ -96,6 +96,8 @@ public class BluetoothDiscoveryUI : MonoBehaviour
         string deviceName = parts.Length > 0 ? parts[0] : "Unknown";
         string address = parts.Length > 1 ? parts[1] : "";
         SetStatus("FOUND: " + deviceName + (string.IsNullOrEmpty(address) ? "" : "  " + address));
+        BluetoothGameTransport transport = FindObjectOfType<BluetoothGameTransport>();
+        if (transport != null && !string.IsNullOrEmpty(address)) transport.SetDiscoveredDevice(address);
     }
 
     public void OnBluetoothDiscoveryFinished(string unused)
