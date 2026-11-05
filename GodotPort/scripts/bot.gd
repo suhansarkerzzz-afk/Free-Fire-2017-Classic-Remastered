@@ -1,5 +1,7 @@
 extends CharacterBody3D
 
+signal died
+
 var target: Node3D
 var health := 200.0
 var attack_timer := 0.0
@@ -44,4 +46,5 @@ func take_damage(amount: float) -> void:
     health -= amount
     if health <= 0.0:
         dead = true
+        died.emit()
         queue_free()
