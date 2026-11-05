@@ -1,27 +1,23 @@
 # Free Fire 2017 Classic Remastered
 
-An original, fan-inspired offline battle-royale prototype with a 2017-era visual direction and lightweight procedural assets. This is not an official Garena product and does not use official Garena assets.
+An original, fan-inspired battle-royale prototype with a 2017-era visual direction and lightweight procedural assets. This is not an official Garena product and does not use official Garena assets.
 
-## Offline-first game scope
+## Two offline play options
 
-The primary game mode is fully offline and does not require an account, internet connection, online matchmaking, or a dedicated server.
-
+### Offline Solo
+- Works without internet and does not open LAN sockets.
 - One local human player against 49 local AI bots.
 - Procedural Bermuda-inspired island and named POI districts.
 - Third-person movement, mobile joystick and touch camera; keyboard controls for development.
-- Initial plane flyover and parachute descent sequence.
-- Bot patrol, pursuit and basic line-of-sight combat.
-- Rifle/pistol starter loadout, weapon pickups, shooting, reload, ammo and weapon switching.
-- Health, medkits, inventory capacity, ammo and weapon loot.
-- Shrinking safe zone and outside-zone damage.
-- Simple vehicle prototype with enter/exit and driving.
-- Alive count, player kill count, match win/lose and result panel.
-- Local graphics settings: Low, Balanced and High.
-- Local progression and match rewards.
+- Plane flyover/parachute prototype, weapons, loot, health, medkits, safe zone and simple vehicle.
+- Local graphics settings and progression.
 
-## Offline-only menu and startup
-
-The main menu exposes only offline play, graphics settings and character selection. The offline match startup does not launch LAN room discovery, Bluetooth discovery, online matchmaking, or companion/pet systems. Network-related prototype scripts remain in the repository for possible separate future work, but they are not started by the offline game.
+### Local Wi-Fi / mobile Hotspot (BETA)
+- A separate opt-in menu mode; Solo Offline remains completely independent.
+- One player creates a room and shares its six-character room code; friends join on the same Wi-Fi or phone hotspot.
+- Uses local UDP discovery and player transform replication; no internet matchmaking or dedicated server.
+- Current implementation is an early networking prototype: remote player movement/appearance is replicated, but authoritative health, damage, shooting, loot, bot state, match phase, reconnect and host migration are not synchronized. Do not describe this as finished multiplayer or a complete Mini Militia-style match yet.
+- Bluetooth is not used for gameplay transport.
 
 ## Performance and build setup
 
@@ -33,7 +29,7 @@ The main menu exposes only offline play, graphics settings and character selecti
 
 ## Current limitations
 
-This is still a prototype, not a finished commercial game. The Bermuda layout and POIs are procedural approximations, not a faithful recreation of the original map. Plane/parachute, vehicle handling, bot navigation and combat balance need further development. Armor/helmet equipment, prone/crouch, scopes, full minimap and richer sound/animation are not yet complete.
+This is a prototype, not a finished commercial game. The Bermuda layout and POIs are procedural approximations, not a faithful recreation of the original map. Plane/parachute, vehicle handling, bot navigation and combat balance need further development. Armor/helmet equipment, prone/crouch, scopes, full minimap and richer sound/animation are not yet complete. Local Wi-Fi multiplayer needs authoritative gameplay synchronization and device testing.
 
 No Unity compilation, Play Mode, gameplay testing, Android APK generation, real-device performance testing or network testing has been run. Code has only been committed/read back from GitHub; successful build and runtime behaviour are not claimed.
 
@@ -59,7 +55,7 @@ The workflow has not yet been run or verified. A valid Unity license secret and 
 - PC prototype: WASD / arrow keys to move; Shift sprint; Space jump; right-mouse drag to look; R reload; Q switch weapon; G drop weapon; E enter/exit vehicle.
 - Android prototype: left joystick to move/steer; SPRINT toggle and JUMP buttons; drag the right side to look; tap FIRE, RELOAD, SWAP, DROP, MEDKIT and DRIVE.
 
-## Planned offline improvements
+## Planned improvements
 
 - Complete classic-style map terrain, coastline, roads and detailed POIs.
 - Spawn island, full airplane route and controllable parachute.
@@ -67,4 +63,5 @@ The workflow has not yet been run or verified. A valid Unity license secret and 
 - Helmet/vest equipment and improved loot.
 - Full minimap and battle HUD.
 - Better bot navigation, cover use and low-memory optimisation for 2 GB phones.
+- Finish authoritative LAN combat/health/loot/match synchronization, reconnect and room lifecycle.
 - Complete sound, animation and match flow.
