@@ -36,16 +36,20 @@ public class BattleRoyaleMatchManager : MonoBehaviour
             bot.name = "BattleBot_" + (i + 1).ToString("00");
             bot.transform.position = new Vector3(point.x, 1f, point.y);
             bot.transform.rotation = Quaternion.Euler(0f, Random.Range(0f, 360f), 0f);
-            bot.GetComponent<Renderer>().material.color = new Color(0.72f, 0.18f, 0.13f);
             TeamAffiliation.Assign(bot, (i / 4) + 1);
+            bot.AddComponent<VillainBotVisual>();
             BasicBotAI ai = bot.AddComponent<BasicBotAI>();
             ai.target = player;
-            ai.engageDistance = 45f;
-            ai.moveSpeed = Random.Range(3.0f, 3.4f);
+            ai.engageDistance = float.PositiveInfinity;
+            ai.moveSpeed = Random.Range(5.2f, 6.0f);
+            ai.turnSpeed = 18f;
             HealthSystem health = bot.AddComponent<HealthSystem>();
+            health.maxHealth = 200f;
             health.OnDied += () => OnBotDied(bot);
             BotCombat combat = bot.AddComponent<BotCombat>();
             combat.target = player;
+            string[] botWeapons = { "RIFLE", "PISTOL", "SMG", "SHOTGUN", "SNIPER" };
+            combat.ConfigureWeapon(botWeapons[Random.Range(0, botWeapons.Length)]);
         }
 
         gameObject.AddComponent<SafeZoneController>().target = player;
