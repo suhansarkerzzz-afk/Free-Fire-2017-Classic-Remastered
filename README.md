@@ -12,7 +12,8 @@ An original, fan-inspired classic battle-royale prototype with a 2017-era visual
 - Rifle and pistol starter loadout, plus unlockable SMG, shotgun and sniper pickup definitions.
 - Shooting, reload, weapon switching, ammo HUD and health system.
 - Mobile FIRE, RELOAD, SWAP, MEDKIT, DRIVE and EMOTE controls.
-- Procedural village arena with houses, trees, rocks and cover.
+- Procedural island village with houses, trees, rocks, cover, road, river, bridge, street lamps and supply crates.
+- Squad affiliation for bot groups; bots avoid targeting members of their own squad.
 
 ### Offline battle-royale prototype
 - Match bootstrap configured for one human player and 49 AI bots.
@@ -30,10 +31,13 @@ An original, fan-inspired classic battle-royale prototype with a 2017-era visual
 - Room-code generation and validation.
 - UDP same-Wi-Fi room discovery, host/join flow and basic player transform synchronisation.
 - Android network permissions are included in the custom manifest.
-- This is an early LAN prototype, not internet matchmaking. Bluetooth discovery and voice chat are not implemented.
+- This is an early LAN prototype, not internet matchmaking. Player transforms are synchronised, but authoritative combat, reconnection, and robust lobby management still need development.
+- Optional Android Bluetooth device discovery is included as a separate nearby-device scan. It does not carry gameplay traffic; Wi-Fi/hotspot remains the gameplay transport.
+- Voice chat is intentionally out of scope.
 
 ### Performance and build setup
-- Conservative low-memory runtime profile with a 30 FPS target on devices reporting 3 GB RAM or less.
+- Persistent Low / Balanced / High runtime graphics profiles with a memory-aware 30 FPS target on devices reporting 3 GB RAM or less.
+- Bot targeting uses a shared actor registry; safe-zone damage applies to all living actors; kill credit is attributed to the actual last damage source.
 - Android build helper and GitHub Actions workflow target Unity 2022.3.62f2.
 - Android target is ARM64, landscape, IL2CPP, minimum API 23.
 - Windows build remains a later milestone.
@@ -71,6 +75,7 @@ The workflow has not yet been run or verified. A valid Unity license secret and 
 - Fix all compiler errors and gameplay bugs.
 - Improve bot-vs-bot combat, navigation and cover usage.
 - Complete LAN reliability, reconnection, team play and network authority.
-- Implement voice chat and Bluetooth device discovery only after platform permissions and device support are designed.
+- Bluetooth discovery is a nearby-device helper only; no Bluetooth gameplay transport is planned.
+- Voice chat is not planned in this project phase.
 - Profile and optimise on actual 2 GB Android phones.
 - Complete APK release build, then prepare Windows PC build.
