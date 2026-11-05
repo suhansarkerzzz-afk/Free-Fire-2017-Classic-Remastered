@@ -1,10 +1,35 @@
 using UnityEngine;
 using UnityEngine.UI;
 using UnityEngine.EventSystems;
+using UnityEngine.SceneManagement;
 
 public class GameBootstrap : MonoBehaviour
 {
     private static bool started;
+    private static bool startAfterReload;
+
+    public static bool ConsumeAutoStart()
+    {
+        bool value = startAfterReload;
+        startAfterReload = false;
+        return value;
+    }
+
+    public static void RestartMatch()
+    {
+        Time.timeScale = 1f;
+        started = false;
+        startAfterReload = true;
+        SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex);
+    }
+
+    public static void ReturnToMenu()
+    {
+        Time.timeScale = 1f;
+        started = false;
+        startAfterReload = false;
+        SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex);
+    }
 
     public static void StartMatch()
     {
