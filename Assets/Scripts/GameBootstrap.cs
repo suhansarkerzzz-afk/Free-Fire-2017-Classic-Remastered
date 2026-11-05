@@ -59,6 +59,7 @@ public class GameBootstrap : MonoBehaviour
 
         CreateTrainingEnvironment();
         gameObject.AddComponent<TerrainMapDetails>();
+        gameObject.AddComponent<ClassicBermudaLocations>();
 
         GameObject player = GameObject.CreatePrimitive(PrimitiveType.Capsule);
         player.name = "Player";
