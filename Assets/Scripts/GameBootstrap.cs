@@ -57,21 +57,10 @@ public class GameBootstrap : MonoBehaviour
         if (cameraObject.GetComponent<WeaponView>() == null) cameraObject.AddComponent<WeaponView>();
         cameraObject.transform.position = player.transform.position + follow.offset;
 
-        for (int i = 0; i < 5; i++)
-        {
-            Vector2 p = Random.insideUnitCircle * 22f;
-            GameObject bot = GameObject.CreatePrimitive(PrimitiveType.Capsule);
-            bot.name = "TrainingBot_" + (i + 1);
-            bot.transform.position = new Vector3(p.x, 1f, p.y);
-            bot.GetComponent<Renderer>().material.color = new Color(0.75f, 0.2f, 0.16f);
-            BasicBotAI ai = bot.AddComponent<BasicBotAI>();
-            ai.target = player.transform;
-            bot.AddComponent<HealthSystem>();
-            BotCombat combat = bot.AddComponent<BotCombat>();
-            combat.target = player.transform;
-        }
-
         CreateControls();
+        BattleRoyaleMatchManager match = gameObject.AddComponent<BattleRoyaleMatchManager>();
+        match.botCount = 49;
+        match.Initialize(player.transform);
     }
 
     // Lightweight, procedural cover and landmarks for the first training island.
