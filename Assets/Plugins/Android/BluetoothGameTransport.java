@@ -57,7 +57,7 @@ public final class BluetoothGameTransport {
         catch (Exception ex) { return "HOST_ERROR:" + ex.getClass().getSimpleName(); }
     }
 
-    public static synchronized String connect(Activity activity, String address, String objectName) {
+    public static synchronized String connect(Activity activity, String objectName, String address) {
         stop();
         if (activity == null) return "NO_ACTIVITY";
         if (!hasPermissions(activity)) return "PERMISSION_REQUIRED";
