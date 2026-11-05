@@ -57,4 +57,5 @@ public class PlayerMovement : MonoBehaviour
             velocity.y = verticalVelocity;
             controller.Move(velocity * Time.deltaTime);
         }
-    }}
+    }
+}
