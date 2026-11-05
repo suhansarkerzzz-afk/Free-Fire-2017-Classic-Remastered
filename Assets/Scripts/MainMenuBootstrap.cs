@@ -81,8 +81,10 @@ public class MainMenuBootstrap : MonoBehaviour
 
         CreateSettings();
         CreateCharacterPanel();
-        // Bluetooth is optional nearby-device discovery only; it never carries gameplay traffic.
+        // Bluetooth supports nearby discovery and a direct RFCOMM connection prototype.
+        // Full match-state replication over Bluetooth remains a later networking milestone.
         canvasObject.AddComponent<BluetoothDiscoveryUI>();
+        canvasObject.AddComponent<BluetoothGameTransport>();
         if (GameBootstrap.ConsumeAutoStart()) GameBootstrap.StartMatch();
     }
 
