@@ -185,10 +185,4 @@ public class MainMenuBootstrap : MonoBehaviour
         GraphicsProfile.Apply(level);
         settingsPanel.SetActive(false);
     }
-
-        int safeLevel = Mathf.Clamp(level, 0, qualityCount - 1);
-        QualitySettings.SetQualityLevel(safeLevel, true);
-        Debug.Log("Graphics Level: " + QualitySettings.names[safeLevel]);
-        settingsPanel.SetActive(false);
-    }
 }
