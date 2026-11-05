@@ -16,6 +16,9 @@ var touch_move_id := -1
 var touch_look_id := -1
 var move_origin := Vector2.ZERO
 var virtual_move := Vector2.ZERO
+var move_pad: Panel
+var move_knob: Panel
+var game_over_panel: PanelContainer
 var match_started := false
 var kills := 0
 var rng := RandomNumberGenerator.new()
@@ -308,30 +311,34 @@ func _build_hud() -> void:
     _make_move_pad()
 
 func _make_move_pad() -> void:
-    # Visual guide only: touch-drag in the left 42% of the screen drives movement.
-    var pad := Panel.new()
-    pad.name = "MovePadGuide"
-    pad.anchor_top = 1
-    pad.anchor_bottom = 1
-    pad.position = Vector2(35, -185)
-    pad.size = Vector2(150, 150)
-    pad.mouse_filter = Control.MOUSE_FILTER_IGNORE
+    # Dynamic virtual joystick: touch movement is already tracked in _unhandled_input.
+    move_pad = Panel.new()
+    move_pad.name = "VirtualJoystick"
+    move_pad.anchor_top = 1
+    move_pad.anchor_bottom = 1
+    move_pad.position = Vector2(35, -185)
+    move_pad.size = Vector2(150, 150)
+    move_pad.mouse_filter = Control.MOUSE_FILTER_IGNORE
     var style := StyleBoxFlat.new()
     style.bg_color = Color(0.04, 0.08, 0.12, 0.38)
     style.border_color = Color(0.85, 0.92, 1.0, 0.65)
     style.set_border_width_all(3)
     style.set_corner_radius_all(75)
-    pad.add_theme_stylebox_override("panel", style)
-    hud_layer.add_child(pad)
-    var caption := Label.new()
-    caption.text = "MOVE"
-    caption.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
-    caption.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
-    caption.vertical_alignment = VERTICAL_ALIGNMENT_CENTER
-    caption.add_theme_color_override("font_color", Color(1, 1, 1, 0.85))
-    caption.add_theme_font_size_override("font_size", 20)
-    caption.mouse_filter = Control.MOUSE_FILTER_IGNORE
-    pad.add_child(caption)
+    move_pad.add_theme_stylebox_override("panel", style)
+    hud_layer.add_child(move_pad)
+
+    move_knob = Panel.new()
+    move_knob.name = "JoystickKnob"
+    move_knob.size = Vector2(58, 58)
+    move_knob.position = Vector2(46, 46)
+    move_knob.mouse_filter = Control.MOUSE_FILTER_IGNORE
+    var knob_style := StyleBoxFlat.new()
+    knob_style.bg_color = Color(0.35, 0.72, 1.0, 0.78)
+    knob_style.border_color = Color.WHITE
+    knob_style.set_border_width_all(2)
+    knob_style.set_corner_radius_all(29)
+    move_knob.add_theme_stylebox_override("panel", knob_style)
+    move_pad.add_child(move_knob)
 
 func _make_hud_label(text_value: String, pos: Vector2, size: Vector2, font_size: int) -> Label:
     var label := Label.new()
@@ -399,6 +406,34 @@ func _on_ammo_changed(current: int, reserve: int) -> void:
 
 func _on_player_died() -> void:
     status_label.text = "ELIMINATED"
+    _show_game_over()
+
+func _show_game_over() -> void:
+    if game_over_panel:
+        game_over_panel.show()
+        return
+    game_over_panel = PanelContainer.new()
+    game_over_panel.set_anchors_preset(Control.PRESET_CENTER)
+    game_over_panel.position = Vector2(-190, -125)
+    game_over_panel.custom_minimum_size = Vector2(380, 250)
+    hud_layer.add_child(game_over_panel)
+    var column := VBoxContainer.new()
+    column.add_theme_constant_override("separation", 16)
+    game_over_panel.add_child(column)
+    var title := Label.new()
+    title.text = "MATCH OVER"
+    title.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+    title.add_theme_font_size_override("font_size", 32)
+    column.add_child(title)
+    var result := Label.new()
+    result.text = "KILLS: %d" % kills
+    result.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+    column.add_child(result)
+    var restart := Button.new()
+    restart.text = "PLAY AGAIN"
+    restart.custom_minimum_size.y = 58
+    restart.pressed.connect(func(): get_tree().reload_current_scene())
+    column.add_child(restart)
 
 func _on_bot_died() -> void:
     kills += 1
@@ -411,6 +446,8 @@ func _unhandled_input(event: InputEvent) -> void:
             if event.position.x < get_viewport().get_visible_rect().size.x * 0.42 and touch_move_id == -1:
                 touch_move_id = event.index
                 move_origin = event.position
+                if move_knob:
+                    move_knob.position = Vector2(46, 46)
             elif touch_look_id == -1:
                 touch_look_id = event.index
         else:
@@ -418,12 +455,16 @@ func _unhandled_input(event: InputEvent) -> void:
                 touch_move_id = -1
                 virtual_move = Vector2.ZERO
                 player.set_move(Vector2.ZERO)
+                if move_knob:
+                    move_knob.position = Vector2(46, 46)
             if event.index == touch_look_id:
                 touch_look_id = -1
     elif event is InputEventScreenDrag:
         if event.index == touch_move_id:
             virtual_move = ((event.position - move_origin) / 75.0).limit_length(1.0)
             player.set_move(virtual_move)
+            if move_knob:
+                move_knob.position = Vector2(46, 46) + virtual_move * 42.0
         elif event.index == touch_look_id:
             player.look_by(event.relative)
     elif event is InputEventMouseMotion and Input.is_mouse_button_pressed(MOUSE_BUTTON_RIGHT):
