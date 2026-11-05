@@ -3,8 +3,13 @@ using UnityEngine;
 // Simple selectable cosmetic presets; no third-party character assets required.
 public static class CharacterLoadout
 {
-    public static int SelectedCharacter { get; private set; }
-    public static void Select(int index) { SelectedCharacter = Mathf.Clamp(index, 0, 3); }
+    public static int SelectedCharacter { get; private set; } = Mathf.Clamp(PlayerPrefs.GetInt("Classic_Character", 0), 0, 3);
+    public static void Select(int index)
+    {
+        SelectedCharacter = Mathf.Clamp(index, 0, 3);
+        PlayerPrefs.SetInt("Classic_Character", SelectedCharacter);
+        PlayerPrefs.Save();
+    }
     public static Color GetPrimaryColor()
     {
         switch (SelectedCharacter)
