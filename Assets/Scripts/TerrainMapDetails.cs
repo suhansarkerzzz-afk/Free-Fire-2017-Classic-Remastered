@@ -59,7 +59,7 @@ public class TerrainMapDetails : MonoBehaviour
 
     private void BuildRiverAndBridge()
     {
-        Cube("Blue_River", new Vector3(-15f, -0.08f, 0f), new Vector3(7.2f, 0.12f, 108f), waterMat, false);
+        Cube("Blue_River", new Vector3(-15f, 0.015f, 0f), new Vector3(7.2f, 0.12f, 108f), waterMat, false);
         Cube("River_Bank_West", new Vector3(-19f, 0.02f, 0f), new Vector3(1.0f, 0.14f, 108f), woodMat, false);
         Cube("River_Bank_East", new Vector3(-11f, 0.02f, 0f), new Vector3(1.0f, 0.14f, 108f), woodMat, false);
         for (int i = 0; i < 11; i++)
