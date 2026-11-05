@@ -6,7 +6,7 @@ An original, fan-inspired classic battle-royale prototype with a 2017-era visual
 
 ### Core gameplay
 - Runtime-generated main menu and graphics settings.
-- Character selection with four original colour presets.
+- Character selection with four original colour presets and saved companion choices (fox, hawk and cub).
 - Third-person player, procedural character model and mobile/keyboard movement.
 - Touch camera look and virtual joystick.
 - Rifle and pistol starter loadout, plus unlockable SMG, shotgun and sniper pickup definitions.
@@ -21,14 +21,14 @@ An original, fan-inspired classic battle-royale prototype with a 2017-era visual
 - Initial plane flyover and parachute descent sequence.
 - Shrinking safe-zone boundary and outside-zone damage.
 - Ammo, medkit and weapon pickups.
-- Inventory readout and medkit use.
+- Inventory readout, medkit use, and backpack capacity upgrades.
 - Alive count, player-attributed kill count, win/lose state, and an interactive result panel with Play Again / Main Menu actions.
 - Basic local rank points, kill progression and match-result rewards.
 - Simple vehicle model with enter/exit and keyboard/mobile joystick driving.
 - Cosmetic pet companion and procedural emotes.
 
 ### Local network prototype
-- Room-code generation and validation.
+- Room-code generation and validation, host capacity checks, and team identity in player state packets.
 - UDP same-Wi-Fi room discovery, host/join flow and basic player transform synchronisation.
 - Android network permissions are included in the custom manifest.
 - This is an early LAN prototype, not internet matchmaking. Player transforms are synchronised, but authoritative combat, reconnection, and robust lobby management still need development.
