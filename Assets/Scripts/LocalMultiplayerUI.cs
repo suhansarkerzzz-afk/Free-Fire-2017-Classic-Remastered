@@ -4,6 +4,7 @@ using UnityEngine.UI;
 // Small in-match LAN room panel for host/create and join-by-code.
 public class LocalMultiplayerUI : MonoBehaviour
 {
+    public static bool OpenOnStart;
     public LocalMultiplayerManager manager;
     private GameObject panel;
     private InputField codeInput;
@@ -27,7 +28,8 @@ public class LocalMultiplayerUI : MonoBehaviour
         AddButton("CREATE ROOM", new Vector2(0.5f, 0.43f), CreateRoom, panel.transform);
         AddButton("JOIN ROOM", new Vector2(0.5f, 0.25f), JoinRoom, panel.transform);
         status = AddText("Same Wi-Fi / hotspot required", 16, new Vector2(0.5f, 0.08f), panel.transform);
-        panel.SetActive(false);
+        panel.SetActive(OpenOnStart);
+        OpenOnStart = false;
 
         AddButton("LAN ROOM", new Vector2(0.5f, 0.08f), TogglePanel, canvas.transform);
     }
