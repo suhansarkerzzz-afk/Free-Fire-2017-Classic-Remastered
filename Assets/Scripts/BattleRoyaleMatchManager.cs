@@ -35,6 +35,7 @@ public class BattleRoyaleMatchManager : MonoBehaviour
             bot.transform.position = new Vector3(point.x, 1f, point.y);
             bot.transform.rotation = Quaternion.Euler(0f, Random.Range(0f, 360f), 0f);
             bot.GetComponent<Renderer>().material.color = new Color(0.72f, 0.18f, 0.13f);
+            TeamAffiliation.Assign(bot, (i / 4) + 1);
             BasicBotAI ai = bot.AddComponent<BasicBotAI>();
             ai.target = player;
             ai.moveSpeed = Random.Range(1.7f, 2.35f);
