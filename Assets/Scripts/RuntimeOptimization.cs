@@ -6,22 +6,15 @@ public class RuntimeOptimization : MonoBehaviour
     [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.BeforeSceneLoad)]
     private static void ApplyEarly()
     {
-        Application.targetFrameRate = SystemInfo.systemMemorySize <= 3072 ? 30 : 45;
-        QualitySettings.vSyncCount = 0;
-        QualitySettings.antiAliasing = 0;
-        QualitySettings.shadowDistance = SystemInfo.systemMemorySize <= 3072 ? 18f : 32f;
-        QualitySettings.pixelLightCount = SystemInfo.systemMemorySize <= 3072 ? 1 : 2;
+        GraphicsProfile.ApplySaved();
         Screen.sleepTimeout = SleepTimeout.NeverSleep;
     }
 
     private void Awake()
     {
         Application.lowMemory += OnLowMemory;
-        if (SystemInfo.systemMemorySize <= 3072)
-        {
-            QualitySettings.SetQualityLevel(0, true);
-            if (Camera.main != null) Camera.main.farClipPlane = 150f;
-        }
+        if (SystemInfo.systemMemorySize <= 3072 && Camera.main != null)
+            Camera.main.farClipPlane = 150f;
     }
 
     private void OnLowMemory()
