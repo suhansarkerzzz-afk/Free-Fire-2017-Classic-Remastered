@@ -54,12 +54,12 @@ public static class AndroidBuildSetup
         Scene scene = EditorSceneManager.NewScene(NewSceneSetup.EmptyScene, NewSceneMode.Single);
         scene.name = "Bootstrap";
         EditorSceneManager.SaveScene(scene, ScenePath);
-        AssetDatabase.SaveAssets();
-        AssetDatabase.Refresh();
         EditorBuildSettings.scenes = new[]
         {
             new EditorBuildSettingsScene(ScenePath, true)
         };
+        AssetDatabase.SaveAssets();
+        AssetDatabase.Refresh();
 
         PlayerSettings.companyName = "Classic Remastered Studio";
         PlayerSettings.productName = "Free Fire 2017 Classic Remastered";
