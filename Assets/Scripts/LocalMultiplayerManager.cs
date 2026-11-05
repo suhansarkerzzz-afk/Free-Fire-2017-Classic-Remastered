@@ -11,6 +11,7 @@ public class LocalMultiplayerManager : MonoBehaviour
 {
     public Transform localPlayer;
     public int port = 47820;
+    public int maxRemotePlayers = 11;
     public string RoomCode { get; private set; }
     public bool IsHost { get; private set; }
     public bool IsConnected { get; private set; }
@@ -112,14 +113,25 @@ public class LocalMultiplayerManager : MonoBehaviour
         if (p[0] == "ROOM" && !IsHost && p.Length >= 3 && p[1] == RoomCode && !IsConnected)
         {
             hostEndpoint = sender;
-            IsConnected = true;
             SendTo(hostEndpoint, "JOIN|" + RoomCode + "|" + localId);
             return;
         }
         if (p[0] == "JOIN" && IsHost && p.Length >= 3 && p[1] == RoomCode)
         {
+            if (!peers.ContainsKey(p[2]) && peers.Count >= maxRemotePlayers)
+            {
+                SendTo(sender, "FULL|" + RoomCode);
+                return;
+            }
             peers[p[2]] = sender;
             SendTo(sender, "WELCOME|" + RoomCode + "|" + localId);
+            return;
+        }
+        if (p[0] == "FULL" && !IsHost && p.Length >= 2 && p[1] == RoomCode)
+        {
+            IsConnected = false;
+            hostEndpoint = null;
+            Debug.LogWarning("LAN room is full.");
             return;
         }
         if (p[0] == "WELCOME" && !IsHost && p.Length >= 3 && p[1] == RoomCode)
@@ -128,7 +140,7 @@ public class LocalMultiplayerManager : MonoBehaviour
             IsConnected = true;
             return;
         }
-        if (p[0] == "STATE" && p.Length >= 8 && p[1] == RoomCode)
+        if (p[0] == "STATE" && p.Length >= 9 && p[1] == RoomCode)
         {
             string id = p[2];
             if (id == localId) return;
@@ -152,9 +164,13 @@ public class LocalMultiplayerManager : MonoBehaviour
             GameObject avatar = GameObject.CreatePrimitive(PrimitiveType.Capsule);
             avatar.name = "LAN_Player_" + id;
             avatar.GetComponent<Renderer>().material.color = new Color(0.2f, 0.8f, 0.95f);
+            avatar.AddComponent<TeamAffiliation>();
             remote = avatar.transform;
             remotePlayers[id] = remote;
         }
+        int teamId = 0;
+        int.TryParse(p[8], out teamId);
+        TeamAffiliation.Assign(remote.gameObject, teamId);
         remote.rotation = Quaternion.Euler(0f, yaw, 0f);
         targetPositions[id] = new Vector3(x, y, z);
     }
@@ -167,7 +183,8 @@ public class LocalMultiplayerManager : MonoBehaviour
             p.x.ToString("F2", System.Globalization.CultureInfo.InvariantCulture),
             p.y.ToString("F2", System.Globalization.CultureInfo.InvariantCulture),
             p.z.ToString("F2", System.Globalization.CultureInfo.InvariantCulture),
-            localPlayer.eulerAngles.y.ToString("F1", System.Globalization.CultureInfo.InvariantCulture), "100");
+            localPlayer.eulerAngles.y.ToString("F1", System.Globalization.CultureInfo.InvariantCulture), "100",
+            (localPlayer.GetComponent<TeamAffiliation>() != null ? localPlayer.GetComponent<TeamAffiliation>().teamId : 0).ToString());
         if (IsHost) Relay(packet, null);
         else if (hostEndpoint != null) SendTo(hostEndpoint, packet);
     }
