@@ -21,7 +21,7 @@ public class ClassicCharacterVisual : MonoBehaviour
         model.SetParent(transform, false);
         model.localPosition = Vector3.zero;
 
-        Material shirt = MakeMaterial(new Color(0.12f, 0.30f, 0.62f));
+        Material shirt = MakeMaterial(CharacterLoadout.GetPrimaryColor());
         Material pants = MakeMaterial(new Color(0.12f, 0.15f, 0.22f));
         Material skin = MakeMaterial(new Color(0.72f, 0.48f, 0.32f));
         Material vest = MakeMaterial(new Color(0.20f, 0.24f, 0.22f));
@@ -65,9 +65,10 @@ public class ClassicCharacterVisual : MonoBehaviour
     {
         if (model == null) return;
         float t = Time.time;
-        float moving = 0f;
+        float moving = PlayerMovement.CurrentMobileMove.magnitude;
 #if ENABLE_LEGACY_INPUT_MANAGER
-        moving = new Vector2(Input.GetAxisRaw("Horizontal"), Input.GetAxisRaw("Vertical")).magnitude;
+        if (moving < 0.01f)
+            moving = new Vector2(Input.GetAxisRaw("Horizontal"), Input.GetAxisRaw("Vertical")).magnitude;
 #endif
         float swing = Mathf.Sin(t * (moving > 0.1f ? 10f : 2f)) * (moving > 0.1f ? 24f : 2f);
         if (leftArm != null) leftArm.localRotation = Quaternion.Euler(swing, 0f, -7f);
