@@ -89,6 +89,11 @@ public class LocalMultiplayerUI : MonoBehaviour
     {
         if (manager == null) return;
         string code = manager.CreateRoom();
+        if (string.IsNullOrEmpty(code))
+        {
+            status.text = manager.StatusMessage;
+            return;
+        }
         codeInput.text = code;
         status.text = "HOSTING ROOM: " + code + "  |  SHARE THIS CODE";
     }
@@ -97,6 +102,6 @@ public class LocalMultiplayerUI : MonoBehaviour
     {
         if (manager == null) return;
         manager.JoinRoom(codeInput.text);
-        status.text = "SEARCHING FOR ROOM " + codeInput.text.ToUpperInvariant();
+        status.text = manager.StatusMessage;
     }
 }
