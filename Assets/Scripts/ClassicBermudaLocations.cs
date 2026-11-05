@@ -93,7 +93,7 @@ public class ClassicBermudaLocations : MonoBehaviour
         label.characterSize = 0.12f;
         label.color = Color.white;
         label.font = Resources.GetBuiltinResource<Font>("Arial.ttf");
-        labelObject.transform.rotation = Quaternion.Euler(0f, 0f, 0f);
+        labelObject.transform.rotation = Quaternion.Euler(0f, 180f, 0f);
         Collider signCollider = sign.GetComponent<Collider>();
         if (signCollider != null) Destroy(signCollider);
     }
