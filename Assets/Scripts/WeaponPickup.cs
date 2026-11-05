@@ -18,7 +18,7 @@ public class WeaponPickup : MonoBehaviour
         if (player == null || Vector3.Distance(player.position, transform.position) > pickupRadius) return;
         PlayerCombat combat = player.GetComponent<PlayerCombat>();
         if (combat == null) return;
-        if (!combat.AddWeapon(weaponName) && !combat.AddReserveAmmo(ammoAmount)) return;
+        if (!combat.AddWeapon(weaponName, ammoAmount) && !combat.AddReserveAmmo(ammoAmount)) return;
         Destroy(gameObject);
     }
 }
