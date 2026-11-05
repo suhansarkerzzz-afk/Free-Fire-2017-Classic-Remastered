@@ -241,6 +241,8 @@ public class GameBootstrap : MonoBehaviour
         CreateVehicleButton(canvas.transform);
         CreateDropWeaponButton(canvas.transform);
         CreateEmoteButton(canvas.transform);
+        CreateSprintButton(canvas.transform);
+        CreateJumpButton(canvas.transform);
 
         GameObject hint = new GameObject("ControlHint", typeof(RectTransform), typeof(Text));
         hint.transform.SetParent(canvas.transform, false);
@@ -462,6 +464,17 @@ public class GameBootstrap : MonoBehaviour
         label.rectTransform.anchorMin = Vector2.zero; label.rectTransform.anchorMax = Vector2.one;
         label.rectTransform.offsetMin = Vector2.zero; label.rectTransform.offsetMax = Vector2.zero;
         buttonObject.GetComponent<Button>().onClick.AddListener(action);
+    }
+
+    private void CreateSprintButton(Transform parent)
+    {
+        CreateActionButton("SPRINT", parent, new Vector2(0.16f, 0.43f), () =>
+            PlayerMovement.SetMobileSprint(!PlayerMovement.MobileSprint));
+    }
+
+    private void CreateJumpButton(Transform parent)
+    {
+        CreateActionButton("JUMP", parent, new Vector2(0.16f, 0.53f), PlayerMovement.RequestJump);
     }
 
     private void CreateDropWeaponButton(Transform parent)
