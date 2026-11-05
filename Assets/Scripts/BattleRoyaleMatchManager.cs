@@ -59,12 +59,12 @@ public class BattleRoyaleMatchManager : MonoBehaviour
         GameObject labelObject = new GameObject("BattleRoyaleStatus", typeof(RectTransform), typeof(Text));
         labelObject.transform.SetParent(canvas.transform, false);
         RectTransform rect = labelObject.GetComponent<RectTransform>();
-        rect.anchorMin = new Vector2(0.5f, 0.96f);
-        rect.anchorMax = new Vector2(0.5f, 0.96f);
-        rect.sizeDelta = new Vector2(420f, 42f);
+        rect.anchorMin = new Vector2(0.5f, 0.975f);
+        rect.anchorMax = new Vector2(0.5f, 0.975f);
+        rect.sizeDelta = new Vector2(420f, 34f);
         statusLabel = labelObject.GetComponent<Text>();
         statusLabel.font = Resources.GetBuiltinResource<Font>("Arial.ttf");
-        statusLabel.fontSize = 22;
+        statusLabel.fontSize = 18;
         statusLabel.alignment = TextAnchor.MiddleCenter;
         statusLabel.color = Color.white;
     }
