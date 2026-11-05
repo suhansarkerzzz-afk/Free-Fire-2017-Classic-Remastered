@@ -15,11 +15,16 @@ public class RuntimeOptimization : MonoBehaviour
         Application.lowMemory += OnLowMemory;
     }
 
-    private void Start()
+    private bool cameraDistanceApplied;
+
+    private void Update()
     {
-        // GameBootstrap creates the camera later in its Start method.
-        if (SystemInfo.systemMemorySize <= 3072 && Camera.main != null)
-            Camera.main.farClipPlane = 150f;
+        // The runtime camera is created by GameBootstrap; wait until it exists.
+        if (cameraDistanceApplied || SystemInfo.systemMemorySize > 3072) return;
+        Camera mainCamera = Camera.main;
+        if (mainCamera == null) return;
+        mainCamera.farClipPlane = 150f;
+        cameraDistanceApplied = true;
     }
 
     private void OnLowMemory()
