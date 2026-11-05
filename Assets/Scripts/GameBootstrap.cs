@@ -47,6 +47,10 @@ public class GameBootstrap : MonoBehaviour
         player.AddComponent<InventorySystem>();
         player.AddComponent<EmoteController>();
         player.AddComponent<ProgressionSystem>();
+        GameObject petObject = new GameObject("PlayerPet");
+        petObject.transform.position = new Vector3(1f, 1f, -1f);
+        PetCompanion petCompanion = petObject.AddComponent<PetCompanion>();
+        petCompanion.petName = PetLoadout.CurrentName;
         player.AddComponent<ParachuteDeployment>();
         player.GetComponent<Renderer>().material.color = CharacterLoadout.GetPrimaryColor();
 
