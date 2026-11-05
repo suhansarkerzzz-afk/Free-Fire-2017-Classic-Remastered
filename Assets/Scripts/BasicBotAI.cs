@@ -60,7 +60,12 @@ public class BasicBotAI : MonoBehaviour
             }
         }
 
-        if (holdingPosition) return;
+        if (holdingPosition)
+        {
+            obstacleCheckTimer = 0f;
+            avoidanceDirection = Vector3.zero;
+            return;
+        }
 
         if (!chasing)
         {
