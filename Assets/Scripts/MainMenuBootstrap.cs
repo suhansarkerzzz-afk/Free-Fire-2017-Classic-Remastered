@@ -81,10 +81,6 @@ public class MainMenuBootstrap : MonoBehaviour
 
         CreateSettings();
         CreateCharacterPanel();
-        // Bluetooth supports nearby discovery and a direct RFCOMM connection prototype.
-        // Full match-state replication over Bluetooth remains a later networking milestone.
-        canvasObject.AddComponent<BluetoothDiscoveryUI>();
-        canvasObject.AddComponent<BluetoothGameTransport>();
         if (GameBootstrap.ConsumeAutoStart()) GameBootstrap.StartMatch();
     }
 
