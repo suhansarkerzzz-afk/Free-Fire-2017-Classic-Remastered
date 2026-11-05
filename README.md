@@ -1,47 +1,76 @@
 # Free Fire 2017 Classic Remastered
 
-An original, fan-inspired low-poly battle-royale prototype. This is not an official Garena product and does not use official Garena assets.
+An original, fan-inspired classic battle-royale prototype with a 2017-era visual direction and lightweight procedural assets. This is not an official Garena product and does not use official Garena assets.
 
-## Current prototype
-- Runtime-generated main menu and graphics quality selector.
-- Start button opens a generated training arena.
-- Third-person orbit camera with touch-drag look control.
-- Mobile virtual joystick for movement.
-- PC keyboard movement (WASD / arrow keys) and mouse drag camera look in the Editor/Standalone.
-- Five simple training bots that follow and attack the player.
-- Two selectable weapons: RIFLE and PISTOL, each with separate damage, range, fire rate and ammo.
-- Separate magazine/reserve ammo and reload timing for each weapon, with ammo/weapon HUD and mobile RELOAD/SWAP buttons.
-- Procedural low-poly rifle and pistol view models, firing recoil, brief muzzle flash and generated prototype shot sounds.
-- Health and elimination HUD prototype.
-- Unity UI package manifest and editor version metadata.
+## Implemented in the current codebase
+
+### Core gameplay
+- Runtime-generated main menu and graphics settings.
+- Character selection with four original colour presets.
+- Third-person player, procedural character model and mobile/keyboard movement.
+- Touch camera look and virtual joystick.
+- Rifle and pistol starter loadout, plus unlockable SMG, shotgun and sniper pickup definitions.
+- Shooting, reload, weapon switching, ammo HUD and health system.
+- Mobile FIRE, RELOAD, SWAP, MEDKIT, DRIVE and EMOTE controls.
+- Procedural village arena with houses, trees, rocks and cover.
+
+### Offline battle-royale prototype
+- Match bootstrap configured for one human player and 49 AI bots.
+- Bot patrol, pursuit and basic line-of-sight combat.
+- Initial plane flyover and parachute descent sequence.
+- Shrinking safe-zone boundary and outside-zone damage.
+- Ammo, medkit and weapon pickups.
+- Inventory readout and medkit use.
+- Alive count, elimination count and win/lose state.
+- Basic local rank points, kill progression and match-result rewards.
+- Simple vehicle model with enter/exit and keyboard/mobile joystick driving.
+- Cosmetic pet companion and procedural emotes.
+
+### Local network prototype
+- Room-code generation and validation.
+- UDP same-Wi-Fi room discovery, host/join flow and basic player transform synchronisation.
+- Android network permissions are included in the custom manifest.
+- This is an early LAN prototype, not internet matchmaking. Bluetooth discovery and voice chat are not implemented.
+
+### Performance and build setup
+- Conservative low-memory runtime profile with a 30 FPS target on devices reporting 3 GB RAM or less.
+- Android build helper and GitHub Actions workflow target Unity 2022.3.62f2.
+- Android target is ARM64, landscape, IL2CPP, minimum API 23.
+- Windows build remains a later milestone.
+
+## Important status
+
+The code has been committed to GitHub, but **Unity compilation, gameplay testing, Android APK generation, real-device performance testing and LAN testing have intentionally not been run yet**. Some systems are prototype implementations and may need changes after the first compile/test pass. In particular, LAN networking, vehicle handling, parachute landing, AI balance and 2 GB memory use require verification.
 
 ## Open in Unity
-1. Install **Unity 2022.3 LTS** with the Android Build Support module (SDK, NDK and OpenJDK).
+
+1. Install Unity 2022.3.62f2 with Android Build Support, Android SDK & NDK Tools and OpenJDK.
 2. Clone or download this repository.
 3. Open the repository folder in Unity Hub.
-4. Let Unity import the project, then open any scene (the menu is created automatically after a scene loads).
-5. Press Play to test the menu and training arena.
+4. Allow Unity to import the project.
+5. The menu is generated when a scene loads.
 
-## Android APK
-After running **Tools > Classic Remastered > Prepare Android Build**, install Android Build Support (SDK, NDK and OpenJDK) through Unity Hub. Select **File > Build Settings > Android** and click **Build** to create the APK. The repository includes an Editor setup helper, but no APK has been compiled or device-tested yet. Unity Editor and Android Build Support must be installed on a build machine.
+## Android APK with GitHub Actions
 
-## Build APK with GitHub Actions
-1. In GitHub, open **Settings > Secrets and variables > Actions > New repository secret**.
-2. Add a secret named `UNITY_LICENSE` containing the Unity license file contents for the Unity account used to build.
-3. Open the repository's **Actions** tab and select **Android APK Build**.
-4. Click **Run workflow** and wait for the job to finish.
-5. Open the completed run and download the artifact named `FreeFire2017ClassicRemastered-Android-APK`.
+1. Open repository **Settings → Secrets and variables → Actions**.
+2. Add the secret named UNITY_LICENSE with the Unity license file contents for the account used to build.
+3. Open **Actions → Android APK Build**.
+4. Choose **Run workflow**.
+5. When the run succeeds, download the FreeFire2017ClassicRemastered-Android-APK artifact.
 
-The workflow runs Unity 2022.3.62f2 in Android mode and uploads the APK as a build artifact. A valid Unity license secret is required. If the workflow fails, open its build log and share the error so it can be fixed. This workflow has been added but has not yet been run or verified.
+The workflow has not yet been run or verified. A valid Unity license secret and a successful Unity build are required before an APK can be downloaded.
 
 ## Controls
-- PC: WASD / arrow keys to move; right-mouse drag to look; press R to reload and Q to switch weapons.
-- Android: use the left-side virtual joystick to move, drag on the right side to rotate the camera, tap FIRE to shoot, RELOAD to reload and SWAP to change weapon.
-- UI buttons are excluded from camera-drag input.
-- The current arena and bots are prototype placeholders, not a finished multiplayer game.
 
-## Planned next milestones
-1. Better arena, character visuals and bot behavior.
-2. Lobby and local Wi-Fi multiplayer.
-3. Performance profiling on 2 GB RAM Android devices.
-4. Windows build after the Android prototype is stable.
+- PC prototype: WASD / arrow keys to move; right-mouse drag to look; R reload; Q switch weapon; E enter/exit vehicle.
+- Android prototype: left joystick to move/steer; drag the right side to look; tap the on-screen action buttons.
+- LAN room panel: create a room and share its six-character code, or enter a code to search on the same Wi-Fi/hotspot.
+
+## Planned after the first compile pass
+
+- Fix all compiler errors and gameplay bugs.
+- Improve bot-vs-bot combat, navigation and cover usage.
+- Complete LAN reliability, reconnection, team play and network authority.
+- Implement voice chat and Bluetooth device discovery only after platform permissions and device support are designed.
+- Profile and optimise on actual 2 GB Android phones.
+- Complete APK release build, then prepare Windows PC build.
