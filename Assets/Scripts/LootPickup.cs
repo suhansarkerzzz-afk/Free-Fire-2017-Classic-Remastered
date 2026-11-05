@@ -23,12 +23,25 @@ public class LootPickup : MonoBehaviour
         HealthSystem health = player.GetComponent<HealthSystem>();
         if (kind == LootKind.Ammo)
         {
-            if (combat == null || !combat.AddReserveAmmo(30)) return;
+            InventorySystem inventory = player.GetComponent<InventorySystem>();
+            if (inventory != null)
+            {
+                if (!inventory.AddAmmo(30)) return;
+            }
+            else if (combat == null || !combat.AddReserveAmmo(30)) return;
         }
         else
         {
-            if (health == null || health.IsDead || health.CurrentHealth >= health.maxHealth) return;
-            health.Heal(35f);
+            InventorySystem inventory = player.GetComponent<InventorySystem>();
+            if (inventory != null)
+            {
+                if (!inventory.AddMedkit()) return;
+            }
+            else
+            {
+                if (health == null || health.IsDead || health.CurrentHealth >= health.maxHealth) return;
+                health.Heal(35f);
+            }
         }
         Destroy(gameObject);
     }
