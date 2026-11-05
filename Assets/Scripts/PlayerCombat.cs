@@ -29,6 +29,7 @@ public class PlayerCombat : MonoBehaviour
     private int activeWeaponIndex;
     private float nextFireTime;
     private Camera aimCamera;
+    private readonly RaycastHit[] shotHits = new RaycastHit[64];
     private bool isReloading;
 
     private WeaponData ActiveWeapon { get { return weapons[activeWeaponIndex]; } }
@@ -78,11 +79,26 @@ public class PlayerCombat : MonoBehaviour
         if (aimCamera == null) return;
 
         Ray ray = aimCamera.ViewportPointToRay(new Vector3(0.5f, 0.5f, 0f));
-        if (Physics.Raycast(ray, out RaycastHit hit, weapon.range))
+        // The third-person camera ray can pass through the player's own capsule.
+        // Ignore self-collisions, then use the nearest remaining hit as the shot result.
+        int hitCount = Physics.RaycastNonAlloc(ray, shotHits, weapon.range, Physics.DefaultRaycastLayers, QueryTriggerInteraction.Ignore);
+        int closestIndex = -1;
+        float closestDistance = float.MaxValue;
+        for (int i = 0; i < hitCount; i++)
         {
+            Collider collider = shotHits[i].collider;
+            if (collider == null || collider.gameObject == gameObject || collider.transform.IsChildOf(transform)) continue;
+            if (shotHits[i].distance < closestDistance)
+            {
+                closestDistance = shotHits[i].distance;
+                closestIndex = i;
+            }
+        }
+        if (closestIndex >= 0)
+        {
+            RaycastHit hit = shotHits[closestIndex];
             HealthSystem health = hit.collider.GetComponentInParent<HealthSystem>();
-            if (health != null && health.gameObject != gameObject)
-                health.TakeDamage(weapon.damage, gameObject);
+            if (health != null) health.TakeDamage(weapon.damage, gameObject);
             Debug.DrawLine(ray.origin, hit.point, Color.red, 0.5f);
         }
         else Debug.DrawRay(ray.origin, ray.direction * weapon.range, Color.red, 0.5f);
