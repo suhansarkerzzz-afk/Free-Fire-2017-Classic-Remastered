@@ -75,11 +75,15 @@ public class SimpleVehicleController : MonoBehaviour
         }
 
         if (hint != null) hint.text = "DRIVING  |  PRESS E TO EXIT";
-        float forward = 0f;
-        float turn = 0f;
+        Vector2 mobile = PlayerMovement.CurrentMobileMove;
+        float forward = mobile.y;
+        float turn = mobile.x;
 #if ENABLE_LEGACY_INPUT_MANAGER
-        forward = Input.GetAxisRaw("Vertical");
-        turn = Input.GetAxisRaw("Horizontal");
+        if (mobile.sqrMagnitude < 0.01f)
+        {
+            forward = Input.GetAxisRaw("Vertical");
+            turn = Input.GetAxisRaw("Horizontal");
+        }
         if (Input.GetKeyDown(KeyCode.E)) ExitVehicle();
 #endif
         transform.Rotate(Vector3.up, turn * turnSpeed * Time.deltaTime);
