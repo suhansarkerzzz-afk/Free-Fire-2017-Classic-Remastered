@@ -8,6 +8,7 @@ public class HealthSystem : MonoBehaviour
     public float maxHealth = 100f;
     public float CurrentHealth { get; private set; }
     public bool IsDead { get; private set; }
+    public GameObject LastDamageSource { get; private set; }
     public System.Action<float, float> OnHealthChanged;
     public System.Action OnDied;
 
@@ -19,9 +20,10 @@ public class HealthSystem : MonoBehaviour
 
     private void OnDestroy() { ActiveActors.Remove(this); }
 
-    public void TakeDamage(float amount)
+    public void TakeDamage(float amount, GameObject source = null)
     {
         if (IsDead || amount <= 0f) return;
+        if (source != null) LastDamageSource = source;
         CurrentHealth = Mathf.Max(0f, CurrentHealth - amount);
         OnHealthChanged?.Invoke(CurrentHealth, maxHealth);
         if (CurrentHealth <= 0f)
