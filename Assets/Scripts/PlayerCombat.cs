@@ -40,9 +40,9 @@ public class PlayerCombat : MonoBehaviour
         {
             new WeaponData { weaponName = "RIFLE", damage = 25f, range = 55f, fireCooldown = 0.16f, magazineSize = 30, reserveAmmo = 120, reloadDuration = 1.6f, unlocked = true },
             new WeaponData { weaponName = "PISTOL", damage = 40f, range = 32f, fireCooldown = 0.38f, magazineSize = 12, reserveAmmo = 48, reloadDuration = 1.2f, unlocked = true },
-            new WeaponData { weaponName = "SMG", damage = 17f, range = 38f, fireCooldown = 0.09f, magazineSize = 35, reserveAmmo = 105, reloadDuration = 1.5f },
-            new WeaponData { weaponName = "SHOTGUN", damage = 13f, range = 18f, fireCooldown = 0.8f, magazineSize = 6, reserveAmmo = 30, reloadDuration = 2.0f },
-            new WeaponData { weaponName = "SNIPER", damage = 75f, range = 95f, fireCooldown = 1.1f, magazineSize = 5, reserveAmmo = 25, reloadDuration = 2.2f }
+            new WeaponData { weaponName = "SMG", damage = 17f, range = 38f, fireCooldown = 0.09f, magazineSize = 35, reserveAmmo = 0, reloadDuration = 1.5f },
+            new WeaponData { weaponName = "SHOTGUN", damage = 13f, range = 18f, fireCooldown = 0.8f, magazineSize = 6, reserveAmmo = 0, reloadDuration = 2.0f },
+            new WeaponData { weaponName = "SNIPER", damage = 75f, range = 95f, fireCooldown = 1.1f, magazineSize = 5, reserveAmmo = 0, reloadDuration = 2.2f }
         };
         foreach (WeaponData weapon in weapons) weapon.currentAmmo = weapon.magazineSize;
         NotifyWeapon();
@@ -101,8 +101,9 @@ public class PlayerCombat : MonoBehaviour
                 return true;
             }
             weapons[i].unlocked = true;
-            weapons[i].currentAmmo = weapons[i].magazineSize;
-            weapons[i].reserveAmmo = Mathf.Min(240, weapons[i].reserveAmmo + Mathf.Max(0, bonusAmmo));
+            int availableAmmo = Mathf.Max(0, bonusAmmo);
+            weapons[i].currentAmmo = Mathf.Min(weapons[i].magazineSize, availableAmmo);
+            weapons[i].reserveAmmo = Mathf.Min(240, weapons[i].reserveAmmo + Mathf.Max(0, availableAmmo - weapons[i].currentAmmo));
             activeWeaponIndex = i;
             NotifyWeapon();
             NotifyAmmo();
