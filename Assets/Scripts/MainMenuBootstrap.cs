@@ -182,13 +182,9 @@ public class MainMenuBootstrap : MonoBehaviour
 
     private void SetGraphics(int level)
     {
-        int qualityCount = QualitySettings.names.Length;
-        if (qualityCount == 0)
-        {
-            Debug.LogWarning("No quality levels are configured in Project Settings.");
-            settingsPanel.SetActive(false);
-            return;
-        }
+        GraphicsProfile.Apply(level);
+        settingsPanel.SetActive(false);
+    }
 
         int safeLevel = Mathf.Clamp(level, 0, qualityCount - 1);
         QualitySettings.SetQualityLevel(safeLevel, true);
