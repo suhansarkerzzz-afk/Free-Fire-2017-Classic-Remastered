@@ -61,11 +61,12 @@ public class MainMenuBootstrap : MonoBehaviour
         CreateButton("MULTIPLAYER", new Vector2(0.5f, 0.07f),
             () => { LocalMultiplayerUI.OpenOnStart = true; GameBootstrap.StartMatch(); });
 
-        CreateText("CLASSIC BATTLE EXPERIENCE", 18, Color.white,
-            new Vector2(0.5f, 0.06f), new Vector2(0.5f, 0.06f), canvas.transform);
+        CreateText("CLASSIC BATTLE EXPERIENCE", 16, Color.white,
+            new Vector2(0.5f, 0.96f), new Vector2(0.5f, 0.96f), canvas.transform);
 
         CreateSettings();
         CreateCharacterPanel();
+        if (GameBootstrap.ConsumeAutoStart()) GameBootstrap.StartMatch();
     }
 
     private Image CreateImage(string name, Transform parent, Color color)
