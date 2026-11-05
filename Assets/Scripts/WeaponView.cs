@@ -25,8 +25,8 @@ public class WeaponView : MonoBehaviour
         if (audioSource == null) audioSource = gameObject.AddComponent<AudioSource>();
         audioSource.playOnAwake = false;
         audioSource.spatialBlend = 0f;
-        rifleClip = CreateShotClip("Rifle_Shot", 115f, 0.105f, 0.55f);
-        pistolClip = CreateShotClip("Pistol_Shot", 185f, 0.14f, 0.65f);
+        rifleClip = CreateShotClip("Rifle_Shot", 115f, 0.105f, 0.55f, 32f);
+        pistolClip = CreateShotClip("Pistol_Shot", 185f, 0.14f, 0.65f, 24f);
 
         combat.OnFired += PlayShot;
         combat.OnWeaponChanged += BuildWeapon;
@@ -145,7 +145,7 @@ public class WeaponView : MonoBehaviour
         flashRoutine = null;
     }
 
-    private AudioClip CreateShotClip(string clipName, float frequency, float duration, float volume)
+    private AudioClip CreateShotClip(string clipName, float frequency, float duration, float volume, float decay)
     {
         const int sampleRate = 22050;
         int count = Mathf.CeilToInt(sampleRate * duration);
@@ -154,7 +154,7 @@ public class WeaponView : MonoBehaviour
         for (int i = 0; i < count; i++)
         {
             float t = i / (float)sampleRate;
-            float envelope = Mathf.Exp(-t * (rifleClip == null ? 32f : 24f));
+            float envelope = Mathf.Exp(-t * decay);
             phase += 2f * Mathf.PI * frequency / sampleRate;
             float tone = Mathf.Sin(phase) * 0.32f;
             float noise = (Random.value * 2f - 1f) * 0.68f;
