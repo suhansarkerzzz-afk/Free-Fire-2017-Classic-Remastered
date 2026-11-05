@@ -1,6 +1,7 @@
 using UnityEngine;
 using UnityEngine.UI;
 using UnityEngine.EventSystems;
+using UnityEngine.SceneManagement;
 using System;
 
 public class MainMenuBootstrap : MonoBehaviour
@@ -12,6 +13,20 @@ public class MainMenuBootstrap : MonoBehaviour
 
     [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.AfterSceneLoad)]
     private static void StartMenu()
+    {
+        // RuntimeInitializeOnLoadMethod runs for the initial scene only.
+        // Subscribe to sceneLoaded so Play Again and Main Menu also rebuild the menu.
+        SceneManager.sceneLoaded -= HandleSceneLoaded;
+        SceneManager.sceneLoaded += HandleSceneLoaded;
+        EnsureMenuExists();
+    }
+
+    private static void HandleSceneLoaded(Scene scene, LoadSceneMode mode)
+    {
+        EnsureMenuExists();
+    }
+
+    private static void EnsureMenuExists()
     {
         if (FindObjectOfType<MainMenuBootstrap>() == null)
             new GameObject("ClassicMainMenu").AddComponent<MainMenuBootstrap>();
