@@ -8,6 +8,7 @@ public class MainMenuBootstrap : MonoBehaviour
     private Font font;
     private Canvas canvas;
     private GameObject settingsPanel;
+    private GameObject characterPanel;
 
     [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.AfterSceneLoad)]
     private static void StartMenu()
@@ -56,13 +57,15 @@ public class MainMenuBootstrap : MonoBehaviour
         CreateButton("TAP TO START", new Vector2(0.5f, 0.43f),
             GameBootstrap.StartMatch);
         CreateButton("GRAPHICS SETTINGS", new Vector2(0.5f, 0.31f), ShowSettings);
-        CreateButton("MULTIPLAYER", new Vector2(0.5f, 0.19f),
+        CreateButton("CHARACTER SELECT", new Vector2(0.5f, 0.19f), ShowCharacters);
+        CreateButton("MULTIPLAYER", new Vector2(0.5f, 0.07f),
             () => Debug.Log("Multiplayer Coming Soon"));
 
         CreateText("CLASSIC BATTLE EXPERIENCE", 18, Color.white,
             new Vector2(0.5f, 0.06f), new Vector2(0.5f, 0.06f), canvas.transform);
 
         CreateSettings();
+        CreateCharacterPanel();
     }
 
     private Image CreateImage(string name, Transform parent, Color color)
@@ -139,6 +142,37 @@ public class MainMenuBootstrap : MonoBehaviour
             () => SetGraphics(2), settingsPanel.transform);
 
         settingsPanel.SetActive(false);
+    }
+
+    private void CreateCharacterPanel()
+    {
+        characterPanel = new GameObject("CharacterSelectPanel");
+        characterPanel.transform.SetParent(canvas.transform, false);
+        Image panel = characterPanel.AddComponent<Image>();
+        panel.color = new Color(0.035f, 0.07f, 0.11f, 0.98f);
+        RectTransform rect = panel.rectTransform;
+        rect.anchorMin = new Vector2(0.18f, 0.15f);
+        rect.anchorMax = new Vector2(0.82f, 0.85f);
+        rect.offsetMin = Vector2.zero;
+        rect.offsetMax = Vector2.zero;
+        CreateText("CHOOSE YOUR CLASSIC SURVIVOR", 28, Color.white,
+            new Vector2(0.5f, 0.78f), new Vector2(0.5f, 0.78f), characterPanel.transform);
+        CreateButton("SCOUT", new Vector2(0.5f, 0.60f), () => SelectCharacter(0), characterPanel.transform);
+        CreateButton("RANGER", new Vector2(0.5f, 0.43f), () => SelectCharacter(1), characterPanel.transform);
+        CreateButton("DESERT", new Vector2(0.5f, 0.26f), () => SelectCharacter(2), characterPanel.transform);
+        CreateButton("SHADOW", new Vector2(0.5f, 0.09f), () => SelectCharacter(3), characterPanel.transform);
+        characterPanel.SetActive(false);
+    }
+
+    private void ShowCharacters()
+    {
+        characterPanel.SetActive(true);
+    }
+
+    private void SelectCharacter(int index)
+    {
+        CharacterLoadout.Select(index);
+        characterPanel.SetActive(false);
     }
 
     private void ShowSettings()
