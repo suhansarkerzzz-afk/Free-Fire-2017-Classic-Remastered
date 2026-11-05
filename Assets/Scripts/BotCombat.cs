@@ -3,10 +3,10 @@ using UnityEngine;
 public class BotCombat : MonoBehaviour
 {
     public Transform target;
-    public float attackRange = 18f;
+    public float attackRange = 26f;
     public float damage = 12f;
-    public float attackInterval = 1.45f;
-    public float aimSpread = 0.18f;
+    public float attackInterval = 1.2f;
+    public float aimSpread = 0.10f;
     private float nextAttack;
 
     private void Update()
