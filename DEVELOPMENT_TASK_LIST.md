@@ -9,11 +9,11 @@ This is the active work plan for the Godot 4.4.1 Android prototype. Work from th
 - [x] 49 offline bots spawn.
 - [x] Bot spawn points spread across the island.
 - [x] Bot separation and melee attack-pressure limit added.
-- [x] Capsule-only player/bot visuals replaced with simple low-poly humanoid parts (latest code change; verify in next CI build).
-- [ ] Confirm latest CI build and inspect all Godot warnings/errors.
+- [x] Capsule-only player/bot visuals replaced with simple low-poly humanoid parts (Build #14 succeeded).
+- [ ] Confirm Build #15 (joystick + match-over UI) and inspect all Godot warnings/errors.
 - [ ] Fix phone viewport/safe-area layout and HUD scaling; test on a real landscape phone.
-- [ ] Replace drag movement with a proper mobile analog joystick; add camera sensitivity control.
-- [ ] Add Game Over / Restart flow and pause/settings menu.
+- [x] Add a visual mobile analog joystick knob that follows left-side touch drag (Build #15 pending); improve anchoring/sensitivity after phone testing.
+- [x] Add player-death Game Over panel and Play Again scene restart (Build #15 pending); add pause/settings menu later.
 - [ ] Improve character visuals: modular outfits, weapon holding pose, hit/death animations.
 - [ ] Add optimized weapon models, muzzle flash, impact effects and sound.
 - [ ] Add loot pickups, ammo, medkits and inventory.
@@ -21,7 +21,7 @@ This is the active work plan for the Godot 4.4.1 Android prototype. Work from th
 - [ ] Add LOD, visibility ranges, texture compression/atlases and baked lighting.
 - [ ] Add graphics presets: Low (2 GB), Medium (4 GB), High (6 GB); profile actual RAM/FPS on devices.
 - [ ] Add vehicles and safe-zone/match phase.
-- [ ] Add ranged bot AI, cover seeking, patrol and difficulty tuning.
+- [x] Add basic ranged bot rifle hitscan (this commit); [ ] add cover seeking, patrol and difficulty tuning.
 - [ ] Add LAN/hotspot multiplayer only after stable offline gameplay; Bluetooth is a later optional transport.
 - [ ] Produce signed release APK and document install/test results.
 
