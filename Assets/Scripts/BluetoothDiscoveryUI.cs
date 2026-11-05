@@ -15,8 +15,8 @@ public class BluetoothDiscoveryUI : MonoBehaviour
         GameObject labelObject = new GameObject("BluetoothStatus", typeof(RectTransform), typeof(Text));
         labelObject.transform.SetParent(canvas.transform, false);
         RectTransform labelRect = labelObject.GetComponent<RectTransform>();
-        labelRect.anchorMin = new Vector2(0.5f, 0.035f);
-        labelRect.anchorMax = new Vector2(0.5f, 0.20f);
+        labelRect.anchorMin = new Vector2(0.5f, 0.025f);
+        labelRect.anchorMax = new Vector2(0.5f, 0.025f);
         labelRect.sizeDelta = new Vector2(500f, 34f);
         status = labelObject.GetComponent<Text>();
         status.font = Resources.GetBuiltinResource<Font>("Arial.ttf");
@@ -29,7 +29,7 @@ public class BluetoothDiscoveryUI : MonoBehaviour
         buttonObject.transform.SetParent(canvas.transform, false);
         RectTransform buttonRect = buttonObject.GetComponent<RectTransform>();
         buttonRect.anchorMin = new Vector2(0.5f, 0.10f);
-        buttonRect.anchorMax = new Vector2(0.5f, 0.27f);
+        buttonRect.anchorMax = new Vector2(0.5f, 0.10f);
         buttonRect.sizeDelta = new Vector2(190f, 52f);
         buttonObject.GetComponent<Image>().color = new Color(0.12f, 0.32f, 0.42f, 0.9f);
         Text buttonText = new GameObject("Label", typeof(RectTransform), typeof(Text)).GetComponent<Text>();
