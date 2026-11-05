@@ -19,6 +19,8 @@ var virtual_move := Vector2.ZERO
 var move_pad: Panel
 var move_knob: Panel
 var game_over_panel: PanelContainer
+var medkit_count := 0
+var inventory_label: Label
 var match_started := false
 var kills := 0
 var rng := RandomNumberGenerator.new()
@@ -317,6 +319,8 @@ func _build_hud() -> void:
     _make_mobile_button("RELOAD", Vector2(-290, -230), Vector2(110, 60), func(): player.reload_weapon())
     _make_mobile_button("JUMP", Vector2(-290, -155), Vector2(110, 60), func(): _jump_player())
     _make_mobile_button("SPRINT", Vector2(-290, -80), Vector2(110, 60), func(): player.sprinting = not player.sprinting)
+    _make_mobile_button("MEDKIT", Vector2(-425, -80), Vector2(115, 60), _use_medkit)
+    inventory_label = _make_hud_label("MEDKITS: 0", Vector2(24, 116), Vector2(260, 38), 19)
     _make_move_pad()
 
 func _make_move_pad() -> void:
@@ -374,6 +378,49 @@ func _make_mobile_button(text_value: String, pos: Vector2, size: Vector2, down: 
         button.button_up.connect(up)
     hud_layer.add_child(button)
 
+func _spawn_loot() -> void:
+    # Lightweight proximity pickups: green medkits and yellow rifle-ammo crates.
+    var pickup_points := [Vector3(-34, 0.7, -25), Vector3(-8, 0.7, -28), Vector3(25, 0.7, -24), Vector3(35, 0.7, 12), Vector3(-30, 0.7, 24), Vector3(8, 0.7, 28), Vector3(0, 0.7, -8), Vector3(0, 0.7, 18)]
+    for i in range(pickup_points.size()):
+        var is_medkit := i % 2 == 0
+        var pickup := Area3D.new()
+        pickup.name = "MedkitPickup" if is_medkit else "AmmoPickup"
+        pickup.position = pickup_points[i]
+        pickup.collision_layer = 0
+        pickup.collision_mask = 1
+        var shape_node := CollisionShape3D.new()
+        var sphere := SphereShape3D.new()
+        sphere.radius = 1.35
+        shape_node.shape = sphere
+        pickup.add_child(shape_node)
+        var visual := MeshInstance3D.new()
+        var mesh := BoxMesh.new()
+        mesh.size = Vector3(0.65, 0.55, 0.65)
+        visual.mesh = mesh
+        visual.material_override = _make_material(Color(0.12, 0.82, 0.28) if is_medkit else Color(0.95, 0.72, 0.12))
+        pickup.add_child(visual)
+        add_child(pickup)
+        pickup.body_entered.connect(func(body: Node3D):
+            if body != player:
+                return
+            if is_medkit:
+                medkit_count += 1
+            else:
+                player.reserve_ammo += 60
+                player.ammo_changed.emit(player.ammo, player.reserve_ammo)
+            if inventory_label:
+                inventory_label.text = "MEDKITS: %d" % medkit_count
+            pickup.queue_free()
+        )
+
+func _use_medkit() -> void:
+    if medkit_count <= 0 or not is_instance_valid(player) or player.health >= player.MAX_HEALTH:
+        return
+    medkit_count -= 1
+    player.heal(70.0)
+    if inventory_label:
+        inventory_label.text = "MEDKITS: %d" % medkit_count
+
 func _fire_pressed() -> void:
     if player:
         player.firing = true
@@ -393,6 +440,7 @@ func start_match() -> void:
     menu_layer.hide()
     hud_layer.show()
     _spawn_bots()
+    _spawn_loot()
     _update_bot_count()
 
 func _process(_delta: float) -> void:
