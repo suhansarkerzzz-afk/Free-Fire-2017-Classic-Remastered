@@ -190,9 +190,11 @@ func _add_bot_visor(bot: Node3D) -> void:
     bot.add_child(visor)
 
 func _build_menu() -> void:
+    var menu_canvas := CanvasLayer.new()
+    add_child(menu_canvas)
     menu_layer = Control.new()
     menu_layer.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
-    add_child(menu_layer)
+    menu_canvas.add_child(menu_layer)
     var shade := ColorRect.new()
     shade.color = Color(0.025, 0.045, 0.065, 0.92)
     shade.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
@@ -225,9 +227,11 @@ func _build_menu() -> void:
     column.add_child(note)
 
 func _build_hud() -> void:
+    var hud_canvas := CanvasLayer.new()
+    add_child(hud_canvas)
     hud_layer = Control.new()
     hud_layer.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
-    add_child(hud_layer)
+    hud_canvas.add_child(hud_layer)
     health_label = _make_hud_label("HP: 200 / 200", Vector2(24, 18), Vector2(300, 48), 24)
     ammo_label = _make_hud_label("RIFLE  30 / 120", Vector2(24, 70), Vector2(300, 42), 21)
     bot_label = _make_hud_label("ENEMIES: 49", Vector2(0, 18), Vector2(300, 48), 24)
