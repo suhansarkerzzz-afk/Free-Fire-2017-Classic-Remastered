@@ -5,7 +5,7 @@ using System.Collections.Generic;
 public class HealthSystem : MonoBehaviour
 {
     public static readonly List<HealthSystem> ActiveActors = new List<HealthSystem>();
-    public float maxHealth = 100f;
+    public float maxHealth = 200f;
     public float CurrentHealth { get; private set; }
     public bool IsDead { get; private set; }
     public GameObject LastDamageSource { get; private set; }
