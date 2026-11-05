@@ -43,7 +43,9 @@ public class GameBootstrap : MonoBehaviour
         player.AddComponent<ClassicCharacterVisual>();
         player.AddComponent<HealthSystem>();
         player.AddComponent<PlayerCombat>();
-        player.GetComponent<Renderer>().material.color = new Color(0.1f, 0.45f, 0.9f);
+        player.AddComponent<InventorySystem>();
+        player.AddComponent<ParachuteDeployment>();
+        player.GetComponent<Renderer>().material.color = CharacterLoadout.GetPrimaryColor();
 
         GameObject cameraObject = Camera.main ? Camera.main.gameObject : new GameObject("Main Camera");
         Camera camera = cameraObject.GetComponent<Camera>();
@@ -58,9 +60,42 @@ public class GameBootstrap : MonoBehaviour
         cameraObject.transform.position = player.transform.position + follow.offset;
 
         CreateControls();
+        CreateVehicle(new Vector3(10f, 0.7f, -12f));
+        CreateWeaponPickups();
         BattleRoyaleMatchManager match = gameObject.AddComponent<BattleRoyaleMatchManager>();
         match.botCount = 49;
         match.Initialize(player.transform);
+    }
+
+    private void CreateVehicle(Vector3 position)
+    {
+        GameObject vehicle = GameObject.CreatePrimitive(PrimitiveType.Cube);
+        vehicle.name = "ClassicJeep";
+        vehicle.transform.position = position;
+        vehicle.transform.localScale = new Vector3(2.2f, 1.1f, 3.8f);
+        vehicle.GetComponent<Renderer>().material.color = new Color(0.22f, 0.31f, 0.18f);
+        vehicle.AddComponent<SimpleVehicleController>();
+        GameObject cabin = GameObject.CreatePrimitive(PrimitiveType.Cube);
+        cabin.name = "JeepCabin";
+        cabin.transform.SetParent(vehicle.transform, false);
+        cabin.transform.localPosition = new Vector3(0f, 0.85f, -0.15f);
+        cabin.transform.localScale = new Vector3(0.82f, 0.8f, 0.55f);
+        cabin.GetComponent<Renderer>().material.color = new Color(0.12f, 0.18f, 0.12f);
+        cabin.GetComponent<Collider>().enabled = false;
+    }
+
+    private void CreateWeaponPickups()
+    {
+        for (int i = 0; i < 8; i++)
+        {
+            Vector2 p = Random.insideUnitCircle * 30f;
+            GameObject pickup = GameObject.CreatePrimitive(PrimitiveType.Cube);
+            pickup.name = "WeaponAmmoPickup_" + (i + 1);
+            pickup.transform.position = new Vector3(p.x, 0.55f, p.y);
+            pickup.transform.localScale = new Vector3(0.8f, 0.5f, 0.8f);
+            pickup.GetComponent<Renderer>().material.color = new Color(0.95f, 0.75f, 0.12f);
+            pickup.AddComponent<WeaponPickup>();
+        }
     }
 
     // Lightweight, procedural cover and landmarks for the first training island.
