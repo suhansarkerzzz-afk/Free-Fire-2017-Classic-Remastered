@@ -302,8 +302,8 @@ public class GameBootstrap : MonoBehaviour
         GameObject healthObject = new GameObject("HealthDisplay", typeof(RectTransform), typeof(Text));
         healthObject.transform.SetParent(parent, false);
         RectTransform rect = healthObject.GetComponent<RectTransform>();
-        rect.anchorMin = new Vector2(0.5f, 0.87f);
-        rect.anchorMax = new Vector2(0.5f, 0.87f);
+        rect.anchorMin = new Vector2(0.5f, 0.83f);
+        rect.anchorMax = new Vector2(0.5f, 0.83f);
         rect.sizeDelta = new Vector2(360f, 48f);
         Text label = healthObject.GetComponent<Text>();
         label.font = Resources.GetBuiltinResource<Font>("Arial.ttf");
