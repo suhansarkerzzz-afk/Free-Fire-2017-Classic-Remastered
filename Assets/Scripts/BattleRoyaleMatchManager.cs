@@ -41,7 +41,7 @@ public class BattleRoyaleMatchManager : MonoBehaviour
             BasicBotAI ai = bot.AddComponent<BasicBotAI>();
             ai.target = player;
             ai.engageDistance = float.PositiveInfinity;
-            ai.moveSpeed = Random.Range(5.2f, 6.0f);
+            ai.moveSpeed = Random.Range(7.6f, 8.2f);
             ai.turnSpeed = 18f;
             HealthSystem health = bot.AddComponent<HealthSystem>();
             health.maxHealth = 200f;
