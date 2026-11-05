@@ -30,6 +30,7 @@ public static class AndroidBuildSetup
         PlayerSettings.bundleVersion = "0.1.0";
         PlayerSettings.SetApplicationIdentifier(BuildTargetGroup.Android, "com.classicremastered.freefire2017");
         PlayerSettings.defaultInterfaceOrientation = UIOrientation.LandscapeLeft;
+        EditorUserBuildSettings.buildAppBundle = false;
         PlayerSettings.Android.minSdkVersion = AndroidSdkVersions.AndroidApiLevel23;
         PlayerSettings.Android.targetArchitectures = AndroidArchitecture.ARMv7 | AndroidArchitecture.ARM64;
         PlayerSettings.SetScriptingBackend(BuildTargetGroup.Android, ScriptingImplementation.IL2CPP);
@@ -65,6 +66,7 @@ public static class AndroidBuildSetup
         PlayerSettings.bundleVersion = "0.1.0";
         PlayerSettings.SetApplicationIdentifier(BuildTargetGroup.Android, "com.classicremastered.freefire2017");
         PlayerSettings.defaultInterfaceOrientation = UIOrientation.LandscapeLeft;
+        EditorUserBuildSettings.buildAppBundle = false;
         PlayerSettings.Android.minSdkVersion = AndroidSdkVersions.AndroidApiLevel23;
         PlayerSettings.Android.targetArchitectures = AndroidArchitecture.ARMv7 | AndroidArchitecture.ARM64;
         PlayerSettings.SetScriptingBackend(BuildTargetGroup.Android, ScriptingImplementation.IL2CPP);
