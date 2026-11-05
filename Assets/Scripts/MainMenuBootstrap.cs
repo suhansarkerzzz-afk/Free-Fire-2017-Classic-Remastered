@@ -157,12 +157,29 @@ public class MainMenuBootstrap : MonoBehaviour
         rect.offsetMin = Vector2.zero;
         rect.offsetMax = Vector2.zero;
         CreateText("CHOOSE YOUR CLASSIC SURVIVOR", 28, Color.white,
-            new Vector2(0.5f, 0.78f), new Vector2(0.5f, 0.78f), characterPanel.transform);
-        CreateButton("SCOUT", new Vector2(0.5f, 0.60f), () => SelectCharacter(0), characterPanel.transform);
-        CreateButton("RANGER", new Vector2(0.5f, 0.43f), () => SelectCharacter(1), characterPanel.transform);
-        CreateButton("DESERT", new Vector2(0.5f, 0.26f), () => SelectCharacter(2), characterPanel.transform);
-        CreateButton("SHADOW", new Vector2(0.5f, 0.09f), () => SelectCharacter(3), characterPanel.transform);
+            new Vector2(0.5f, 0.90f), new Vector2(0.5f, 0.90f), characterPanel.transform);
+        CreateButton("SCOUT", new Vector2(0.5f, 0.73f), () => SelectCharacter(0), characterPanel.transform);
+        CreateButton("RANGER", new Vector2(0.5f, 0.57f), () => SelectCharacter(1), characterPanel.transform);
+        CreateButton("DESERT", new Vector2(0.5f, 0.41f), () => SelectCharacter(2), characterPanel.transform);
+        CreateButton("SHADOW", new Vector2(0.5f, 0.25f), () => SelectCharacter(3), characterPanel.transform);
+        CreateText("CHOOSE COMPANION", 17, new Color(1f, 0.8f, 0.35f),
+            new Vector2(0.5f, 0.15f), new Vector2(0.5f, 0.15f), characterPanel.transform);
+        CreateSmallButton("FOX", new Vector2(0.25f, 0.06f), () => PetLoadout.Select(0), characterPanel.transform);
+        CreateSmallButton("HAWK", new Vector2(0.5f, 0.06f), () => PetLoadout.Select(1), characterPanel.transform);
+        CreateSmallButton("CUB", new Vector2(0.75f, 0.06f), () => PetLoadout.Select(2), characterPanel.transform);
         characterPanel.SetActive(false);
+    }
+
+    private void CreateSmallButton(string label, Vector2 position, Action action, Transform parent)
+    {
+        GameObject obj = new GameObject(label, typeof(RectTransform), typeof(Image), typeof(Button));
+        obj.transform.SetParent(parent, false);
+        RectTransform rect = obj.GetComponent<RectTransform>();
+        rect.anchorMin = position; rect.anchorMax = position; rect.sizeDelta = new Vector2(135f, 44f);
+        obj.GetComponent<Image>().color = new Color(0.18f, 0.35f, 0.42f, 1f);
+        Text text = CreateText(label, 16, Color.white, Vector2.zero, Vector2.one, obj.transform);
+        text.rectTransform.sizeDelta = Vector2.zero;
+        obj.GetComponent<Button>().onClick.AddListener(() => action?.Invoke());
     }
 
     private void ShowCharacters()
