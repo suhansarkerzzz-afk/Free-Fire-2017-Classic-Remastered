@@ -8,12 +8,31 @@ public class BasicBotAI : MonoBehaviour
     public float engageDistance = 32f;
     public float turnSpeed = 5f;
     private float roamTimer;
+    private float targetScanTimer;
     private Vector3 roamDirection;
 
     private void Update()
     {
         HealthSystem health = GetComponent<HealthSystem>();
         if (health != null && health.IsDead) return;
+
+        targetScanTimer -= Time.deltaTime;
+        if (targetScanTimer <= 0f)
+        {
+            targetScanTimer = Random.Range(1.1f, 1.8f);
+            HealthSystem[] candidates = FindObjectsOfType<HealthSystem>();
+            float nearest = 34f;
+            foreach (HealthSystem candidate in candidates)
+            {
+                if (candidate == null || candidate.gameObject == gameObject || candidate.IsDead) continue;
+                float distance = Vector3.Distance(transform.position, candidate.transform.position);
+                if (distance < nearest)
+                {
+                    nearest = distance;
+                    target = candidate.transform;
+                }
+            }
+        }
 
         Vector3 destinationDirection = Vector3.zero;
         bool chasing = false;
