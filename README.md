@@ -1,56 +1,41 @@
 # Free Fire 2017 Classic Remastered
 
-An original, fan-inspired battle-royale prototype with a 2017-era visual direction and lightweight procedural assets. This is not an official Garena product and does not use official Garena assets.
+An original, fan-inspired battle-royale prototype with a classic 2017-era feel and lightweight procedural visuals. This is not an official Garena product and does not use official Garena assets.
 
-## Current Android direction: Godot Port
+## Active Android project
 
-The active Android project is **Godot 4.4.1** in `GodotPort/`. The previous Unity prototype is retained in the repository as reference code and is not used by the Godot Android workflow.
+The active Android project is **Godot 4.4.1** in `GodotPort/`. The earlier Unity prototype is retained as reference code and is not part of the current Godot APK workflow. Android is the first target; Windows PC support comes later.
 
-### Godot prototype foundation
+## Offline prototype currently written
 
-- Procedural low-poly island, roads, houses, trees and 12 district labels.
-- Third-person player with keyboard controls and Android touch-drag movement/look.
-- Player health 200, rifle magazine 30, reserve ammo and reload.
-- 49 basic villain bots with 200 HP, chase movement and close-range attacks.
-- Basic raycast shooting and HUD.
-- Android landscape export for ARMv7 and ARM64.
-- Godot Compatibility renderer for broad Android device support.
+- One human player plus **49 offline bots** (50 participants total).
+- Procedural low-poly island with roads, houses, trees and 12 district labels.
+- Third-person player, 200 HP, rifle magazine/reserve ammo, reload and raycast shooting.
+- Bots with 200 HP, chase/separation movement, ranged hitscan attacks and close-range attacks.
+- Landscape mobile controls: left-side drag movement with a visual joystick knob, right-side drag camera look, and FIRE / RELOAD / JUMP / SPRINT / MEDKIT buttons.
+- Ammo and medkit pickups, medkit inventory counter and healing.
+- Player-death Game Over panel and Play Again scene restart.
+- A shrinking safe-zone controller has now been added to the Godot match startup. It begins with a 45-second grace period, contracts over 180 seconds and damages the player/bots outside its boundary. This latest safe-zone code has **not** been run or validated yet.
 
-This is an early playable foundation, not a finished battle-royale game. The MOVE circle is currently a visual guide rather than a true analog joystick. Bots do not shoot yet, and the Godot port does not yet include loot, weapons pickup/drop, vehicles, parachute, safe zone or multiplayer.
+This is still an early offline prototype, not a finished battle royale.
 
-See [GodotPort/PORT_STATUS.md](GodotPort/PORT_STATUS.md) for the detailed implementation and test status.
+## Not implemented in the active Godot port
 
-## Latest Android APK
+- Vehicles, parachute deployment, pets, selectable character skins and custom rooms.
+- LAN/Wi-Fi/hotspot gameplay networking and synchronized multiplayer.
+- Optional Bluetooth device discovery (discovery only; Bluetooth is not the gameplay transport).
+- Measured performance or compatibility on physical 2 GB / 4 GB / 6 GB phones.
 
-The latest GitHub Actions build succeeded:
+**Voice chat is out of scope and must not be added.** Local multiplayer will be considered only after the offline game is stable. The initial target remains one human plus bots.
 
-- Workflow run #10: [Godot Android APK Build](https://github.com/suhansarkerzzz-afk/Free-Fire-2017-Classic-Remastered/actions/runs/42046524963)
-- Commit: `6955558aa166beea4c0880c808eda7bda306a75e`
-- Godot import, headless runtime validation, Android export, debug signing and artifact upload passed.
-- Artifact name: `FreeFire2017ClassicRemastered-Godot-Android-APK`
-- [Download the APK artifact](https://github.com/suhansarkerzzz-afk/Free-Fire-2017-Classic-Remastered/actions/runs/42046524963/artifacts/13424856526)
+## Build and verification gate
 
-The CI result does not replace testing on a physical Android phone. Landscape orientation, touch controls, gameplay and performance on 2 GB / 4 GB / 6 GB devices still need real-device verification.
+The most recent recorded successful Android CI run before the safe-zone change was [Godot Android APK Build #18](https://github.com/suhansarkerzzz-afk/Free-Fire-2017-Classic-Remastered/actions/runs/42053639599), on commit `85ba2032145bc8a03f46b051ff88bf96fcea8fb3`. It does **not** validate the newer safe-zone code.
 
-## Build Android APK with GitHub Actions
+To respect the current coding-first phase, the Godot workflow is now **manual-only**. No build, gameplay test or phone test should be started until the user says coding is complete or explicitly authorizes testing. When authorized, open repository Actions, select **Godot Android APK Build**, and choose **Run workflow**.
 
-1. Open repository **Actions**.
-2. Select **Godot Android APK Build**.
-3. Choose **Run workflow**, or push a change under `GodotPort/`.
-4. When the run succeeds, download the artifact named `FreeFire2017ClassicRemastered-Godot-Android-APK`.
+Godot Android export does not require a Unity license. The legacy Unity workflow is separate and is not used for the active Android project.
 
-No Unity license or `UNITY_LICENSE` secret is required for the Godot workflow.
+## Verification limits
 
-## Legacy Unity prototype (reference only)
-
-The repository still contains the previous Unity implementation under `Assets/`, `Packages/` and `ProjectSettings/`. It includes prototypes for offline bots, weapons, loot, safe zone, vehicle, parachute, local Wi-Fi/hotspot and Bluetooth direct-link transport.
-
-The Unity multiplayer code is incomplete: authoritative health/damage, shooting, loot, bot state, match phase, reconnect and host migration are not synchronized. Bluetooth currently exchanges basic player state only and still needs discoverability / device testing. It is not a complete synchronized battle-royale match.
-
-The old `.github/workflows/android-apk.yml` workflow is for the legacy Unity project and requires a valid Unity license secret. Use `.github/workflows/godot-android-apk.yml` for the active Android APK.
-
-## Testing status
-
-Verified in GitHub Actions: Godot 4.4.1 project import, headless runtime validation, Android debug APK export, APK signing and artifact upload.
-
-Not yet verified: APK installation and play on a physical phone, touch-control usability, real-device performance, full gameplay balance, Unity compilation, Wi-Fi multiplayer or Bluetooth multiplayer.
+Still unverified on a physical phone: installation, touch-control usability, landscape safe-area layout, gameplay balance, frame rate, memory use and battery impact. The 2 GB device target must be measured rather than assumed.
