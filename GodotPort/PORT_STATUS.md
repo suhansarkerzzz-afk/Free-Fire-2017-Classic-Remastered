@@ -1,44 +1,42 @@
 # Godot Port — Development Status
 
-This is the active Android project, built with Godot 4.4.1 alongside the retained legacy Unity prototype. The Unity files are reference code and are not included in the Godot Android APK.
+This is the active Android project, built with Godot 4.4.1 and the Compatibility renderer. The previous Unity prototype remains in the repository as reference code and is not included in the Godot Android APK.
 
-## Implemented prototype foundation
+## Implemented in source
 
-- Godot 4.4.1 project using the Compatibility renderer.
-- Procedural low-poly island ground, two crossing roads, simple houses, trees and 12 district labels.
-- Third-person player with keyboard movement for desktop testing and touch-drag movement/look on Android.
+- Procedural low-poly island ground, roads, houses, trees and 12 district labels.
+- Third-person player with desktop keyboard input and Android touch-drag movement/look.
 - Player health (200 HP), 30-round rifle magazine, reserve ammo, reload and raycast shooting.
-- 49 basic villain bots, each with 200 HP, chase movement and close-range attacks.
+- 49 offline bots (50 participants including the player), each with 200 HP.
+- Bot chase movement, separation, ranged hitscan rifle attacks and close-range attacks.
 - HUD for health, ammo, enemy count and match status.
-- Landscape Android export preset for ARMv7 and ARM64.
-- GitHub Actions workflow for a debug APK; no Unity license secret is needed.
+- Mobile joystick knob and FIRE / RELOAD / JUMP / SPRINT / MEDKIT buttons.
+- Ammo and medkit pickups, medkit counter and healing.
+- Player-death Game Over panel and Play Again scene restart.
+- **New, not yet validated:** shrinking safe-zone controller. It waits 45 seconds, contracts from 52 m to 8 m over 180 seconds, draws a boundary ring and deals 8 damage every 2 seconds to the player/bots outside it.
 
-## Verified Android CI build
+## Last recorded CI result
 
-- Workflow run: [#10 — Godot Android APK Build](https://github.com/suhansarkerzzz-afk/Free-Fire-2017-Classic-Remastered/actions/runs/42046524963)
-- Commit: `6955558aa166beea4c0880c808eda7bda306a75e`
-- Result: success — Godot import, headless runtime validation, APK export, signing and artifact upload all completed.
-- Artifact: `FreeFire2017ClassicRemastered-Godot-Android-APK` (about 53.8 MB).
-- [Download the APK artifact](https://github.com/suhansarkerzzz-afk/Free-Fire-2017-Classic-Remastered/actions/runs/42046524963/artifacts/13424856526)
+- [Godot Android APK Build #18](https://github.com/suhansarkerzzz-afk/Free-Fire-2017-Classic-Remastered/actions/runs/42053639599) succeeded on commit `85ba2032145bc8a03f46b051ff88bf96fcea8fb3`.
+- That run predates the safe-zone addition and must not be treated as validation of the current source.
+- No CI build, Godot runtime test, APK export or phone test has been started for the safe-zone changes.
 
-CI success confirms project import, script validation, export and packaging. It does not confirm installation, touch behaviour, performance or gameplay on a physical phone. Those still require device testing.
+## Remaining work
 
-## Known limitations and next work
-
-- The current MOVE circle is a visual guide, not a movable analog joystick; movement uses left-side touch dragging.
-- Bots do not use guns yet; they chase and attack at close range.
-- No visible weapon model, weapon pickup/drop system, medkits or loot in the Godot port.
-- The island is a flat procedural prototype, not the full Bermuda map or its faithful terrain/POIs.
-- No plane/parachute, jeep, shrinking safe zone, minimap, animation or finished audio.
-- No Wi-Fi/hotspot room discovery, Bluetooth transport or multiplayer synchronization in the Godot port.
-- No measured 2 GB / 4 GB / 6 GB device performance results yet.
-- The export log reports that no project icon is configured; this is non-fatal, and the APK still exported successfully.
+- Review the safe-zone implementation after the coding phase and validate its visual boundary, timing and damage behaviour.
+- Fix HUD anchoring, scaling and phone safe-area layout.
+- Improve character outfits, weapon holding pose, hit/death animations, weapon models, effects and audio.
+- Add more detailed terrain, shoreline, water, height variation and recognizable classic-inspired points of interest.
+- Add visibility/LOD and low-memory graphics settings; measure actual FPS and RAM use on 2 GB, 4 GB and 6 GB devices.
+- Add vehicles, parachute, pets, skins and custom rooms.
+- Add LAN/Wi-Fi/hotspot multiplayer only after offline gameplay is stable. Bluetooth may be used for optional device discovery only, not as gameplay transport.
+- Voice chat is explicitly out of scope.
 
 ## Controls
 
 - Desktop: WASD move, Shift sprint, Space jump, F fire, R reload, right-mouse drag to look.
-- Android: drag on the left side to move, drag on the right side to look, and use FIRE / RELOAD / JUMP / SPRINT buttons.
+- Android: drag on the left side to move, drag on the right side to look, and use FIRE / RELOAD / JUMP / SPRINT / MEDKIT buttons.
 
-## Build
+## Build policy during coding
 
-The workflow runs on pushes affecting `GodotPort/**` or its workflow file, and can also be started manually from GitHub Actions. The uploaded debug artifact is retained for 14 days.
+The GitHub Actions workflow remains available through manual `workflow_dispatch` only. Do not start validation, APK export, gameplay tests or phone tests until the user confirms that coding is complete or explicitly asks to test.
