@@ -89,14 +89,17 @@ func _damage_outside_zone() -> void:
     if is_instance_valid(player):
         _damage_actor_if_outside(player)
 
-func _damage_actor_if_outside(actor: Node3D) -> void:
-    if not is_instance_valid(actor) or not actor.has_method("take_damage"):
+func _damage_actor_if_outside(actor: Node) -> void:
+    if not is_instance_valid(actor) or not (actor is Node3D):
+        return
+    if not actor.has_method("take_damage"):
         return
 
-    var offset := actor.global_position - global_position
+    var actor_3d := actor as Node3D
+    var offset := actor_3d.global_position - global_position
     offset.y = 0.0
     if offset.length() > current_radius:
-        actor.call("take_damage", damage_per_tick)
+        actor_3d.call("take_damage", damage_per_tick)
 
 func get_current_radius() -> float:
     return current_radius
