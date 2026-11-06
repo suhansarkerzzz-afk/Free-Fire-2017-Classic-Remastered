@@ -1,13 +1,8 @@
 name: Godot Android APK Build
 
 on:
+  # Keep validation/export manual until the coding phase is explicitly complete.
   workflow_dispatch:
-  push:
-    branches:
-      - main
-    paths:
-      - "GodotPort/**"
-      - ".github/workflows/godot-android-apk.yml"
 
 permissions:
   contents: read
