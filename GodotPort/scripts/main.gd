@@ -2,6 +2,7 @@ extends Node3D
 
 const PlayerScript = preload("res://scripts/player.gd")
 const BotScript = preload("res://scripts/bot.gd")
+const SafeZoneScript = preload("res://scripts/safe_zone.gd")
 const BOT_COUNT := 49
 
 var player: CharacterBody3D
@@ -441,6 +442,12 @@ func start_match() -> void:
     hud_layer.show()
     _spawn_bots()
     _spawn_loot()
+    # One human plus 49 bots gives the intended 50-participant offline test match.
+    var safe_zone: Node3D = Node3D.new()
+    safe_zone.name = "SafeZone"
+    safe_zone.set_script(SafeZoneScript)
+    safe_zone.set("player", player)
+    add_child(safe_zone)
     _update_bot_count()
 
 func _process(_delta: float) -> void:
