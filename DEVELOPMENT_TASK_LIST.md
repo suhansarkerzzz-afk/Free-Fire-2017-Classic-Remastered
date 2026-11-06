@@ -1,33 +1,35 @@
 # Free Fire 2017 Classic Remastered — Development Task List
 
-This is the active work plan for the Godot 4.4.1 Android prototype. Work from the top down. Keep Android first, preserve the classic 2017 feel, and optimize for 2 GB devices before enabling higher visual settings on 4 GB and 6 GB devices.
+The active Android project is the Godot 4.4.1 port in `GodotPort/`. Keep the classic 2017 feel, Android first, Windows PC later, and design for 2 GB devices before raising visual settings for 4 GB / 6 GB devices.
 
-## Current status
-- [x] Godot Android debug APK workflow completes successfully (Build #10 and Build #13).
-- [x] Landscape orientation configured.
-- [x] Player movement, camera, health, rifle ammo, reload and raycast shooting foundation.
-- [x] 49 offline bots spawn.
-- [x] Bot spawn points spread across the island.
-- [x] Bot separation and melee attack-pressure limit added.
-- [x] Capsule-only player/bot visuals replaced with simple low-poly humanoid parts (Build #14 succeeded).
-- [ ] Confirm Build #15 (joystick + match-over UI) and inspect all Godot warnings/errors.
-- [ ] Fix phone viewport/safe-area layout and HUD scaling; test on a real landscape phone.
-- [x] Add a visual mobile analog joystick knob that follows left-side touch drag (Build #15 pending); improve anchoring/sensitivity after phone testing.
-- [x] Add player-death Game Over panel and Play Again scene restart (Build #15 pending); add pause/settings menu later.
-- [ ] Improve character visuals: modular outfits, weapon holding pose, hit/death animations.
-- [ ] Add optimized weapon models, muzzle flash, impact effects and sound.
-- [x] Add proximity ammo crates, medkit pickups, medkit inventory counter and healing button (CI pending).
-- [ ] Build a more detailed classic-inspired island with terrain height, shoreline, water, roads and recognizable POIs.
-- [ ] Add LOD, visibility ranges, texture compression/atlases and baked lighting.
-- [ ] Add graphics presets: Low (2 GB), Medium (4 GB), High (6 GB); profile actual RAM/FPS on devices.
-- [ ] Add vehicles and safe-zone/match phase.
-- [x] Add basic ranged bot rifle hitscan (this commit); [ ] add cover seeking, patrol and difficulty tuning.
-- [ ] Add LAN/hotspot multiplayer only after stable offline gameplay; Bluetooth is a later optional transport.
-- [ ] Produce signed release APK and document install/test results.
+## Source implementation status
 
-## Rules for every change
-1. Inspect the existing implementation before editing.
-2. Make small, isolated changes; do not overwrite unrelated working features.
-3. Run the GitHub Actions Android build after code changes.
-4. If a build fails, inspect the failed job logs, fix the root cause, and rebuild.
-5. Never mark phone installation, touch controls, FPS, or RAM performance as tested until verified on a physical device.
+- [x] Godot Compatibility-renderer project and landscape Android export preset.
+- [x] Third-person player movement, camera, health, rifle ammo, reload and raycast shooting.
+- [x] 49 offline bots plus one human player (50 participants total).
+- [x] Bot spawn distribution, separation, melee attacks and ranged hitscan attacks.
+- [x] Low-poly humanoid player/bot visuals.
+- [x] Mobile touch-drag movement/look, joystick knob and match-over/restart UI.
+- [x] Ammo crates, medkit pickups, medkit counter and healing button.
+- [x] Shrinking safe-zone source code connected to match startup (45-second wait, 180-second contraction, outside-zone damage). **Not yet validated.**
+
+## Next coding priorities
+
+- [ ] Improve safe-zone feedback and review edge cases after testing is authorized.
+- [ ] Fix HUD viewport anchoring, scaling and Android safe areas.
+- [ ] Add character outfits, weapon holding pose, hit/death animations, weapon models, muzzle flash, impact effects and sound.
+- [ ] Improve island terrain, shoreline, water, elevation and recognizable classic-inspired POIs.
+- [ ] Add optimized LOD/visibility and Low (2 GB), Medium (4 GB), High (6 GB) graphics profiles.
+- [ ] Add vehicles and vehicle interaction.
+- [ ] Add plane/parachute deployment, pets, character skins and custom rooms.
+- [ ] Add LAN/Wi-Fi/hotspot multiplayer after offline gameplay is stable.
+- [ ] Optional Bluetooth device discovery only; it must not be used as gameplay transport.
+- [ ] Prepare Windows PC build after Android gameplay is stable.
+- [ ] Voice chat is out of scope and must not be added.
+
+## Verification gate
+
+- The last recorded successful CI build was Godot Android APK Build #18 on commit `85ba2032145bc8a03f46b051ff88bf96fcea8fb3`; it predates the safe-zone code.
+- The Godot workflow is manual-only during the coding phase.
+- Do **not** run Unity compilation, Godot validation, gameplay tests, APK builds or phone tests until the user says the coding phase is complete or explicitly authorizes testing.
+- When authorized, run the Godot Android workflow manually, inspect all logs/warnings, then verify installation, controls, gameplay, FPS and RAM on physical devices. Never claim phone or 2 GB performance testing without actual device results.
