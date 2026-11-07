@@ -13,11 +13,17 @@ var strafe_phase := 0.0
 const GRAVITY := 18.0
 const SEPARATION_RADIUS := 2.8
 const SEPARATION_STRENGTH := 2.2
+const SEPARATION_REFRESH_INTERVAL := 0.18
 const MAX_SIMULTANEOUS_ATTACKERS := 3
+
+var separation_refresh_timer := 0.0
+var cached_separation := Vector3.ZERO
 
 func _ready() -> void:
     add_to_group("bots")
     strafe_phase = randf_range(0.0, TAU)
+    # Stagger neighbour scans so all 49 bots do not run the O(n) scan together.
+    separation_refresh_timer = randf_range(0.0, SEPARATION_REFRESH_INTERVAL)
 
 func _physics_process(delta: float) -> void:
     if dead or not is_instance_valid(target):
@@ -37,8 +43,13 @@ func _physics_process(delta: float) -> void:
         velocity.x = move_toward(velocity.x, 0.0, 14.0 * delta)
         velocity.z = move_toward(velocity.z, 0.0, 14.0 * delta)
 
-    # Push bots away from nearby teammates so they do not form one solid pile.
-    var separation := _get_separation()
+    # Refresh neighbour separation a few times per second instead of scanning all
+    # bots on every physics frame. The staggered timer spreads this work across frames.
+    separation_refresh_timer -= delta
+    if separation_refresh_timer <= 0.0:
+        cached_separation = _get_separation()
+        separation_refresh_timer = SEPARATION_REFRESH_INTERVAL + randf_range(0.0, 0.04)
+    var separation := cached_separation
     if direction != Vector3.ZERO:
         var side := Vector3(-direction.z, 0.0, direction.x) * sin(Time.get_ticks_msec() * 0.0015 + strafe_phase) * 0.10
         var movement := (direction + side + separation * SEPARATION_STRENGTH).normalized()
