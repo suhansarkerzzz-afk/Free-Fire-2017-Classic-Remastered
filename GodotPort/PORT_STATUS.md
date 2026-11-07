@@ -9,6 +9,7 @@ This is the active Android project, built with Godot 4.4.1 and the Compatibility
 - Player health (200 HP), 30-round rifle magazine, reserve ammo, reload and raycast shooting.
 - 49 offline bots (50 participants including the player), each with 200 HP.
 - Bot chase movement, separation, ranged hitscan rifle attacks and close-range attacks.
+- **New, not yet validated:** neighbour-separation scans are staggered and refreshed about 5 times per second per bot instead of running on every physics frame, reducing repeated 49-bot proximity work.
 - HUD for health, ammo, enemy count and match status.
 - Mobile joystick knob and FIRE / RELOAD / JUMP / SPRINT / MEDKIT buttons.
 - Ammo and medkit pickups, medkit counter and healing.
@@ -19,7 +20,7 @@ This is the active Android project, built with Godot 4.4.1 and the Compatibility
 
 - [Godot Android APK Build #18](https://github.com/suhansarkerzzz-afk/Free-Fire-2017-Classic-Remastered/actions/runs/42053639599) succeeded on commit `85ba2032145bc8a03f46b051ff88bf96fcea8fb3`.
 - That run predates the safe-zone addition and must not be treated as validation of the current source.
-- No CI build, Godot runtime test, APK export or phone test has been started for the safe-zone changes.
+- No CI build, Godot runtime test, APK export or phone test has been started for the safe-zone or bot-scan optimization changes.
 
 ## Remaining work
 
