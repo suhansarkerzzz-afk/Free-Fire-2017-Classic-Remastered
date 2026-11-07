@@ -8,6 +8,7 @@ The active Android project is the Godot 4.4.1 port in `GodotPort/`. Keep the cla
 - [x] Third-person player movement, camera, health, rifle ammo, reload and raycast shooting.
 - [x] 49 offline bots plus one human player (50 participants total).
 - [x] Bot spawn distribution, separation, melee attacks and ranged hitscan attacks.
+- [x] Source-level optimization: stagger bot neighbour-separation scans to reduce repeated per-frame work. **Not yet validated in Godot or on a phone.**
 - [x] Low-poly humanoid player/bot visuals.
 - [x] Mobile touch-drag movement/look, joystick knob and match-over/restart UI.
 - [x] Ammo crates, medkit pickups, medkit counter and healing button.
