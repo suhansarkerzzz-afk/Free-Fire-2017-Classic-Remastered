@@ -13,6 +13,7 @@ The active Android project is the Godot 4.4.1 port in `GodotPort/`. Keep the cla
 - [x] Mobile touch-drag movement/look, joystick knob and match-over/restart UI.
 - [x] Ammo crates, medkit pickups, medkit counter and healing button.
 - [x] Shrinking safe-zone source code connected to match startup (45-second wait, 180-second contraction, outside-zone damage). **Not yet validated.**
+- [x] Safe-zone HUD status text for countdown, shrink percentage and final radius. **Not yet validated.**
 
 ## Next coding priorities
 
