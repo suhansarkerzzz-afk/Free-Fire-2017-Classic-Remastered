@@ -15,6 +15,7 @@ This is the active Android project, built with Godot 4.4.1 and the Compatibility
 - Ammo and medkit pickups, medkit counter and healing.
 - Player-death Game Over panel and Play Again scene restart.
 - **New, not yet validated:** shrinking safe-zone controller. It waits 45 seconds, contracts from 52 m to 8 m over 180 seconds, draws a boundary ring and deals 8 damage every 2 seconds to the player/bots outside it.
+- **New, not yet validated:** match HUD reports the safe-zone countdown, shrink percentage and final radius. The HUD polls the controller four times per second rather than every rendered frame.
 
 ## Last recorded CI result
 
