@@ -103,3 +103,16 @@ func _damage_actor_if_outside(actor: Node) -> void:
 
 func get_current_radius() -> float:
     return current_radius
+
+func get_status_text() -> String:
+    if elapsed < wait_seconds:
+        var seconds_left := ceili(wait_seconds - elapsed)
+        var minutes_left := int(seconds_left / 60.0)
+        var remaining_seconds := seconds_left % 60
+        return "ZONE CLOSES IN %02d:%02d" % [minutes_left, remaining_seconds]
+
+    var duration := maxf(shrink_duration, 0.01)
+    var progress := clampf((elapsed - wait_seconds) / duration, 0.0, 1.0)
+    if progress < 1.0:
+        return "ZONE SHRINKING • %d%%" % roundi(progress * 100.0)
+    return "FINAL ZONE • %d m" % roundi(end_radius)
