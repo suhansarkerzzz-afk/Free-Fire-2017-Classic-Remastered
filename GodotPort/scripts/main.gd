@@ -11,6 +11,9 @@ var hud_layer: Control
 var health_label: Label
 var ammo_label: Label
 var status_label: Label
+var zone_label: Label
+var safe_zone_controller: Node3D
+var zone_ui_timer := 0.0
 var bot_label: Label
 var fire_button: Button
 var touch_move_id := -1
@@ -315,6 +318,10 @@ func _build_hud() -> void:
     status_label.anchor_left = 0.5
     status_label.anchor_right = 0.5
     status_label.position.x = -150
+    zone_label = _make_hud_label("ZONE CLOSES IN 00:45", Vector2(0, 108), Vector2(340, 36), 16)
+    zone_label.anchor_left = 0.5
+    zone_label.anchor_right = 0.5
+    zone_label.position.x = -170
     # Keep the touch controls separated so they remain usable in landscape on phones.
     _make_mobile_button("FIRE", Vector2(-155, -150), Vector2(130, 110), _fire_pressed, _fire_released)
     _make_mobile_button("RELOAD", Vector2(-290, -230), Vector2(110, 60), func(): player.reload_weapon())
@@ -448,13 +455,24 @@ func start_match() -> void:
     safe_zone.set_script(SafeZoneScript)
     safe_zone.set("player", player)
     add_child(safe_zone)
+    safe_zone_controller = safe_zone
+    _update_zone_label()
     _update_bot_count()
 
-func _process(_delta: float) -> void:
+func _process(delta: float) -> void:
     if match_started and is_instance_valid(player):
         _update_bot_count()
+        zone_ui_timer += delta
+        if zone_ui_timer >= 0.25:
+            zone_ui_timer = 0.0
+            _update_zone_label()
         if player.health <= 0:
             status_label.text = "ELIMINATED  •  KILLS: %d" % kills
+
+func _update_zone_label() -> void:
+    if not is_instance_valid(safe_zone_controller) or not safe_zone_controller.has_method("get_status_text"):
+        return
+    zone_label.text = str(safe_zone_controller.call("get_status_text"))
 
 func _update_bot_count() -> void:
     var count := get_tree().get_nodes_in_group("bots").size()
