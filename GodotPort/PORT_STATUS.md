@@ -11,6 +11,7 @@ This is the active Android project, built with Godot 4.4.1 and the Compatibility
 - Bot chase movement, separation, ranged hitscan rifle attacks and close-range attacks.
 - **New, not yet validated:** neighbour-separation scans are staggered and refreshed about 5 times per second per bot instead of running on every physics frame, reducing repeated 49-bot proximity work.
 - HUD for health, ammo, enemy count and match status.
+- **New, not yet validated:** match HUD positions are adjusted using Android/display safe-area insets. Top labels, centered status text, touch buttons and joystick are moved away from cutouts, and layout recalculates when the viewport size changes.
 - Mobile joystick knob and FIRE / RELOAD / JUMP / SPRINT / MEDKIT buttons.
 - Ammo and medkit pickups, medkit counter and healing.
 - Player-death Game Over panel and Play Again scene restart.
@@ -26,7 +27,7 @@ This is the active Android project, built with Godot 4.4.1 and the Compatibility
 ## Remaining work
 
 - Review the safe-zone implementation after the coding phase and validate its visual boundary, timing and damage behaviour.
-- Fix HUD anchoring, scaling and phone safe-area layout.
+- Validate the new safe-area HUD positioning and tune scaling across phone aspect ratios and cutout layouts.
 - Improve character outfits, weapon holding pose, hit/death animations, weapon models, effects and audio.
 - Add more detailed terrain, shoreline, water, height variation and recognizable classic-inspired points of interest.
 - Add visibility/LOD and low-memory graphics settings; measure actual FPS and RAM use on 2 GB, 4 GB and 6 GB devices.
