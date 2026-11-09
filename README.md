@@ -13,6 +13,7 @@ The active Android project is **Godot 4.4.1** in `GodotPort/`. The earlier Unity
 - Third-person player, 200 HP, rifle magazine/reserve ammo, reload and raycast shooting.
 - Bots with 200 HP, chase/separation movement, ranged hitscan attacks and close-range attacks.
 - Landscape mobile controls: left-side drag movement with a visual joystick knob, right-side drag camera look, and FIRE / RELOAD / JUMP / SPRINT / MEDKIT buttons.
+- **New, not yet validated:** HUD controls and labels are positioned using display safe-area insets and recalculate after viewport resizing to reduce overlap with phone cutouts.
 - Ammo and medkit pickups, medkit inventory counter and healing.
 - Player-death Game Over panel and Play Again scene restart.
 - A shrinking safe-zone controller has now been added to the Godot match startup. It begins with a 45-second grace period, contracts over 180 seconds and damages the player/bots outside its boundary. This latest safe-zone code has **not** been run or validated yet.
