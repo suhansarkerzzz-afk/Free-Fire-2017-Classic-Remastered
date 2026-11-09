@@ -16,6 +16,10 @@ var safe_zone_controller: Node3D
 var zone_ui_timer := 0.0
 var bot_label: Label
 var fire_button: Button
+var reload_button: Button
+var jump_button: Button
+var sprint_button: Button
+var medkit_button: Button
 var touch_move_id := -1
 var touch_look_id := -1
 var move_origin := Vector2.ZERO
@@ -35,6 +39,9 @@ func _ready() -> void:
     _build_world()
     _build_menu()
     _build_hud()
+    hud_layer.resized.connect(_layout_hud)
+    get_viewport().size_changed.connect(_layout_hud)
+    call_deferred("_layout_hud")
     hud_layer.hide()
     # Start the playable scene immediately on Android so the first screen is the 3D island, not a text-only menu.
     call_deferred("start_match")
@@ -323,11 +330,11 @@ func _build_hud() -> void:
     zone_label.anchor_right = 0.5
     zone_label.position.x = -170
     # Keep the touch controls separated so they remain usable in landscape on phones.
-    _make_mobile_button("FIRE", Vector2(-155, -150), Vector2(130, 110), _fire_pressed, _fire_released)
-    _make_mobile_button("RELOAD", Vector2(-290, -230), Vector2(110, 60), func(): player.reload_weapon())
-    _make_mobile_button("JUMP", Vector2(-290, -155), Vector2(110, 60), func(): _jump_player())
-    _make_mobile_button("SPRINT", Vector2(-290, -80), Vector2(110, 60), func(): player.sprinting = not player.sprinting)
-    _make_mobile_button("MEDKIT", Vector2(-425, -80), Vector2(115, 60), _use_medkit)
+    fire_button = _make_mobile_button("FIRE", Vector2(-155, -150), Vector2(130, 110), _fire_pressed, _fire_released)
+    reload_button = _make_mobile_button("RELOAD", Vector2(-290, -230), Vector2(110, 60), func(): player.reload_weapon())
+    jump_button = _make_mobile_button("JUMP", Vector2(-290, -155), Vector2(110, 60), func(): _jump_player())
+    sprint_button = _make_mobile_button("SPRINT", Vector2(-290, -80), Vector2(110, 60), func(): player.sprinting = not player.sprinting)
+    medkit_button = _make_mobile_button("MEDKIT", Vector2(-425, -80), Vector2(115, 60), _use_medkit)
     inventory_label = _make_hud_label("MEDKITS: 0", Vector2(24, 116), Vector2(260, 38), 19)
     _make_move_pad()
 
@@ -371,7 +378,7 @@ func _make_hud_label(text_value: String, pos: Vector2, size: Vector2, font_size:
     hud_layer.add_child(label)
     return label
 
-func _make_mobile_button(text_value: String, pos: Vector2, size: Vector2, down: Callable, up: Callable = Callable()) -> void:
+func _make_mobile_button(text_value: String, pos: Vector2, size: Vector2, down: Callable, up: Callable = Callable()) -> Button:
     var button := Button.new()
     button.text = text_value
     button.size = size
@@ -385,6 +392,71 @@ func _make_mobile_button(text_value: String, pos: Vector2, size: Vector2, down: 
     if up.is_valid():
         button.button_up.connect(up)
     hud_layer.add_child(button)
+    return button
+
+func _get_safe_area_insets(viewport_size: Vector2) -> Vector4:
+    var window_size := DisplayServer.window_get_size()
+    if window_size.x <= 0 or window_size.y <= 0:
+        return Vector4.ZERO
+
+    var safe_rect := DisplayServer.get_display_safe_area()
+    if safe_rect.size.x <= 0 or safe_rect.size.y <= 0:
+        return Vector4.ZERO
+
+    # DisplayServer safe-area values are in screen pixels; convert them into
+    # the current Godot viewport's coordinate space before positioning controls.
+    var window_position := DisplayServer.window_get_position()
+    var left_px := clampf(float(safe_rect.position.x - window_position.x), 0.0, float(window_size.x) * 0.2)
+    var top_px := clampf(float(safe_rect.position.y - window_position.y), 0.0, float(window_size.y) * 0.2)
+    var right_px := clampf(float(window_position.x + window_size.x - safe_rect.end.x), 0.0, float(window_size.x) * 0.2)
+    var bottom_px := clampf(float(window_position.y + window_size.y - safe_rect.end.y), 0.0, float(window_size.y) * 0.2)
+
+    var scale_x := viewport_size.x / float(window_size.x)
+    var scale_y := viewport_size.y / float(window_size.y)
+    return Vector4(left_px * scale_x, top_px * scale_y, right_px * scale_x, bottom_px * scale_y)
+
+func _layout_hud() -> void:
+    if not is_instance_valid(hud_layer) or not is_instance_valid(health_label):
+        return
+
+    var viewport_size := hud_layer.size
+    if viewport_size.x <= 0.0 or viewport_size.y <= 0.0:
+        return
+
+    var insets := _get_safe_area_insets(viewport_size)
+    var safe_left := insets.x
+    var safe_top := insets.y
+    var safe_right := insets.z
+    var safe_bottom := insets.w
+
+    health_label.position = Vector2(safe_left + 24.0, safe_top + 18.0)
+    ammo_label.position = Vector2(safe_left + 24.0, safe_top + 70.0)
+    inventory_label.position = Vector2(safe_left + 24.0, safe_top + 116.0)
+
+    bot_label.position = Vector2(-320.0 - safe_right, safe_top + 18.0)
+
+    # Center status text inside the usable safe rectangle, not beneath a notch.
+    var usable_width := maxf(1.0, viewport_size.x - safe_left - safe_right)
+    var safe_center_anchor := clampf((safe_left + usable_width * 0.5) / viewport_size.x, 0.0, 1.0)
+    status_label.anchor_left = safe_center_anchor
+    status_label.anchor_right = safe_center_anchor
+    status_label.position = Vector2(-150.0, safe_top + 68.0)
+    zone_label.anchor_left = safe_center_anchor
+    zone_label.anchor_right = safe_center_anchor
+    zone_label.position = Vector2(-170.0, safe_top + 108.0)
+
+    if is_instance_valid(fire_button):
+        fire_button.position = Vector2(-155.0 - safe_right, -150.0 - safe_bottom)
+    if is_instance_valid(reload_button):
+        reload_button.position = Vector2(-290.0 - safe_right, -230.0 - safe_bottom)
+    if is_instance_valid(jump_button):
+        jump_button.position = Vector2(-290.0 - safe_right, -155.0 - safe_bottom)
+    if is_instance_valid(sprint_button):
+        sprint_button.position = Vector2(-290.0 - safe_right, -80.0 - safe_bottom)
+    if is_instance_valid(medkit_button):
+        medkit_button.position = Vector2(-425.0 - safe_right, -80.0 - safe_bottom)
+    if is_instance_valid(move_pad):
+        move_pad.position = Vector2(35.0 + safe_left, -185.0 - safe_bottom)
 
 func _spawn_loot() -> void:
     # Lightweight proximity pickups: green medkits and yellow rifle-ammo crates.
