@@ -9,6 +9,7 @@ The active Android project is the Godot 4.4.1 port in `GodotPort/`. Keep the cla
 - [x] 49 offline bots plus one human player (50 participants total).
 - [x] Bot spawn distribution, separation, melee attacks and ranged hitscan attacks.
 - [x] Source-level optimization: stagger bot neighbour-separation scans to reduce repeated per-frame work. **Not yet validated in Godot or on a phone.**
+- [x] Initial bot visual LOD: cull distant bot mesh parts beyond the configured visibility range while keeping AI and collision active. **Not yet validated or benchmarked.**
 - [x] Low-poly humanoid player/bot visuals.
 - [x] Mobile touch-drag movement/look, joystick knob and match-over/restart UI.
 - [x] Ammo crates, medkit pickups, medkit counter and healing button.
@@ -22,7 +23,7 @@ The active Android project is the Godot 4.4.1 port in `GodotPort/`. Keep the cla
 - [ ] Validate safe-area HUD positioning and tune scaling across phone aspect ratios, cutouts and landscape devices.
 - [ ] Add character outfits, weapon holding pose, hit/death animations, weapon models, muzzle flash, impact effects and sound.
 - [ ] Improve island terrain, shoreline, water, elevation and recognizable classic-inspired POIs.
-- [ ] Add optimized LOD/visibility and Low (2 GB), Medium (4 GB), High (6 GB) graphics profiles.
+- [ ] Extend LOD/visibility to static island scenery and add Low (2 GB), Medium (4 GB), High (6 GB) graphics profiles.
 - [ ] Add vehicles and vehicle interaction.
 - [ ] Add plane/parachute deployment, pets, character skins and custom rooms.
 - [ ] Add LAN/Wi-Fi/hotspot multiplayer after offline gameplay is stable.
