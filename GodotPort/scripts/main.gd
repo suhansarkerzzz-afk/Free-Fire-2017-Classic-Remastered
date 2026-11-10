@@ -4,6 +4,9 @@ const PlayerScript = preload("res://scripts/player.gd")
 const BotScript = preload("res://scripts/bot.gd")
 const SafeZoneScript = preload("res://scripts/safe_zone.gd")
 const BOT_COUNT := 49
+# Cull only distant bot render meshes; keep AI and collision active.
+const BOT_VISUAL_CULL_END := 44.0
+const BOT_VISUAL_CULL_MARGIN := 4.0
 
 var player: CharacterBody3D
 var menu_layer: Control
@@ -97,6 +100,10 @@ func _make_material(color: Color) -> StandardMaterial3D:
     material.roughness = 0.92
     return material
 
+func _configure_bot_visual(mesh_instance: MeshInstance3D) -> void:
+    mesh_instance.visibility_range_end = BOT_VISUAL_CULL_END
+    mesh_instance.visibility_range_end_margin = BOT_VISUAL_CULL_MARGIN
+
 func _make_box(label: String, pos: Vector3, size: Vector3, color: Color, collision: bool) -> Node3D:
     var body: Node3D
     if collision:
@@ -136,6 +143,8 @@ func _make_actor_body(actor: CharacterBody3D, color: Color, bot: bool) -> void:
     var torso_mesh := BoxMesh.new()
     torso_mesh.size = Vector3(0.68, 0.78, 0.38)
     torso.mesh = torso_mesh
+    if bot:
+        _configure_bot_visual(torso)
     torso.material_override = body_material
     torso.position = Vector3(0, 0.25, 0)
     actor.add_child(torso)
@@ -145,6 +154,8 @@ func _make_actor_body(actor: CharacterBody3D, color: Color, bot: bool) -> void:
     head_mesh.radius = 0.25
     head_mesh.height = 0.5
     head.mesh = head_mesh
+    if bot:
+        _configure_bot_visual(head)
     head.material_override = dark_material if bot else skin_material
     head.position = Vector3(0, 0.88, 0)
     actor.add_child(head)
@@ -154,6 +165,7 @@ func _make_actor_body(actor: CharacterBody3D, color: Color, bot: bool) -> void:
         var rifle_mesh := BoxMesh.new()
         rifle_mesh.size = Vector3(0.12, 0.13, 0.92)
         rifle.mesh = rifle_mesh
+        _configure_bot_visual(rifle)
         rifle.material_override = dark_material
         rifle.position = Vector3(0.36, 0.12, -0.43)
         actor.add_child(rifle)
@@ -164,6 +176,8 @@ func _make_actor_body(actor: CharacterBody3D, color: Color, bot: bool) -> void:
         arm_mesh.radius = 0.13
         arm_mesh.height = 0.78
         arm.mesh = arm_mesh
+        if bot:
+            _configure_bot_visual(arm)
         arm.material_override = body_material
         arm.position = Vector3(side * 0.46, 0.22, 0)
         arm.rotation_degrees.z = -side * 12.0
@@ -174,6 +188,8 @@ func _make_actor_body(actor: CharacterBody3D, color: Color, bot: bool) -> void:
         leg_mesh.radius = 0.15
         leg_mesh.height = 0.78
         leg.mesh = leg_mesh
+        if bot:
+            _configure_bot_visual(leg)
         leg.material_override = dark_material
         leg.position = Vector3(side * 0.19, -0.48, 0)
         actor.add_child(leg)
@@ -268,6 +284,7 @@ func _add_bot_visor(bot: Node3D) -> void:
     var mesh := BoxMesh.new()
     mesh.size = Vector3(0.48, 0.13, 0.08)
     visor.mesh = mesh
+    _configure_bot_visual(visor)
     visor.position = Vector3(0, 0.45, -0.39)
     visor.material_override = _make_material(Color(0.9, 0.04, 0.03))
     bot.add_child(visor)
