@@ -11,6 +11,7 @@ This is the active Android project, built with Godot 4.4.1 and the Compatibility
 - Bot chase movement, separation, ranged hitscan rifle attacks and close-range attacks.
 - **New, not yet validated:** neighbour-separation scans are staggered and refreshed about 5 times per second per bot instead of running on every physics frame, reducing repeated 49-bot proximity work.
 - **New, not yet validated:** bot render meshes use a 44 m visibility range with a 4 m margin. This culls distant mesh parts only; bot AI, CharacterBody3D movement and collision remain active. The actual draw-call/FPS benefit has not been measured.
+- **New, not yet validated:** procedural house/roof/tree visuals use a 76 m visibility range with an 8 m margin; building collision is retained. Repeated procedural props now share `StandardMaterial3D` resources by color to reduce duplicate material allocations. Actual memory/FPS gains have not been measured.
 - HUD for health, ammo, enemy count and match status.
 - **New, not yet validated:** match HUD positions are adjusted using Android/display safe-area insets. Top labels, centered status text, touch buttons and joystick are moved away from cutouts, and layout recalculates when the viewport size changes.
 - Mobile joystick knob and FIRE / RELOAD / JUMP / SPRINT / MEDKIT buttons.
@@ -30,7 +31,7 @@ This is the active Android project, built with Godot 4.4.1 and the Compatibility
 - Review the safe-zone implementation after the coding phase and validate its visual boundary, timing and damage behaviour.
 - Validate the new safe-area HUD positioning and tune scaling across phone aspect ratios and cutout layouts.
 - Improve character outfits, weapon holding pose, hit/death animations, weapon models, effects and audio.
-- Add more detailed terrain, shoreline, water, height variation and recognizable classic-inspired points of interest.
+- Add selectable Low (2 GB), Medium (4 GB), High (6 GB) graphics profiles and measure actual FPS/RAM use on physical devices; static scenery visibility and material reuse are now present in source but unvalidated.
 - Extend visibility/LOD to static island scenery and add selectable Low (2 GB), Medium (4 GB) and High (6 GB) profiles; measure actual FPS and RAM use on physical devices.
 - Add vehicles, parachute, pets, skins and custom rooms.
 - Add LAN/Wi-Fi/hotspot multiplayer only after offline gameplay is stable. Bluetooth may be used for optional device discovery only, not as gameplay transport.
