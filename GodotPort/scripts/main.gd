@@ -7,6 +7,9 @@ const BOT_COUNT := 49
 # Cull only distant bot render meshes; keep AI and collision active.
 const BOT_VISUAL_CULL_END := 44.0
 const BOT_VISUAL_CULL_MARGIN := 4.0
+# Static scenery is visual-only beyond this range; building collision remains available.
+const STATIC_SCENERY_CULL_END := 76.0
+const STATIC_SCENERY_CULL_MARGIN := 8.0
 
 var player: CharacterBody3D
 var menu_layer: Control
@@ -35,6 +38,7 @@ var inventory_label: Label
 var match_started := false
 var kills := 0
 var rng := RandomNumberGenerator.new()
+var material_cache: Dictionary = {}
 
 func _ready() -> void:
     rng.randomize()
@@ -95,16 +99,24 @@ func _build_world() -> void:
     player.died.connect(_on_player_died)
 
 func _make_material(color: Color) -> StandardMaterial3D:
+    # Reuse identical materials across procedural props instead of allocating one
+    # StandardMaterial3D per mesh instance on low-memory Android devices.
+    var cache_key := color.to_rgba32()
+    var cached := material_cache.get(cache_key) as StandardMaterial3D
+    if cached != null:
+        return cached
+
     var material := StandardMaterial3D.new()
     material.albedo_color = color
     material.roughness = 0.92
+    material_cache[cache_key] = material
     return material
 
 func _configure_bot_visual(mesh_instance: MeshInstance3D) -> void:
     mesh_instance.visibility_range_end = BOT_VISUAL_CULL_END
     mesh_instance.visibility_range_end_margin = BOT_VISUAL_CULL_MARGIN
 
-func _make_box(label: String, pos: Vector3, size: Vector3, color: Color, collision: bool) -> Node3D:
+func _make_box(label: String, pos: Vector3, size: Vector3, color: Color, collision: bool, visual_cull_end: float = 0.0) -> Node3D:
     var body: Node3D
     if collision:
         body = StaticBody3D.new()
@@ -122,6 +134,9 @@ func _make_box(label: String, pos: Vector3, size: Vector3, color: Color, collisi
     mesh.size = size
     mesh_instance.mesh = mesh
     mesh_instance.material_override = _make_material(color)
+    if visual_cull_end > 0.0:
+        mesh_instance.visibility_range_end = visual_cull_end
+        mesh_instance.visibility_range_end_margin = STATIC_SCENERY_CULL_MARGIN
     body.add_child(mesh_instance)
     add_child(body)
     return body
@@ -218,8 +233,8 @@ func _build_districts() -> void:
         var center: Vector3 = positions[i]
         for j in range(3):
             var offset := Vector3(-3.0 + float(j) * 3.2, 1.6, 0 if j == 1 else -4.0)
-            var building := _make_box(names[i] + "_House_" + str(j), center + offset, Vector3(4.2, 3.2, 4.0), Color(0.58, 0.51, 0.39), true)
-            _make_box(names[i] + "_Roof_" + str(j), center + offset + Vector3(0, 1.8, 0), Vector3(4.6, 0.35, 4.4), Color(0.27, 0.19, 0.15), false)
+            var building := _make_box(names[i] + "_House_" + str(j), center + offset, Vector3(4.2, 3.2, 4.0), Color(0.58, 0.51, 0.39), true, STATIC_SCENERY_CULL_END)
+            _make_box(names[i] + "_Roof_" + str(j), center + offset + Vector3(0, 1.8, 0), Vector3(4.6, 0.35, 4.4), Color(0.27, 0.19, 0.15), false, STATIC_SCENERY_CULL_END)
         var label := Label3D.new()
         label.text = names[i]
         label.position = center + Vector3(0, 5.0, 0)
@@ -234,12 +249,14 @@ func _build_trees() -> void:
         var angle := TAU * float(i) / 36.0
         var radius := rng.randf_range(48.0, 56.0)
         var p := Vector3(cos(angle) * radius, 0, sin(angle) * radius)
-        var trunk := _make_box("TreeTrunk", p + Vector3(0, 1.1, 0), Vector3(0.55, 2.2, 0.55), Color(0.29, 0.18, 0.10), false)
+        var trunk := _make_box("TreeTrunk", p + Vector3(0, 1.1, 0), Vector3(0.55, 2.2, 0.55), Color(0.29, 0.18, 0.10), false, STATIC_SCENERY_CULL_END)
         var crown := MeshInstance3D.new()
         var sphere := SphereMesh.new()
         sphere.radius = 1.8
         sphere.height = 3.6
         crown.mesh = sphere
+        crown.visibility_range_end = STATIC_SCENERY_CULL_END
+        crown.visibility_range_end_margin = STATIC_SCENERY_CULL_MARGIN
         crown.position = p + Vector3(0, 3.1, 0)
         crown.material_override = _make_material(Color(0.12, 0.34, 0.14))
         add_child(crown)
