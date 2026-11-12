@@ -13,6 +13,7 @@ const STATIC_SCENERY_CULL_MARGIN := 8.0
 
 var player: CharacterBody3D
 var menu_layer: Control
+var menu_panel: PanelContainer
 var hud_layer: Control
 var health_label: Label
 var ammo_label: Label
@@ -52,8 +53,11 @@ func _ready() -> void:
     _build_world()
     _build_menu()
     _build_hud()
+    menu_layer.resized.connect(_layout_menu)
     hud_layer.resized.connect(_layout_hud)
+    get_viewport().size_changed.connect(_layout_menu)
     get_viewport().size_changed.connect(_layout_hud)
+    call_deferred("_layout_menu")
     call_deferred("_layout_hud")
     hud_layer.hide()
     # The menu is the first screen; a match starts only after the player taps Offline Solo.
@@ -328,6 +332,7 @@ func _build_menu() -> void:
     panel.custom_minimum_size = Vector2(500, 520)
     panel.set_anchors_preset(Control.PRESET_CENTER)
     panel.position = Vector2(-250, -260)
+    menu_panel = panel
     menu_layer.add_child(panel)
     var column := VBoxContainer.new()
     column.add_theme_constant_override("separation", 14)
@@ -373,6 +378,21 @@ func _build_menu() -> void:
     note.text = "Classic-style island prototype\nWASD move • Shift sprint • Space jump\nF fire • R reload • drag screen to look"
     note.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
     column.add_child(note)
+
+func _layout_menu() -> void:
+    if not is_instance_valid(menu_layer) or not is_instance_valid(menu_panel):
+        return
+
+    var viewport_size := menu_layer.size
+    if viewport_size.x <= 0.0 or viewport_size.y <= 0.0:
+        return
+
+    var base_size := menu_panel.custom_minimum_size
+    var available_width := maxf(1.0, viewport_size.x - 24.0)
+    var available_height := maxf(1.0, viewport_size.y - 24.0)
+    var scale_factor := minf(1.0, minf(available_width / base_size.x, available_height / base_size.y))
+    menu_panel.scale = Vector2.ONE * scale_factor
+    menu_panel.position = Vector2(-base_size.x * scale_factor * 0.5, -base_size.y * scale_factor * 0.5)
 
 func _on_graphics_profile_selected(profile_index: int) -> void:
     _apply_graphics_profile(profile_index)
