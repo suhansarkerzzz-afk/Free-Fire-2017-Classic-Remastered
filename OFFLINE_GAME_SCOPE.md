@@ -6,9 +6,9 @@ An original, fan-inspired battle-royale prototype with a 2017-era visual directi
 
 The active Android build is the Godot 4.4.1 project in `GodotPort/`. The legacy Unity prototype remains in `Assets/` as reference code and is not part of the Godot APK.
 
-The current Godot prototype includes a procedural low-poly island, roads, houses, trees, 12 district labels, third-person player movement, touch-drag movement/look, 200 HP, rifle ammo/reload, raycast shooting, HUD and 49 bots with chase/separation movement, ranged hitscan attacks and close-range attacks. It also contains ammo/medkit pickups, healing, a shrinking safe zone, safe-zone HUD feedback and Android safe-area-aware touch controls. Recent bot-scan and bot-visual-culling optimizations are source changes only and have not been validated or benchmarked.
+The current Godot prototype includes a procedural low-poly island, roads, houses, trees, 12 district labels, third-person player movement, touch-drag movement/look, 200 HP, rifle ammo/reload, raycast shooting, HUD and 49 bots with chase/separation movement, ranged hitscan attacks and close-range attacks. It also contains ammo/medkit pickups, healing, a shrinking safe zone, safe-zone HUD feedback and Android safe-area-aware touch controls. The startup menu and selectable Low/Medium/High graphics profiles are now present in source: Low is the default, and profiles adjust bot/scenery visual distances and 3D MSAA. These recent menu, profile, bot-scan and visual-culling changes have not been compiled, run or benchmarked.
 
-The current Godot APK was successfully exported and uploaded by GitHub Actions run [#10](https://github.com/suhansarkerzzz-afk/Free-Fire-2017-Classic-Remastered/actions/runs/42046524963). The CI workflow imported the project, ran headless runtime validation, exported and signed the Android debug APK, and uploaded the artifact. Physical-device installation and gameplay have not yet been verified.
+The latest recorded successful Godot Android APK export is GitHub Actions run [#18](https://github.com/suhansarkerzzz-afk/Free-Fire-2017-Classic-Remastered/actions/runs/42053639599), on commit `85ba2032145bc8a03f46b051ff88bf96fcea8fb3`. It imported the project, ran headless runtime validation, exported and signed the Android debug APK, and uploaded the artifact. It predates the safe-zone, bot/scenery optimization, main-menu and graphics-profile changes; it does not validate the current source. Physical-device installation and gameplay have not yet been verified.
 
 ## Two offline / local-play design targets
 
@@ -34,11 +34,11 @@ The current Godot APK was successfully exported and uploaded by GitHub Actions r
 - The Godot project uses lightweight procedural primitives and the Compatibility renderer.
 - Android export supports ARMv7 and ARM64 and is configured for landscape.
 - No measured 2 GB / 4 GB / 6 GB device performance results are available yet.
-- The memory-aware graphics profile and Unity Android build helper belong to the legacy Unity prototype, not the active Godot APK.
+- The selectable graphics profiles now belong to the active Godot source but are not validated or benchmarked; they use manual Low/Medium/High choices and do not detect installed RAM. The Unity Android build helper remains part of the legacy reference project, not the active Godot APK workflow.
 
 ## Current limitations
 
-This is a prototype, not a finished commercial game. The Godot island is a flat procedural approximation, not the original Bermuda geometry. The Godot port still needs a polished analog joystick, weapon models/animations, parachute/plane, vehicle gameplay, minimap, richer audio/animation, wider LOD/graphics profiles and real-device performance tuning.
+This is a prototype, not a finished commercial game. The Godot island is a flat procedural approximation, not the original Bermuda geometry. The Godot port still needs a polished analog joystick, weapon models/animations, parachute/plane, vehicle gameplay, minimap, richer audio/animation, profile tuning and real-device performance measurements.
 
 The legacy Unity prototype contains additional feature experiments, but they are not automatically present in the Godot APK. Its Wi-Fi prototype is not authoritative multiplayer, and its Bluetooth RFCOMM experiment is deprecated and outside the agreed project scope.
 
