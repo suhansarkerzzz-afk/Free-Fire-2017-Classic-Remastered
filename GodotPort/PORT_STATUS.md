@@ -26,7 +26,7 @@ This is the active Android project, built with Godot 4.4.1 and the Compatibility
 
 - [Godot Android APK Build #18](https://github.com/suhansarkerzzz-afk/Free-Fire-2017-Classic-Remastered/actions/runs/42053639599) succeeded on commit `85ba2032145bc8a03f46b051ff88bf96fcea8fb3`.
 - That run predates the safe-zone addition and must not be treated as validation of the current source.
-- No CI build, Godot runtime test, APK export or phone test has been started for the safe-zone or bot-scan optimization changes.
+- No CI build, Godot runtime test, APK export or phone test has been started for the safe-zone, bot/scenery optimization, menu-first startup or selectable graphics-profile changes.
 
 ## Remaining work
 
