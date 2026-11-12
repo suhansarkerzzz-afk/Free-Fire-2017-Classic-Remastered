@@ -19,7 +19,7 @@ The active Android project is **Godot 4.4.1** in `GodotPort/`. The earlier Unity
 - Ammo and medkit pickups, medkit inventory counter and healing.
 - Player-death Game Over panel and Play Again scene restart.
 - A shrinking safe-zone controller has now been added to the Godot match startup. It begins with a 45-second grace period, contracts over 180 seconds and damages the player/bots outside its boundary. This latest safe-zone code has **not** been run or validated yet.
-- **New, not yet validated:** the main menu is now the first screen; a match starts only when the player taps Offline Solo.
+- **New, not yet validated:** the main menu is now the first screen; a match starts only when the player taps Offline Solo. The menu panel scales to fit smaller landscape viewports.
 - **New, not yet validated:** selectable Low (2 GB), Medium (4 GB) and High (6 GB) graphics profiles. Low is the default; profiles adjust bot/scenery visual distances and 3D MSAA. RAM labels are guidance only, not automatic detection, and performance has not been measured.
 
 This is still an early offline prototype, not a finished battle royale.
