@@ -19,6 +19,8 @@ This is the active Android project, built with Godot 4.4.1 and the Compatibility
 - Player-death Game Over panel and Play Again scene restart.
 - **New, not yet validated:** shrinking safe-zone controller. It waits 45 seconds, contracts from 52 m to 8 m over 180 seconds, draws a boundary ring and deals 8 damage every 2 seconds to the player/bots outside it.
 - **New, not yet validated:** match HUD reports the safe-zone countdown, shrink percentage and final radius. The HUD polls the controller four times per second rather than every rendered frame.
+- **New, not yet validated:** the main menu is now the first screen; the game no longer starts a match automatically. The player must tap Offline Solo to enter the match.
+- **New, not yet validated:** the menu offers Low (2 GB), Medium (4 GB) and High (6 GB) graphics profiles. Low is the default; profiles adjust bot/scenery visual distances and 3D MSAA. The RAM labels are manual guidance, not automatic device detection, and no device performance has been measured.
 
 ## Last recorded CI result
 
@@ -31,8 +33,8 @@ This is the active Android project, built with Godot 4.4.1 and the Compatibility
 - Review the safe-zone implementation after the coding phase and validate its visual boundary, timing and damage behaviour.
 - Validate the new safe-area HUD positioning and tune scaling across phone aspect ratios and cutout layouts.
 - Improve character outfits, weapon holding pose, hit/death animations, weapon models, effects and audio.
-- Add selectable Low (2 GB), Medium (4 GB), High (6 GB) graphics profiles and measure actual FPS/RAM use on physical devices; static scenery visibility and material reuse are now present in source but unvalidated.
-- Extend visibility/LOD to static island scenery and add selectable Low (2 GB), Medium (4 GB) and High (6 GB) profiles; measure actual FPS and RAM use on physical devices.
+- Validate the main-menu layout and profile selection at common Android landscape resolutions and safe-area sizes.
+- Measure actual FPS/RAM use on physical 2 GB / 4 GB / 6 GB devices; tune visual distances and MSAA from those results rather than assuming the profile labels guarantee compatibility.
 - Add vehicles, parachute, pets, skins and custom rooms.
 - Add LAN/Wi-Fi/hotspot multiplayer only after offline gameplay is stable. Bluetooth may be used for optional device discovery only, not as gameplay transport.
 - Voice chat is explicitly out of scope.
