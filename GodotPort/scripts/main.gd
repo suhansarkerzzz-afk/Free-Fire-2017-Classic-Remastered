@@ -39,10 +39,16 @@ var match_started := false
 var kills := 0
 var rng := RandomNumberGenerator.new()
 var material_cache: Dictionary = {}
+var graphics_profile := 0
+var graphics_profile_hint: Label
+var bot_visual_range := BOT_VISUAL_CULL_END
+var scenery_visual_range := STATIC_SCENERY_CULL_END
 
 func _ready() -> void:
     rng.randomize()
     _setup_input()
+    # Default to the low-memory profile before creating the procedural island.
+    _apply_graphics_profile(0)
     _build_world()
     _build_menu()
     _build_hud()
@@ -50,8 +56,7 @@ func _ready() -> void:
     get_viewport().size_changed.connect(_layout_hud)
     call_deferred("_layout_hud")
     hud_layer.hide()
-    # Start the playable scene immediately on Android so the first screen is the 3D island, not a text-only menu.
-    call_deferred("start_match")
+    # The menu is the first screen; a match starts only after the player taps Offline Solo.
 
 func _setup_input() -> void:
     _add_key_action("move_left", KEY_A)
@@ -113,7 +118,8 @@ func _make_material(color: Color) -> StandardMaterial3D:
     return material
 
 func _configure_bot_visual(mesh_instance: MeshInstance3D) -> void:
-    mesh_instance.visibility_range_end = BOT_VISUAL_CULL_END
+    mesh_instance.add_to_group("bot_visual_lod")
+    mesh_instance.visibility_range_end = bot_visual_range
     mesh_instance.visibility_range_end_margin = BOT_VISUAL_CULL_MARGIN
 
 func _make_box(label: String, pos: Vector3, size: Vector3, color: Color, collision: bool, visual_cull_end: float = 0.0) -> Node3D:
@@ -135,7 +141,8 @@ func _make_box(label: String, pos: Vector3, size: Vector3, color: Color, collisi
     mesh_instance.mesh = mesh
     mesh_instance.material_override = _make_material(color)
     if visual_cull_end > 0.0:
-        mesh_instance.visibility_range_end = visual_cull_end
+        mesh_instance.add_to_group("scenery_visual_lod")
+        mesh_instance.visibility_range_end = scenery_visual_range
         mesh_instance.visibility_range_end_margin = STATIC_SCENERY_CULL_MARGIN
     body.add_child(mesh_instance)
     add_child(body)
@@ -255,7 +262,8 @@ func _build_trees() -> void:
         sphere.radius = 1.8
         sphere.height = 3.6
         crown.mesh = sphere
-        crown.visibility_range_end = STATIC_SCENERY_CULL_END
+        crown.add_to_group("scenery_visual_lod")
+        crown.visibility_range_end = scenery_visual_range
         crown.visibility_range_end_margin = STATIC_SCENERY_CULL_MARGIN
         crown.position = p + Vector3(0, 3.1, 0)
         crown.material_override = _make_material(Color(0.12, 0.34, 0.14))
@@ -317,22 +325,45 @@ func _build_menu() -> void:
     shade.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
     menu_layer.add_child(shade)
     var panel := PanelContainer.new()
-    panel.custom_minimum_size = Vector2(480, 420)
+    panel.custom_minimum_size = Vector2(500, 520)
     panel.set_anchors_preset(Control.PRESET_CENTER)
-    panel.position = Vector2(-240, -210)
+    panel.position = Vector2(-250, -260)
     menu_layer.add_child(panel)
     var column := VBoxContainer.new()
-    column.add_theme_constant_override("separation", 18)
+    column.add_theme_constant_override("separation", 14)
     panel.add_child(column)
     var title := Label.new()
     title.text = "FREE FIRE 2017\nCLASSIC REMASTERED"
     title.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
-    title.add_theme_font_size_override("font_size", 34)
+    title.add_theme_font_size_override("font_size", 32)
     column.add_child(title)
     var subtitle := Label.new()
     subtitle.text = "OFFLINE BATTLE ROYALE • GODOT PORT"
     subtitle.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
     column.add_child(subtitle)
+
+    var profile_title := Label.new()
+    profile_title.text = "GRAPHICS PROFILE"
+    profile_title.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+    profile_title.add_theme_font_size_override("font_size", 18)
+    column.add_child(profile_title)
+
+    var profile_option := OptionButton.new()
+    profile_option.custom_minimum_size.y = 54
+    profile_option.add_item("LOW  •  2 GB RAM", 0)
+    profile_option.add_item("MEDIUM  •  4 GB RAM", 1)
+    profile_option.add_item("HIGH  •  6 GB RAM", 2)
+    profile_option.select(0)
+    profile_option.item_selected.connect(_on_graphics_profile_selected)
+    column.add_child(profile_option)
+
+    graphics_profile_hint = Label.new()
+    graphics_profile_hint.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+    graphics_profile_hint.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
+    graphics_profile_hint.add_theme_font_size_override("font_size", 15)
+    column.add_child(graphics_profile_hint)
+    _update_graphics_profile_hint()
+
     var start := Button.new()
     start.text = "OFFLINE SOLO  •  49 BOTS"
     start.custom_minimum_size.y = 64
@@ -342,6 +373,58 @@ func _build_menu() -> void:
     note.text = "Classic-style island prototype\nWASD move • Shift sprint • Space jump\nF fire • R reload • drag screen to look"
     note.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
     column.add_child(note)
+
+func _on_graphics_profile_selected(profile_index: int) -> void:
+    _apply_graphics_profile(profile_index)
+
+func _apply_graphics_profile(profile_index: int) -> void:
+    graphics_profile = clampi(profile_index, 0, 2)
+    var msaa_mode := Viewport.MSAA_DISABLED
+    var hint_text := ""
+
+    match graphics_profile:
+        0:
+            bot_visual_range = 32.0
+            scenery_visual_range = 48.0
+            msaa_mode = Viewport.MSAA_DISABLED
+            hint_text = "Best starting point for 2 GB phones. Shorter visual range and no 3D MSAA."
+        1:
+            bot_visual_range = 44.0
+            scenery_visual_range = 76.0
+            msaa_mode = Viewport.MSAA_2X
+            hint_text = "Balanced visual range and 2x 3D anti-aliasing. Intended for 4 GB phones."
+        2:
+            bot_visual_range = 58.0
+            scenery_visual_range = 96.0
+            msaa_mode = Viewport.MSAA_4X
+            hint_text = "Longer visual range and 4x 3D anti-aliasing. Intended for 6 GB phones."
+
+    get_viewport().msaa_3d = msaa_mode
+
+    for visual in get_tree().get_nodes_in_group("bot_visual_lod"):
+        var bot_mesh := visual as GeometryInstance3D
+        if is_instance_valid(bot_mesh):
+            bot_mesh.visibility_range_end = bot_visual_range
+
+    for visual in get_tree().get_nodes_in_group("scenery_visual_lod"):
+        var scenery_mesh := visual as GeometryInstance3D
+        if is_instance_valid(scenery_mesh):
+            scenery_mesh.visibility_range_end = scenery_visual_range
+
+    _update_graphics_profile_hint(hint_text)
+
+func _update_graphics_profile_hint(hint_text: String = "") -> void:
+    if not is_instance_valid(graphics_profile_hint):
+        return
+    if hint_text.is_empty():
+        match graphics_profile:
+            0:
+                hint_text = "Best starting point for 2 GB phones. Shorter visual range and no 3D MSAA."
+            1:
+                hint_text = "Balanced visual range and 2x 3D anti-aliasing. Intended for 4 GB phones."
+            2:
+                hint_text = "Longer visual range and 4x 3D anti-aliasing. Intended for 6 GB phones."
+    graphics_profile_hint.text = hint_text
 
 func _build_hud() -> void:
     var hud_canvas := CanvasLayer.new()
