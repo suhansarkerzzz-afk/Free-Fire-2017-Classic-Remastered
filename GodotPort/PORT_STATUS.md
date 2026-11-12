@@ -19,7 +19,7 @@ This is the active Android project, built with Godot 4.4.1 and the Compatibility
 - Player-death Game Over panel and Play Again scene restart.
 - **New, not yet validated:** shrinking safe-zone controller. It waits 45 seconds, contracts from 52 m to 8 m over 180 seconds, draws a boundary ring and deals 8 damage every 2 seconds to the player/bots outside it.
 - **New, not yet validated:** match HUD reports the safe-zone countdown, shrink percentage and final radius. The HUD polls the controller four times per second rather than every rendered frame.
-- **New, not yet validated:** the main menu is now the first screen; the game no longer starts a match automatically. The player must tap Offline Solo to enter the match.
+- **New, not yet validated:** the main menu is now the first screen; the game no longer starts a match automatically. The player must tap Offline Solo to enter the match. The menu panel scales to fit smaller landscape viewports.
 - **New, not yet validated:** the menu offers Low (2 GB), Medium (4 GB) and High (6 GB) graphics profiles. Low is the default; profiles adjust bot/scenery visual distances and 3D MSAA. The RAM labels are manual guidance, not automatic device detection, and no device performance has been measured.
 
 ## Last recorded CI result
