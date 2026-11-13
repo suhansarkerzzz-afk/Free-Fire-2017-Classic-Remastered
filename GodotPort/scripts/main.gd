@@ -42,14 +42,16 @@ var rng := RandomNumberGenerator.new()
 var material_cache: Dictionary = {}
 var graphics_profile := 0
 var graphics_profile_hint: Label
+const SETTINGS_PATH := "user://settings.cfg"
 var bot_visual_range := BOT_VISUAL_CULL_END
 var scenery_visual_range := STATIC_SCENERY_CULL_END
 
 func _ready() -> void:
     rng.randomize()
     _setup_input()
-    # Default to the low-memory profile before creating the procedural island.
-    _apply_graphics_profile(0)
+    _load_graphics_settings()
+    # Apply the saved profile before creating the procedural island.
+    _apply_graphics_profile(graphics_profile)
     _build_world()
     _build_menu()
     _build_hud()
@@ -358,7 +360,7 @@ func _build_menu() -> void:
     profile_option.add_item("LOW  •  2 GB RAM", 0)
     profile_option.add_item("MEDIUM  •  4 GB RAM", 1)
     profile_option.add_item("HIGH  •  6 GB RAM", 2)
-    profile_option.select(0)
+    profile_option.select(graphics_profile)
     profile_option.item_selected.connect(_on_graphics_profile_selected)
     column.add_child(profile_option)
 
@@ -394,8 +396,24 @@ func _layout_menu() -> void:
     menu_panel.scale = Vector2.ONE * scale_factor
     menu_panel.position = Vector2(-base_size.x * scale_factor * 0.5, -base_size.y * scale_factor * 0.5)
 
+func _load_graphics_settings() -> void:
+    var config := ConfigFile.new()
+    var load_error := config.load(SETTINGS_PATH)
+    if load_error == OK:
+        graphics_profile = clampi(int(config.get_value("graphics", "profile", 0)), 0, 2)
+    else:
+        graphics_profile = 0
+
+func _save_graphics_settings() -> void:
+    var config := ConfigFile.new()
+    config.set_value("graphics", "profile", graphics_profile)
+    var save_error := config.save(SETTINGS_PATH)
+    if save_error != OK:
+        push_warning("Could not save graphics profile settings: %s" % error_string(save_error))
+
 func _on_graphics_profile_selected(profile_index: int) -> void:
     _apply_graphics_profile(profile_index)
+    _save_graphics_settings()
 
 func _apply_graphics_profile(profile_index: int) -> void:
     graphics_profile = clampi(profile_index, 0, 2)
