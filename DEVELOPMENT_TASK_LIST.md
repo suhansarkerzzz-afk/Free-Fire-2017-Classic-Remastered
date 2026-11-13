@@ -25,7 +25,7 @@ The active Android project is the Godot 4.4.1 port in `GodotPort/`. Keep the cla
 - [ ] Improve safe-zone feedback and review edge cases after testing is authorized.
 - [ ] Validate safe-area HUD positioning and tune scaling across phone aspect ratios, cutouts and landscape devices.
 - [ ] Improve island terrain, shoreline, water, elevation and recognizable classic-inspired POIs.
-- [ ] Extend LOD/visibility to static island scenery.
+- [ ] Tune Low / Medium / High rendering budgets using measured FPS and memory results after the coding phase is complete and testing is authorized.
 - [ ] Add vehicles and vehicle interaction.
 - [ ] Add plane/parachute deployment, pets, character skins and custom rooms.
 - [ ] Add LAN/Wi-Fi/hotspot multiplayer after offline gameplay is stable.
