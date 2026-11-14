@@ -21,6 +21,7 @@ This is the active Android project, built with Godot 4.4.1 and the Compatibility
 - **New, not yet validated:** match HUD reports the safe-zone countdown, shrink percentage and final radius. The HUD polls the controller four times per second rather than every rendered frame.
 - **New, not yet validated:** the main menu is now the first screen; the game no longer starts a match automatically. The player must tap Offline Solo to enter the match. The menu panel scales to fit smaller landscape viewports.
 - **New, not yet validated:** the menu offers Low (2 GB), Medium (4 GB) and High (6 GB) graphics profiles. Low is the default; profiles adjust bot/scenery visual distances and 3D MSAA. The selected profile is saved to `user://settings.cfg` and restored on the next launch. The RAM labels are manual guidance, not automatic device detection, and no device performance has been measured.
+- **New, not yet validated:** a low-poly procedural Jeep has a `CharacterBody3D` controller, forward/reverse acceleration, steering, braking-by-coasting, keyboard controls, touch-joystick input, and nearby enter/exit interaction. The driver camera follows the vehicle seat; the on-screen DRIVE/EXIT button appears near the Jeep. This is an initial source prototype only; collision, handling, seat/camera alignment and mobile behaviour have not been tested.
 
 ## Last recorded CI result
 
@@ -35,14 +36,14 @@ This is the active Android project, built with Godot 4.4.1 and the Compatibility
 - Improve character outfits, weapon holding pose, hit/death animations, weapon models, effects and audio.
 - Validate the main-menu layout and profile selection at common Android landscape resolutions and safe-area sizes.
 - Measure actual FPS/RAM use on physical 2 GB / 4 GB / 6 GB devices; tune visual distances and MSAA from those results rather than assuming the profile labels guarantee compatibility.
-- Add vehicles, parachute, pets, skins and custom rooms.
+- Validate and tune the Jeep controller, collision, seat/camera alignment and mobile interaction after authorization; then add vehicle damage/additional vehicles, parachute, pets, skins and custom rooms.
 - Add LAN/Wi-Fi/hotspot multiplayer only after offline gameplay is stable. Bluetooth may be used for optional device discovery only, not as gameplay transport.
 - Voice chat is explicitly out of scope.
 
 ## Controls
 
-- Desktop: WASD move, Shift sprint, Space jump, F fire, R reload, right-mouse drag to look.
-- Android: drag on the left side to move, drag on the right side to look, and use FIRE / RELOAD / JUMP / SPRINT / MEDKIT buttons.
+- Desktop: WASD move, Shift sprint, Space jump, F fire, R reload, E enters/exits the nearby Jeep, right-mouse drag to look.
+- Android: drag on the left side to move/steer, drag on the right side to look, use FIRE / RELOAD / JUMP / SPRINT / MEDKIT, and tap DRIVE/EXIT when near the Jeep.
 
 ## Build policy during coding
 
