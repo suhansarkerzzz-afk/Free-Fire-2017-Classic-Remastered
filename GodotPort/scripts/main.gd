@@ -501,7 +501,7 @@ func _build_hud() -> void:
     jump_button = _make_mobile_button("JUMP", Vector2(-290, -155), Vector2(110, 60), func(): _jump_player())
     sprint_button = _make_mobile_button("SPRINT", Vector2(-290, -80), Vector2(110, 60), func(): player.sprinting = not player.sprinting)
     medkit_button = _make_mobile_button("MEDKIT", Vector2(-425, -80), Vector2(115, 60), _use_medkit)
-    vehicle_button = _make_mobile_button("DRIVE", Vector2(-155, -270), Vector2(130, 64), _toggle_vehicle)
+    vehicle_button = _make_mobile_button("DRIVE", Vector2(-155, -300), Vector2(130, 64), _toggle_vehicle)
     vehicle_button.hide()
     inventory_label = _make_hud_label("MEDKITS: 0", Vector2(24, 116), Vector2(260, 38), 19)
     _make_move_pad()
@@ -624,7 +624,7 @@ func _layout_hud() -> void:
     if is_instance_valid(medkit_button):
         medkit_button.position = Vector2(-425.0 - safe_right, -80.0 - safe_bottom)
     if is_instance_valid(vehicle_button):
-        vehicle_button.position = Vector2(-155.0 - safe_right, -270.0 - safe_bottom)
+        vehicle_button.position = Vector2(-155.0 - safe_right, -300.0 - safe_bottom)
     if is_instance_valid(move_pad):
         move_pad.position = Vector2(35.0 + safe_left, -185.0 - safe_bottom)
 
