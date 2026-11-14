@@ -19,6 +19,7 @@ The active Android project is the Godot 4.4.1 port in `GodotPort/`. Keep the cla
 - [x] Safe-zone HUD status text for countdown, shrink percentage and final radius. **Not yet validated.**
 - [x] Add source-level safe-area-aware HUD positioning for display cutouts and viewport resizing. **Not yet validated on a device.**
 - [x] Add selectable Low (2 GB), Medium (4 GB), High (6 GB) graphics profiles; Low is the default and the selected profile is saved to `user://settings.cfg`. RAM labels are manual guidance, not automatic device detection. **Not yet validated on a device.**
+- [x] Add a lightweight procedural Jeep prototype with keyboard/touch-joystick driving, nearby enter/exit interaction and a mobile DRIVE/EXIT button. **Source only; not yet validated, and it is not a complete vehicle system.**
 
 ## Next coding priorities
 
@@ -26,7 +27,7 @@ The active Android project is the Godot 4.4.1 port in `GodotPort/`. Keep the cla
 - [ ] Validate safe-area HUD positioning and tune scaling across phone aspect ratios, cutouts and landscape devices.
 - [ ] Improve island terrain, shoreline, water, elevation and recognizable classic-inspired POIs.
 - [ ] Tune Low / Medium / High rendering budgets using measured FPS and memory results after the coding phase is complete and testing is authorized.
-- [ ] Add vehicles and vehicle interaction.
+- [ ] Review and tune Jeep handling, collision, camera/seat position and mobile interaction after testing is authorized; then add vehicle damage and additional vehicle types.
 - [ ] Add plane/parachute deployment, pets, character skins and custom rooms.
 - [ ] Add LAN/Wi-Fi/hotspot multiplayer after offline gameplay is stable.
 - [ ] Optional Bluetooth device discovery only; it must not be used as gameplay transport.
