@@ -3,6 +3,7 @@ extends Node3D
 const PlayerScript = preload("res://scripts/player.gd")
 const BotScript = preload("res://scripts/bot.gd")
 const SafeZoneScript = preload("res://scripts/safe_zone.gd")
+const VehicleScript = preload("res://scripts/vehicle.gd")
 const BOT_COUNT := 49
 # Cull only distant bot render meshes; keep AI and collision active.
 const BOT_VISUAL_CULL_END := 44.0
@@ -12,6 +13,8 @@ const STATIC_SCENERY_CULL_END := 76.0
 const STATIC_SCENERY_CULL_MARGIN := 8.0
 
 var player: CharacterBody3D
+var vehicle: Node3D
+var vehicle_button: Button
 var menu_layer: Control
 var menu_panel: PanelContainer
 var hud_layer: Control
@@ -73,6 +76,7 @@ func _setup_input() -> void:
     _add_key_action("jump", KEY_SPACE)
     _add_key_action("reload", KEY_R)
     _add_key_action("fire", KEY_F)
+    _add_key_action("interact", KEY_E)
 
 func _add_key_action(action: String, key: Key) -> void:
     if not InputMap.has_action(action):
@@ -108,6 +112,7 @@ func _build_world() -> void:
     player.health_changed.connect(_on_health_changed)
     player.ammo_changed.connect(_on_ammo_changed)
     player.died.connect(_on_player_died)
+    _build_vehicle()
 
 func _make_material(color: Color) -> StandardMaterial3D:
     # Reuse identical materials across procedural props instead of allocating one
@@ -238,6 +243,12 @@ func _build_player_visual(actor: CharacterBody3D) -> void:
     camera.position.z = 0.0
     camera.current = true
     arm.add_child(camera)
+
+func _build_vehicle() -> void:
+    vehicle = VehicleScript.new()
+    vehicle.name = "ClassicJeep"
+    vehicle.position = Vector3(3.2, 0.0, 8.0)
+    add_child(vehicle)
 
 func _build_districts() -> void:
     var names := ["SHIPYARD", "BULLSEYE", "OBSERVATORY", "PLANTATION", "MILL", "CAPE TOWN", "HANGAR", "CLOCK TOWER", "FACTORY", "PEAK", "POCHINOK", "SENTOSA"]
@@ -490,6 +501,8 @@ func _build_hud() -> void:
     jump_button = _make_mobile_button("JUMP", Vector2(-290, -155), Vector2(110, 60), func(): _jump_player())
     sprint_button = _make_mobile_button("SPRINT", Vector2(-290, -80), Vector2(110, 60), func(): player.sprinting = not player.sprinting)
     medkit_button = _make_mobile_button("MEDKIT", Vector2(-425, -80), Vector2(115, 60), _use_medkit)
+    vehicle_button = _make_mobile_button("DRIVE", Vector2(-155, -270), Vector2(130, 64), _toggle_vehicle)
+    vehicle_button.hide()
     inventory_label = _make_hud_label("MEDKITS: 0", Vector2(24, 116), Vector2(260, 38), 19)
     _make_move_pad()
 
@@ -610,8 +623,32 @@ func _layout_hud() -> void:
         sprint_button.position = Vector2(-290.0 - safe_right, -80.0 - safe_bottom)
     if is_instance_valid(medkit_button):
         medkit_button.position = Vector2(-425.0 - safe_right, -80.0 - safe_bottom)
+    if is_instance_valid(vehicle_button):
+        vehicle_button.position = Vector2(-155.0 - safe_right, -270.0 - safe_bottom)
     if is_instance_valid(move_pad):
         move_pad.position = Vector2(35.0 + safe_left, -185.0 - safe_bottom)
+
+func _update_vehicle_interaction() -> void:
+    if not is_instance_valid(vehicle_button) or not is_instance_valid(vehicle) or not is_instance_valid(player):
+        return
+
+    if bool(vehicle.get("is_occupied")):
+        vehicle_button.text = "EXIT JEEP"
+        vehicle_button.show()
+    elif player.global_position.distance_to(vehicle.global_position) <= 4.5:
+        vehicle_button.text = "DRIVE"
+        vehicle_button.show()
+    else:
+        vehicle_button.hide()
+
+func _toggle_vehicle() -> void:
+    if not match_started or not is_instance_valid(vehicle) or not is_instance_valid(player):
+        return
+
+    if bool(vehicle.get("is_occupied")):
+        vehicle.call("exit_vehicle")
+    elif player.global_position.distance_to(vehicle.global_position) <= 4.5:
+        vehicle.call("enter_vehicle", player)
 
 func _spawn_loot() -> void:
     # Lightweight proximity pickups: green medkits and yellow rifle-ammo crates.
@@ -688,6 +725,9 @@ func start_match() -> void:
 
 func _process(delta: float) -> void:
     if match_started and is_instance_valid(player):
+        _update_vehicle_interaction()
+        if Input.is_action_just_pressed("interact"):
+            _toggle_vehicle()
         _update_bot_count()
         zone_ui_timer += delta
         if zone_ui_timer >= 0.25:
@@ -715,6 +755,8 @@ func _on_ammo_changed(current: int, reserve: int) -> void:
 
 func _on_player_died() -> void:
     status_label.text = "ELIMINATED"
+    if is_instance_valid(vehicle) and bool(vehicle.get("is_occupied")):
+        vehicle.call("exit_vehicle")
     _show_game_over()
 
 func _show_game_over() -> void:
