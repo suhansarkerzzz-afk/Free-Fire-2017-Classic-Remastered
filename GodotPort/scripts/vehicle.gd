@@ -134,7 +134,7 @@ func exit_vehicle() -> void:
             child.visible = true
     var camera_arm := driver.get_node_or_null("CameraPivot/SpringArm3D") as SpringArm3D
     if is_instance_valid(camera_arm):
-        camera_arm.remove_excluded_object(get_rid())
+        camera_arm.clear_excluded_objects()
     driver.velocity = Vector3.ZERO
 
     driver = null
