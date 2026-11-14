@@ -20,6 +20,7 @@ var firing := false
 var fire_cooldown := 0.0
 var reload_timer := 0.0
 var is_dead := false
+var is_in_vehicle := false
 
 @onready var pivot: Node3D = $CameraPivot
 @onready var spring_arm: SpringArm3D = $CameraPivot/SpringArm3D
@@ -40,6 +41,9 @@ func look_by(delta_pixels: Vector2) -> void:
 
 func _physics_process(delta: float) -> void:
     if is_dead:
+        return
+    if is_in_vehicle:
+        velocity = Vector3.ZERO
         return
     fire_cooldown = maxf(0.0, fire_cooldown - delta)
     if reload_timer > 0.0:
