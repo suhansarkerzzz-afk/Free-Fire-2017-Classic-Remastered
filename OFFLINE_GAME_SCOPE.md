@@ -6,7 +6,7 @@ An original, fan-inspired battle-royale prototype with a 2017-era visual directi
 
 The active Android build is the Godot 4.4.1 project in `GodotPort/`. The legacy Unity prototype remains in `Assets/` as reference code and is not part of the Godot APK.
 
-The current Godot prototype includes a procedural low-poly island, roads, houses, trees, 12 district labels, third-person player movement, touch-drag movement/look, 200 HP, rifle ammo/reload, raycast shooting, HUD and 49 bots with chase/separation movement, ranged hitscan attacks and close-range attacks. It also contains ammo/medkit pickups, healing, a shrinking safe zone, safe-zone HUD feedback and Android safe-area-aware touch controls. The startup menu and selectable Low/Medium/High graphics profiles are now present in source: Low is the default, and profiles adjust bot/scenery visual distances and 3D MSAA. These recent menu, profile, bot-scan and visual-culling changes have not been compiled, run or benchmarked.
+The current Godot prototype includes a procedural low-poly island, roads, houses, trees, 12 district labels, third-person player movement, touch-drag movement/look, 200 HP, rifle ammo/reload, raycast shooting, HUD and 49 bots with chase/separation movement, ranged hitscan attacks and close-range attacks. It also contains ammo/medkit pickups, healing, a shrinking safe zone, safe-zone HUD feedback and Android safe-area-aware touch controls. The startup menu and selectable Low/Medium/High graphics profiles are present in source: Low is the default, and profiles adjust bot/scenery visual distances and 3D MSAA. A first procedural Jeep controller now has keyboard/touch-joystick driving plus nearby enter/exit interaction. These menu, profile, optimization, safe-zone and vehicle changes are source-only and have not been compiled, run or benchmarked.
 
 The latest recorded successful Godot Android APK export is GitHub Actions run [#18](https://github.com/suhansarkerzzz-afk/Free-Fire-2017-Classic-Remastered/actions/runs/42053639599), on commit `85ba2032145bc8a03f46b051ff88bf96fcea8fb3`. It imported the project, ran headless runtime validation, exported and signed the Android debug APK, and uploaded the artifact. It predates the safe-zone, bot/scenery optimization, main-menu and graphics-profile changes; it does not validate the current source. Physical-device installation and gameplay have not yet been verified.
 
@@ -17,7 +17,7 @@ The latest recorded successful Godot Android APK export is GitHub Actions run [#
 - Target: one local human player against 49 local AI bots.
 - Current Godot version: bots have basic chase/separation movement, ranged hitscan attacks and close-range attacks; behaviour is not yet balanced or tested.
 - The island and POIs are procedural approximations, not a faithful recreation of the original map.
-- Ammo/medkit pickups, healing and safe-zone logic exist in source but remain unvalidated. Plane/parachute, weapon pickup/drop and vehicle gameplay are not implemented in the active Godot port.
+- Ammo/medkit pickups, healing and safe-zone logic exist in source but remain unvalidated. A basic procedural Jeep and driving/enter-exit controller have been added in source but are not validated or considered complete vehicle gameplay. Plane/parachute and weapon pickup/drop remain unimplemented in the active Godot port.
 
 ### Local Wi-Fi / mobile Hotspot (legacy Unity prototype — BETA)
 
@@ -60,8 +60,8 @@ The legacy Unity Android workflow still requires a valid `UNITY_LICENSE` secret.
 
 ## Controls
 
-- Godot desktop prototype: WASD move; Shift sprint; Space jump; F fire; R reload; right-mouse drag to look.
-- Godot Android prototype: drag the left side to move; drag the right side to look; tap/hold the on-screen action buttons.
+- Godot desktop prototype: WASD move; Shift sprint; Space jump; F fire; R reload; E enters/exits the nearby Jeep; right-mouse drag to look.
+- Godot Android prototype: drag the left side to move/steer; drag the right side to look; tap/hold the on-screen action buttons. A DRIVE/EXIT button appears near the Jeep.
 - Legacy Unity prototype: left joystick to move/steer; SPRINT and JUMP buttons; drag the right side to look; FIRE, RELOAD, SWAP, DROP, MEDKIT and DRIVE buttons.
 
 ## Planned improvements
@@ -72,7 +72,7 @@ The legacy Unity Android workflow still requires a valid `UNITY_LICENSE` secret.
 - Spawn island, airplane route and controllable parachute.
 - Crouch/prone, scopes, recoil, weapon balancing and equipment.
 - Full minimap and battle HUD.
-- Expand loot/inventory and implement vehicle gameplay in Godot.
+- Expand the Godot Jeep prototype with validated handling, collision, camera/seat positioning, vehicle damage and additional vehicle types.
 - Design and implement authoritative Wi-Fi/Hotspot combat, health, loot, match synchronization, reconnect and room lifecycle after offline gameplay is stable.
 - Optional Bluetooth device discovery only; no Bluetooth gameplay transport.
 - Sound, animation and low-memory profiling on physical Android devices.
