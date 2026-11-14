@@ -106,6 +106,12 @@ func enter_vehicle(player_node: CharacterBody3D) -> bool:
     driver.set("move_input", Vector2.ZERO)
     driver.set("firing", false)
     driver.velocity = Vector3.ZERO
+    for child in driver.get_children():
+        if child is MeshInstance3D:
+            child.visible = false
+    var camera_arm := driver.get_node_or_null("CameraPivot/SpringArm3D") as SpringArm3D
+    if is_instance_valid(camera_arm):
+        camera_arm.add_excluded_object(get_rid())
     is_occupied = true
     _sync_driver_to_seat()
     return true
@@ -123,6 +129,12 @@ func exit_vehicle() -> void:
     driver.set("is_in_vehicle", false)
     driver.collision_layer = saved_driver_collision_layer
     driver.collision_mask = saved_driver_collision_mask
+    for child in driver.get_children():
+        if child is MeshInstance3D:
+            child.visible = true
+    var camera_arm := driver.get_node_or_null("CameraPivot/SpringArm3D") as SpringArm3D
+    if is_instance_valid(camera_arm):
+        camera_arm.remove_excluded_object(get_rid())
     driver.velocity = Vector3.ZERO
 
     driver = null
