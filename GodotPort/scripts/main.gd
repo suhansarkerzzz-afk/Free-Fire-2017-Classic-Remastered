@@ -631,6 +631,9 @@ func _layout_hud() -> void:
 func _update_vehicle_interaction() -> void:
     if not is_instance_valid(vehicle_button) or not is_instance_valid(vehicle) or not is_instance_valid(player):
         return
+    if bool(player.get("is_dead")):
+        vehicle_button.hide()
+        return
 
     if bool(vehicle.get("is_occupied")):
         vehicle_button.text = "EXIT JEEP"
@@ -643,6 +646,8 @@ func _update_vehicle_interaction() -> void:
 
 func _toggle_vehicle() -> void:
     if not match_started or not is_instance_valid(vehicle) or not is_instance_valid(player):
+        return
+    if bool(player.get("is_dead")):
         return
 
     if bool(vehicle.get("is_occupied")):
