@@ -12,6 +12,8 @@ var is_occupied := false
 var current_speed := 0.0
 var saved_driver_collision_layer := 1
 var saved_driver_collision_mask := 1
+var wheel_spin_nodes: Array[Node3D] = []
+var front_wheel_steering_nodes: Array[Node3D] = []
 
 func _ready() -> void:
     _build_vehicle_visual()
@@ -50,6 +52,20 @@ func _build_vehicle_visual() -> void:
         add_child(headlight)
 
         for axle_z in [-1.08, 1.08]:
+            # The steering pivot turns only the front axle; the child pivot spins
+            # the wheel around its axle as the Jeep moves.
+            var steering_pivot := Node3D.new()
+            steering_pivot.name = "FrontWheelSteering" if axle_z < 0.0 else "RearWheelMount"
+            steering_pivot.position = Vector3(side * 0.99, 0.37, axle_z)
+            add_child(steering_pivot)
+            if axle_z < 0.0:
+                front_wheel_steering_nodes.append(steering_pivot)
+
+            var spin_pivot := Node3D.new()
+            spin_pivot.name = "WheelSpin"
+            steering_pivot.add_child(spin_pivot)
+            wheel_spin_nodes.append(spin_pivot)
+
             var wheel := MeshInstance3D.new()
             var wheel_mesh := CylinderMesh.new()
             wheel_mesh.top_radius = 0.37
@@ -58,9 +74,8 @@ func _build_vehicle_visual() -> void:
             wheel_mesh.radial_segments = 10
             wheel.mesh = wheel_mesh
             wheel.material_override = rubber
-            wheel.position = Vector3(side * 0.99, 0.37, axle_z)
             wheel.rotation_degrees.z = 90.0
-            add_child(wheel)
+            spin_pivot.add_child(wheel)
 
             var hub := MeshInstance3D.new()
             var hub_mesh := CylinderMesh.new()
@@ -70,9 +85,8 @@ func _build_vehicle_visual() -> void:
             hub_mesh.radial_segments = 8
             hub.mesh = hub_mesh
             hub.material_override = metal
-            hub.position = wheel.position
             hub.rotation_degrees.z = 90.0
-            add_child(hub)
+            spin_pivot.add_child(hub)
 
 func _make_material(color: Color, transparent: bool = false, metallic: float = 0.0) -> StandardMaterial3D:
     var material := StandardMaterial3D.new()
@@ -166,6 +180,14 @@ func _physics_process(delta: float) -> void:
     if absf(current_speed) > 0.4:
         var speed_factor := clampf(absf(current_speed) / MAX_FORWARD_SPEED, 0.0, 1.0)
         rotate_y(-steering * signf(current_speed) * STEERING_RATE * speed_factor * delta)
+
+    var wheel_steer_angle := -steering * 0.48
+    for front_wheel in front_wheel_steering_nodes:
+        front_wheel.rotation.y = lerp_angle(front_wheel.rotation.y, wheel_steer_angle, minf(1.0, delta * 9.0))
+
+    var wheel_rotation := current_speed * delta / 0.37
+    for wheel_spin in wheel_spin_nodes:
+        wheel_spin.rotate_x(wheel_rotation)
 
     var forward := -global_basis.z
     velocity.x = forward.x * current_speed
