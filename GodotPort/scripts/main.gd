@@ -15,6 +15,7 @@ const STATIC_SCENERY_CULL_MARGIN := 8.0
 var player: CharacterBody3D
 var vehicle: Node3D
 var vehicle_button: Button
+var vehicle_speed_label: Label
 var menu_layer: Control
 var menu_panel: PanelContainer
 var hud_layer: Control
@@ -495,6 +496,11 @@ func _build_hud() -> void:
     zone_label.anchor_left = 0.5
     zone_label.anchor_right = 0.5
     zone_label.position.x = -170
+    vehicle_speed_label = _make_hud_label("JEEP  •  0 KM/H", Vector2(0, 148), Vector2(240, 34), 18)
+    vehicle_speed_label.anchor_left = 0.5
+    vehicle_speed_label.anchor_right = 0.5
+    vehicle_speed_label.position.x = -120
+    vehicle_speed_label.hide()
     # Keep the touch controls separated so they remain usable in landscape on phones.
     fire_button = _make_mobile_button("FIRE", Vector2(-155, -150), Vector2(130, 110), _fire_pressed, _fire_released)
     reload_button = _make_mobile_button("RELOAD", Vector2(-290, -230), Vector2(110, 60), func(): player.reload_weapon())
@@ -612,6 +618,10 @@ func _layout_hud() -> void:
     zone_label.anchor_left = safe_center_anchor
     zone_label.anchor_right = safe_center_anchor
     zone_label.position = Vector2(-170.0, safe_top + 108.0)
+    if is_instance_valid(vehicle_speed_label):
+        vehicle_speed_label.anchor_left = safe_center_anchor
+        vehicle_speed_label.anchor_right = safe_center_anchor
+        vehicle_speed_label.position = Vector2(-120.0, safe_top + 148.0)
 
     if is_instance_valid(fire_button):
         fire_button.position = Vector2(-155.0 - safe_right, -150.0 - safe_bottom)
@@ -630,19 +640,27 @@ func _layout_hud() -> void:
 
 func _update_vehicle_interaction() -> void:
     if not is_instance_valid(vehicle_button) or not is_instance_valid(vehicle) or not is_instance_valid(player):
+        if is_instance_valid(vehicle_speed_label):
+            vehicle_speed_label.hide()
         return
     if bool(player.get("is_dead")):
         vehicle_button.hide()
+        vehicle_speed_label.hide()
         return
 
     if bool(vehicle.get("is_occupied")):
         vehicle_button.text = "EXIT JEEP"
         vehicle_button.show()
-    elif player.global_position.distance_to(vehicle.global_position) <= 4.5:
-        vehicle_button.text = "DRIVE"
-        vehicle_button.show()
+        if vehicle.has_method("get_speed_kph"):
+            vehicle_speed_label.text = "JEEP  •  %d KM/H" % int(vehicle.call("get_speed_kph"))
+            vehicle_speed_label.show()
     else:
-        vehicle_button.hide()
+        vehicle_speed_label.hide()
+        if player.global_position.distance_to(vehicle.global_position) <= 4.5:
+            vehicle_button.text = "DRIVE"
+            vehicle_button.show()
+        else:
+            vehicle_button.hide()
 
 func _toggle_vehicle() -> void:
     if not match_started or not is_instance_valid(vehicle) or not is_instance_valid(player):
