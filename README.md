@@ -21,13 +21,13 @@ The active Android project is **Godot 4.4.1** in `GodotPort/`. The earlier Unity
 - A shrinking safe-zone controller has now been added to the Godot match startup. It begins with a 45-second grace period, contracts over 180 seconds and damages the player/bots outside its boundary. This latest safe-zone code has **not** been run or validated yet.
 - **New, not yet validated:** the main menu is now the first screen; a match starts only when the player taps Offline Solo. The menu panel scales to fit smaller landscape viewports.
 - **New, not yet validated:** selectable Low (2 GB), Medium (4 GB) and High (6 GB) graphics profiles. Low is the default; profiles adjust bot/scenery visual distances and 3D MSAA. The selected profile is saved to `user://settings.cfg` and restored on the next launch. RAM labels are guidance only, not automatic detection, and performance has not been measured.
-- **New, not yet validated:** a procedural low-poly Jeep prototype supports keyboard/touch-joystick driving and nearby enter/exit. Front-wheel steering visuals, rolling wheel animation and an on-screen speed readout have now been added. Vehicle collision, handling, camera/seat positioning and mobile usability still require authorized runtime/device verification.
+- **New, not yet validated:** the procedural low-poly Jeep supports keyboard/touch-joystick driving, nearby enter/exit, front-wheel steering visuals, rolling wheels and a speed readout. A source-level 500 HP vehicle health system now applies damage after horizontal impacts above 5 m/s (up to 60 HP per hit, with a 0.85-second cooldown); at 0 HP the Jeep stops and ejects its driver, and a health readout is shown while driving. Handling, collision response, camera/seat positioning and mobile usability still require authorized runtime/device verification.
 
 This is still an early offline prototype, not a finished battle royale.
 
 ## Not implemented in the active Godot port
 
-- Vehicle damage, additional vehicle types, validated vehicle handling, parachute deployment, pets, selectable character skins and custom rooms.
+- Additional vehicle types and validated vehicle handling/collision balance, parachute deployment, pets, selectable character skins and custom rooms.
 - LAN/Wi-Fi/hotspot gameplay networking and synchronized multiplayer.
 - Optional Bluetooth device discovery (discovery only; Bluetooth is not the gameplay transport).
 - Measured performance or compatibility on physical 2 GB / 4 GB / 6 GB phones.
