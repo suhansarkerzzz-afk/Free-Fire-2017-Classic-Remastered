@@ -16,6 +16,7 @@ var player: CharacterBody3D
 var vehicle: Node3D
 var vehicle_button: Button
 var vehicle_speed_label: Label
+var vehicle_health_label: Label
 var menu_layer: Control
 var menu_panel: PanelContainer
 var hud_layer: Control
@@ -250,6 +251,7 @@ func _build_vehicle() -> void:
     vehicle.name = "ClassicJeep"
     vehicle.position = Vector3(3.2, 0.0, 8.0)
     add_child(vehicle)
+    vehicle.connect("health_changed", Callable(self, "_on_vehicle_health_changed"))
 
 func _build_districts() -> void:
     var names := ["SHIPYARD", "BULLSEYE", "OBSERVATORY", "PLANTATION", "MILL", "CAPE TOWN", "HANGAR", "CLOCK TOWER", "FACTORY", "PEAK", "POCHINOK", "SENTOSA"]
@@ -501,6 +503,13 @@ func _build_hud() -> void:
     vehicle_speed_label.anchor_right = 0.5
     vehicle_speed_label.position.x = -120
     vehicle_speed_label.hide()
+    vehicle_health_label = _make_hud_label("JEEP HP  •  500 / 500", Vector2(0, 184), Vector2(300, 30), 16)
+    vehicle_health_label.anchor_left = 0.5
+    vehicle_health_label.anchor_right = 0.5
+    vehicle_health_label.position.x = -150
+    vehicle_health_label.hide()
+    if is_instance_valid(vehicle):
+        _on_vehicle_health_changed(int(vehicle.call("get_health")), int(vehicle.call("get_max_health")))
     # Keep the touch controls separated so they remain usable in landscape on phones.
     fire_button = _make_mobile_button("FIRE", Vector2(-155, -150), Vector2(130, 110), _fire_pressed, _fire_released)
     reload_button = _make_mobile_button("RELOAD", Vector2(-290, -230), Vector2(110, 60), func(): player.reload_weapon())
@@ -622,6 +631,10 @@ func _layout_hud() -> void:
         vehicle_speed_label.anchor_left = safe_center_anchor
         vehicle_speed_label.anchor_right = safe_center_anchor
         vehicle_speed_label.position = Vector2(-120.0, safe_top + 148.0)
+    if is_instance_valid(vehicle_health_label):
+        vehicle_health_label.anchor_left = safe_center_anchor
+        vehicle_health_label.anchor_right = safe_center_anchor
+        vehicle_health_label.position = Vector2(-150.0, safe_top + 182.0)
 
     if is_instance_valid(fire_button):
         fire_button.position = Vector2(-155.0 - safe_right, -150.0 - safe_bottom)
@@ -642,10 +655,13 @@ func _update_vehicle_interaction() -> void:
     if not is_instance_valid(vehicle_button) or not is_instance_valid(vehicle) or not is_instance_valid(player):
         if is_instance_valid(vehicle_speed_label):
             vehicle_speed_label.hide()
+        if is_instance_valid(vehicle_health_label):
+            vehicle_health_label.hide()
         return
-    if bool(player.get("is_dead")):
+    if bool(player.get("is_dead")) or bool(vehicle.get("is_destroyed")):
         vehicle_button.hide()
         vehicle_speed_label.hide()
+        vehicle_health_label.hide()
         return
 
     if bool(vehicle.get("is_occupied")):
@@ -654,8 +670,10 @@ func _update_vehicle_interaction() -> void:
         if vehicle.has_method("get_speed_kph"):
             vehicle_speed_label.text = "JEEP  •  %d KM/H" % int(vehicle.call("get_speed_kph"))
             vehicle_speed_label.show()
+        vehicle_health_label.show()
     else:
         vehicle_speed_label.hide()
+        vehicle_health_label.hide()
         if player.global_position.distance_to(vehicle.global_position) <= 4.5:
             vehicle_button.text = "DRIVE"
             vehicle_button.show()
@@ -665,7 +683,7 @@ func _update_vehicle_interaction() -> void:
 func _toggle_vehicle() -> void:
     if not match_started or not is_instance_valid(vehicle) or not is_instance_valid(player):
         return
-    if bool(player.get("is_dead")):
+    if bool(player.get("is_dead")) or bool(vehicle.get("is_destroyed")):
         return
 
     if bool(vehicle.get("is_occupied")):
@@ -775,6 +793,10 @@ func _on_health_changed(current: float, maximum: float) -> void:
 
 func _on_ammo_changed(current: int, reserve: int) -> void:
     ammo_label.text = "RIFLE  %d / %d" % [current, reserve]
+
+func _on_vehicle_health_changed(current: int, maximum: int) -> void:
+    if is_instance_valid(vehicle_health_label):
+        vehicle_health_label.text = "JEEP HP  •  %d / %d" % [current, maximum]
 
 func _on_player_died() -> void:
     status_label.text = "ELIMINATED"
