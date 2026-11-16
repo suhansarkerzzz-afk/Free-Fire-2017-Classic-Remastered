@@ -1,5 +1,13 @@
 extends CharacterBody3D
 
+signal health_changed(current: int, maximum: int)
+
+const MAX_HEALTH := 500
+const COLLISION_DAMAGE_MIN_SPEED := 5.0
+const COLLISION_DAMAGE_PER_SPEED := 6.0
+const MAX_COLLISION_DAMAGE := 60
+const COLLISION_DAMAGE_COOLDOWN := 0.85
+
 const MAX_FORWARD_SPEED := 13.0
 const MAX_REVERSE_SPEED := 5.0
 const ACCELERATION := 8.5
@@ -10,6 +18,9 @@ const GRAVITY := 18.0
 var driver: CharacterBody3D
 var is_occupied := false
 var current_speed := 0.0
+var health := MAX_HEALTH
+var is_destroyed := false
+var collision_damage_cooldown := 0.0
 var saved_driver_collision_layer := 1
 var saved_driver_collision_mask := 1
 var wheel_spin_nodes: Array[Node3D] = []
@@ -108,7 +119,7 @@ func _add_box(label: String, size: Vector3, local_position: Vector3, material: M
     add_child(visual)
 
 func enter_vehicle(player_node: CharacterBody3D) -> bool:
-    if is_occupied or not is_instance_valid(player_node):
+    if is_destroyed or is_occupied or not is_instance_valid(player_node):
         return false
 
     driver = player_node
@@ -157,7 +168,7 @@ func exit_vehicle() -> void:
     velocity = Vector3.ZERO
 
 func _physics_process(delta: float) -> void:
-    if not is_occupied or not is_instance_valid(driver):
+    if is_destroyed or not is_occupied or not is_instance_valid(driver):
         velocity = Vector3.ZERO
         return
 
@@ -197,8 +208,52 @@ func _physics_process(delta: float) -> void:
     else:
         velocity.y = -0.5
 
+    collision_damage_cooldown = maxf(0.0, collision_damage_cooldown - delta)
+    var incoming_velocity := velocity
     move_and_slide()
+    _apply_collision_damage(incoming_velocity)
     _sync_driver_to_seat()
+
+func _apply_collision_damage(incoming_velocity: Vector3) -> void:
+    if is_destroyed or collision_damage_cooldown > 0.0:
+        return
+
+    var horizontal_velocity := Vector2(incoming_velocity.x, incoming_velocity.z)
+    var impact_speed := 0.0
+    for index in range(get_slide_collision_count()):
+        var collision := get_slide_collision(index)
+        var normal_3d := collision.get_normal()
+        var normal_2d := Vector2(normal_3d.x, normal_3d.z)
+        if normal_2d.length_squared() <= 0.25:
+            continue
+        var speed_into_surface := -horizontal_velocity.dot(normal_2d.normalized())
+        impact_speed = maxf(impact_speed, speed_into_surface)
+
+    if impact_speed < COLLISION_DAMAGE_MIN_SPEED:
+        return
+
+    var damage := roundi((impact_speed - COLLISION_DAMAGE_MIN_SPEED) * COLLISION_DAMAGE_PER_SPEED)
+    apply_damage(clampi(damage, 1, MAX_COLLISION_DAMAGE))
+    collision_damage_cooldown = COLLISION_DAMAGE_COOLDOWN
+
+func apply_damage(amount: int) -> void:
+    if is_destroyed or amount <= 0:
+        return
+
+    health = maxi(0, health - amount)
+    health_changed.emit(health, MAX_HEALTH)
+    if health == 0:
+        is_destroyed = true
+        current_speed = 0.0
+        velocity = Vector3.ZERO
+        if is_occupied:
+            exit_vehicle()
+
+func get_health() -> int:
+    return health
+
+func get_max_health() -> int:
+    return MAX_HEALTH
 
 func _sync_driver_to_seat() -> void:
     if not is_instance_valid(driver):
