@@ -62,12 +62,12 @@ func _build_vehicle_visual() -> void:
         headlight.position = Vector3(side * 0.66, 0.88, -1.67)
         add_child(headlight)
 
-        for axle_z in [-1.08, 1.08]:
+        for axle_z in [-1.0, 1.0]:
             # The steering pivot turns only the front axle; the child pivot spins
             # the wheel around its axle as the Jeep moves.
             var steering_pivot := Node3D.new()
             steering_pivot.name = "FrontWheelSteering" if axle_z < 0.0 else "RearWheelMount"
-            steering_pivot.position = Vector3(side * 0.99, 0.37, axle_z)
+            steering_pivot.position = Vector3(side * 0.99, 0.37, axle_z * 1.08)
             add_child(steering_pivot)
             if axle_z < 0.0:
                 front_wheel_steering_nodes.append(steering_pivot)
@@ -148,7 +148,7 @@ func exit_vehicle() -> void:
         current_speed = 0.0
         return
 
-    var exit_position := global_position + global_basis.x * 1.8 + Vector3.UP * 1.0
+    var exit_position := _find_safe_exit_position(driver)
     driver.global_position = exit_position
     driver.global_rotation = Vector3(0.0, global_rotation.y, 0.0)
     driver.set("is_in_vehicle", false)
@@ -166,6 +166,38 @@ func exit_vehicle() -> void:
     is_occupied = false
     current_speed = 0.0
     velocity = Vector3.ZERO
+
+func _find_safe_exit_position(player_node: CharacterBody3D) -> Vector3:
+    # Try clear positions around the Jeep before restoring the player's collision.
+    # This avoids placing the player inside a wall, prop or the vehicle collider.
+    var collision_shape := player_node.get_node_or_null("CollisionShape3D") as CollisionShape3D
+    var overhead_fallback := global_position + Vector3.UP * 2.35
+    if not is_instance_valid(collision_shape) or collision_shape.shape == null:
+        return global_position + global_basis.x * 1.9 + Vector3.UP * 1.15
+
+    var candidate_offsets: Array[Vector3] = [
+        global_basis.x * 1.9 + Vector3.UP * 1.15,
+        -global_basis.x * 1.9 + Vector3.UP * 1.15,
+        -global_basis.z * 2.35 + Vector3.UP * 1.15,
+        global_basis.z * 2.35 + Vector3.UP * 1.15,
+        Vector3.UP * 2.35
+    ]
+    var space_state := get_world_3d().direct_space_state
+    for offset in candidate_offsets:
+        var candidate_position := global_position + offset
+        var query := PhysicsShapeQueryParameters3D.new()
+        query.shape = collision_shape.shape
+        var candidate_transform := collision_shape.global_transform
+        candidate_transform.origin = candidate_position
+        query.transform = candidate_transform
+        query.collision_mask = saved_driver_collision_mask
+        query.exclude = [player_node.get_rid(), get_rid()]
+        query.margin = 0.04
+        if space_state.intersect_shape(query, 1).is_empty():
+            return candidate_position
+
+    # The overhead fallback clears the Jeep's low body collider if every side is blocked.
+    return overhead_fallback
 
 func _physics_process(delta: float) -> void:
     if is_destroyed or not is_occupied or not is_instance_valid(driver):
