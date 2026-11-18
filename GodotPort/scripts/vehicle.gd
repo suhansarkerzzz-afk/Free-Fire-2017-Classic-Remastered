@@ -20,6 +20,9 @@ var is_occupied := false
 var current_speed := 0.0
 var health := MAX_HEALTH
 var is_destroyed := false
+var paint_material: StandardMaterial3D
+var windshield_crack_material: StandardMaterial3D
+var windshield_crack_nodes: Array[MeshInstance3D] = []
 var collision_damage_cooldown := 0.0
 var saved_driver_collision_layer := 1
 var saved_driver_collision_mask := 1
@@ -38,6 +41,7 @@ func _build_vehicle_visual() -> void:
     add_child(collider)
 
     var paint := _make_material(Color(0.18, 0.31, 0.22))
+    paint_material = paint
     var dark_paint := _make_material(Color(0.07, 0.09, 0.08))
     var glass := _make_material(Color(0.18, 0.42, 0.48, 0.82), true)
     var rubber := _make_material(Color(0.025, 0.03, 0.032))
@@ -49,6 +53,7 @@ func _build_vehicle_visual() -> void:
     _add_box("Cabin", Vector3(1.58, 0.78, 1.62), Vector3(0, 1.34, 0.18), dark_paint)
     _add_box("Roof", Vector3(1.68, 0.13, 1.78), Vector3(0, 1.79, 0.18), paint)
     _add_box("Windshield", Vector3(1.42, 0.43, 0.055), Vector3(0, 1.43, -0.66), glass)
+    _add_windshield_crack_overlays()
     _add_box("FrontBumper", Vector3(2.02, 0.16, 0.18), Vector3(0, 0.48, -1.72), metal)
     _add_box("RearBumper", Vector3(2.02, 0.16, 0.18), Vector3(0, 0.48, 1.72), metal)
 
@@ -117,6 +122,39 @@ func _add_box(label: String, size: Vector3, local_position: Vector3, material: M
     visual.material_override = material
     visual.position = local_position
     add_child(visual)
+
+func _add_windshield_crack_overlays() -> void:
+    windshield_crack_material = _make_material(Color(0.055, 0.065, 0.06, 0.92), true)
+    _add_windshield_crack(Vector3(0.02, 1.45, -0.70), Vector3(0.022, 0.52, 0.012), deg_to_rad(24.0))
+    _add_windshield_crack(Vector3(0.13, 1.62, -0.70), Vector3(0.018, 0.30, 0.012), deg_to_rad(-48.0))
+    _add_windshield_crack(Vector3(-0.12, 1.30, -0.70), Vector3(0.018, 0.28, 0.012), deg_to_rad(-42.0))
+    _add_windshield_crack(Vector3(-0.22, 1.53, -0.70), Vector3(0.016, 0.22, 0.012), deg_to_rad(58.0))
+
+
+func _add_windshield_crack(local_position: Vector3, size: Vector3, angle: float) -> void:
+    var crack := MeshInstance3D.new()
+    var crack_mesh := BoxMesh.new()
+    crack_mesh.size = size
+    crack.mesh = crack_mesh
+    crack.material_override = windshield_crack_material
+    crack.position = local_position
+    crack.rotation.z = angle
+    crack.visible = false
+    add_child(crack)
+    windshield_crack_nodes.append(crack)
+
+
+func _update_damage_visuals() -> void:
+    var damage_ratio := 1.0 - float(health) / float(MAX_HEALTH)
+    if is_instance_valid(paint_material):
+        paint_material.albedo_color = Color(0.18, 0.31, 0.22).lerp(Color(0.07, 0.09, 0.07), damage_ratio * 0.75)
+        paint_material.roughness = lerpf(0.78, 0.96, damage_ratio)
+
+    var show_cracks := health <= MAX_HEALTH / 2
+    for crack in windshield_crack_nodes:
+        if is_instance_valid(crack):
+            crack.visible = show_cracks
+
 
 func enter_vehicle(player_node: CharacterBody3D) -> bool:
     if is_destroyed or is_occupied or not is_instance_valid(player_node):
@@ -273,6 +311,7 @@ func apply_damage(amount: int) -> void:
         return
 
     health = maxi(0, health - amount)
+    _update_damage_visuals()
     health_changed.emit(health, MAX_HEALTH)
     if health == 0:
         is_destroyed = true
