@@ -22,10 +22,14 @@ func begin_route(player_node: CharacterBody3D) -> void:
     route_active = true
 
     if passenger.has_method("board_airdrop_plane"):
-        passenger.call("board_airdrop_plane", global_position + PASSENGER_OFFSET)
+        passenger.call("board_airdrop_plane", _get_passenger_position())
     else:
         route_active = false
         push_warning("Airdrop passenger does not support plane boarding.")
+
+func _get_passenger_position() -> Vector3:
+    # PASSENGER_OFFSET is in the plane's local space, behind and below the fuselage.
+    return global_position + global_basis * PASSENGER_OFFSET
 
 func _physics_process(delta: float) -> void:
     if not route_active:
