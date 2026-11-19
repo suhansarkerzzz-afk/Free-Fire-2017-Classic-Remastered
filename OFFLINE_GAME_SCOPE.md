@@ -27,6 +27,7 @@ The latest recorded successful Godot Android APK export is GitHub Actions run [#
 - Uses local UDP discovery and basic player transform replication; no internet matchmaking or dedicated server.
 - This remains an early networking prototype: authoritative health, damage, shooting, loot, bot state, match phase, reconnect and host migration are not synchronized.
 - Bluetooth device discovery is optional and must be used only to discover nearby devices. Bluetooth must not carry gameplay packets.
+- Voice chat is explicitly out of scope and must not be added.
 - Legacy files `Assets/Scripts/BluetoothGameTransport.cs` and `Assets/Plugins/Android/BluetoothGameTransport.java` contain an older RFCOMM player-sync experiment. They are retained as inactive historical Unity reference code only; do not use or port this transport. Future local gameplay networking must use Wi-Fi/mobile hotspot.
 - No local multiplayer implementation is currently active in the Godot project.
 
