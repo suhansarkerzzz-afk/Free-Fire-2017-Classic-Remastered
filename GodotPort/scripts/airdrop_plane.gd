@@ -1,9 +1,9 @@
 extends Node3D
 
-const ROUTE_START := Vector3(-76.0, 56.0, 0.0)
-const ROUTE_END_X := 76.0
+const ROUTE_START := Vector3(-58.0, 56.0, 0.0)
+const ROUTE_END_X := 58.0
 const ROUTE_SPEED := 18.0
-const PASSENGER_OFFSET := Vector3(0.0, -1.25, 0.85)
+const PASSENGER_OFFSET := Vector3(0.0, -2.0, 0.85)
 const AIRDROP_IN_PLANE := 1
 
 var passenger: CharacterBody3D
