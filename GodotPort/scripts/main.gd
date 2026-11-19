@@ -4,6 +4,7 @@ const PlayerScript = preload("res://scripts/player.gd")
 const BotScript = preload("res://scripts/bot.gd")
 const SafeZoneScript = preload("res://scripts/safe_zone.gd")
 const VehicleScript = preload("res://scripts/vehicle.gd")
+const AirdropPlaneScript = preload("res://scripts/airdrop_plane.gd")
 const BOT_COUNT := 49
 # Cull only distant bot render meshes; keep AI and collision active.
 const BOT_VISUAL_CULL_END := 44.0
@@ -14,6 +15,7 @@ const STATIC_SCENERY_CULL_MARGIN := 8.0
 
 var player: CharacterBody3D
 var vehicle: Node3D
+var airdrop_plane: Node3D
 var vehicle_button: Button
 var vehicle_speed_label: Label
 var vehicle_health_label: Label
@@ -691,6 +693,14 @@ func _toggle_vehicle() -> void:
     elif player.global_position.distance_to(vehicle.global_position) <= 4.5:
         vehicle.call("enter_vehicle", player)
 
+func _start_airdrop() -> void:
+    if not is_instance_valid(player):
+        return
+    airdrop_plane = AirdropPlaneScript.new()
+    airdrop_plane.name = "TransportPlane"
+    add_child(airdrop_plane)
+    airdrop_plane.call("begin_route", player)
+
 func _spawn_loot() -> void:
     # Lightweight proximity pickups: green medkits and yellow rifle-ammo crates.
     var pickup_points := [Vector3(-34, 0.7, -25), Vector3(-8, 0.7, -28), Vector3(25, 0.7, -24), Vector3(35, 0.7, 12), Vector3(-30, 0.7, 24), Vector3(8, 0.7, 28), Vector3(0, 0.7, -8), Vector3(0, 0.7, 18)]
@@ -743,8 +753,8 @@ func _fire_released() -> void:
         player.firing = false
 
 func _jump_player() -> void:
-    if player and player.is_on_floor():
-        player.velocity.y = 5.2
+    if is_instance_valid(player):
+        player.call("handle_jump_action")
 
 func start_match() -> void:
     if match_started:
@@ -763,9 +773,12 @@ func start_match() -> void:
     safe_zone_controller = safe_zone
     _update_zone_label()
     _update_bot_count()
+    _start_airdrop()
+    _update_airdrop_hud()
 
 func _process(delta: float) -> void:
     if match_started and is_instance_valid(player):
+        _update_airdrop_hud()
         _update_vehicle_interaction()
         if Input.is_action_just_pressed("interact"):
             _toggle_vehicle()
@@ -776,6 +789,26 @@ func _process(delta: float) -> void:
             _update_zone_label()
         if player.health <= 0:
             status_label.text = "ELIMINATED  •  KILLS: %d" % kills
+
+func _update_airdrop_hud() -> void:
+    if not is_instance_valid(player) or not is_instance_valid(jump_button) or not is_instance_valid(status_label):
+        return
+
+    var state := int(player.get("airdrop_state"))
+    match state:
+        1:
+            jump_button.text = "JUMP"
+            status_label.text = "IN FLIGHT  •  TAP JUMP TO DROP"
+        2:
+            jump_button.text = "OPEN CHUTE"
+            status_label.text = "FREEFALL  •  DEPLOY PARACHUTE"
+        3:
+            jump_button.text = "CHUTE OPEN"
+            status_label.text = "PARACHUTE  •  STEER TO LAND"
+        _:
+            jump_button.text = "JUMP"
+            if status_label.text == "IN FLIGHT  •  TAP JUMP TO DROP" or status_label.text == "FREEFALL  •  DEPLOY PARACHUTE" or status_label.text == "PARACHUTE  •  STEER TO LAND":
+                status_label.text = "SURVIVE"
 
 func _update_zone_label() -> void:
     if not is_instance_valid(safe_zone_controller) or not safe_zone_controller.has_method("get_status_text"):
