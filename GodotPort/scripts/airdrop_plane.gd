@@ -43,7 +43,8 @@ func _physics_process(delta: float) -> void:
     global_position.x = minf(global_position.x + ROUTE_SPEED * delta, ROUTE_END_X)
 
     if int(passenger.get("airdrop_state")) == AIRDROP_IN_PLANE:
-        passenger.global_position = global_position + PASSENGER_OFFSET
+        # Keep the passenger offset in the plane's rotated local space throughout flight.
+        passenger.global_position = _get_passenger_position()
 
     if global_position.x >= ROUTE_END_X:
         if int(passenger.get("airdrop_state")) == AIRDROP_IN_PLANE:
