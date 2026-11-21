@@ -19,6 +19,7 @@ The active Android project is the Godot 4.4.1 port in `GodotPort/`. Keep the cla
 - [x] Safe-zone HUD status text for countdown, shrink percentage and final radius. **Not yet validated.**
 - [x] Add source-level safe-area-aware HUD positioning for display cutouts and viewport resizing. **Not yet validated on a device.**
 - [x] Add selectable Low (2 GB), Medium (4 GB), High (6 GB) graphics profiles; Low is the default and the selected profile is saved to `user://settings.cfg`. RAM labels are manual guidance, not automatic device detection. **Not yet validated on a device.**
+- [x] Add four original palette-based player outfits with lobby selection, torso/arm/leg colors, a simple helmet/chest accent and saved selection in `user://settings.cfg`. **Source only; not yet validated and not a full model-based skin inventory.**
 - [x] Add a lightweight procedural Jeep prototype with keyboard/touch-joystick driving, nearby enter/exit interaction and a mobile DRIVE/EXIT button. **Source only; not yet validated, and it is not a complete vehicle system.**
 - [x] Add source-level Jeep health and collision damage: 500 HP, horizontal impact threshold 5 m/s, up to 60 damage per hit with a 0.85-second cooldown, destroyed-state lockout/driver exit and an in-vehicle health HUD. **Not yet validated or balanced.**
 
@@ -29,7 +30,9 @@ The active Android project is the Godot 4.4.1 port in `GodotPort/`. Keep the cla
 - [ ] Improve island terrain, shoreline, water, elevation and recognizable classic-inspired POIs.
 - [ ] Tune Low / Medium / High rendering budgets using measured FPS and memory results after the coding phase is complete and testing is authorized.
 - [ ] Review and tune Jeep handling, collision damage, camera/seat position and mobile interaction after testing is authorized; then add additional vehicle types.
-- [ ] Add plane/parachute deployment, pets, character skins and custom rooms.
+- [x] Add source-level transport-plane route, manual jump, parachute deployment/steering and landing transition. **Not yet validated.**
+- [x] Add four original palette-based player outfit choices and persist the selected outfit. **Not yet validated; not full model-based skins.**
+- [ ] Add pet companion, custom rooms and additional vehicle types.
 - [ ] Add LAN/Wi-Fi/hotspot multiplayer after offline gameplay is stable.
 - [ ] Optional Bluetooth device discovery only; it must not be used as gameplay transport.
 - [ ] Prepare Windows PC build after Android gameplay is stable.
