@@ -5,6 +5,7 @@ const BotScript = preload("res://scripts/bot.gd")
 const SafeZoneScript = preload("res://scripts/safe_zone.gd")
 const VehicleScript = preload("res://scripts/vehicle.gd")
 const AirdropPlaneScript = preload("res://scripts/airdrop_plane.gd")
+const PlayerSkinCatalog = preload("res://scripts/player_skin_catalog.gd")
 const BOT_COUNT := 49
 # Cull only distant bot render meshes; keep AI and collision active.
 const BOT_VISUAL_CULL_END := 44.0
@@ -49,6 +50,8 @@ var rng := RandomNumberGenerator.new()
 var material_cache: Dictionary = {}
 var graphics_profile := 0
 var graphics_profile_hint: Label
+var skin_index := 0
+var skin_option: OptionButton
 const SETTINGS_PATH := "user://settings.cfg"
 var bot_visual_range := BOT_VISUAL_CULL_END
 var scenery_visual_range := STATIC_SCENERY_CULL_END
@@ -163,7 +166,7 @@ func _make_box(label: String, pos: Vector3, size: Vector3, color: Color, collisi
     add_child(body)
     return body
 
-func _make_actor_body(actor: CharacterBody3D, color: Color, bot: bool) -> void:
+func _make_actor_body(actor: CharacterBody3D, color: Color, bot: bool, skin_data: Dictionary = {}) -> void:
     # One capsule collider keeps movement inexpensive; visuals are a simple low-poly humanoid.
     var collision := CollisionShape3D.new()
     var capsule := CapsuleShape3D.new()
@@ -172,7 +175,20 @@ func _make_actor_body(actor: CharacterBody3D, color: Color, bot: bool) -> void:
     collision.shape = capsule
     actor.add_child(collision)
 
-    var body_material := _make_material(color)
+    var body_color: Color = color
+    var arm_color: Color = color
+    var leg_color := Color(0.055, 0.065, 0.08)
+    var accent_color := Color(0.12, 0.14, 0.18)
+    if not bot and not skin_data.is_empty():
+        body_color = skin_data.get("torso", color)
+        arm_color = skin_data.get("arms", color)
+        leg_color = skin_data.get("legs", leg_color)
+        accent_color = skin_data.get("accent", accent_color)
+
+    var body_material := _make_material(body_color)
+    var arm_material := _make_material(arm_color)
+    var leg_material := _make_material(leg_color)
+    var accent_material := _make_material(accent_color)
     var skin_material := _make_material(Color(0.16, 0.19, 0.23) if bot else Color(0.78, 0.55, 0.38))
     var dark_material := _make_material(Color(0.055, 0.065, 0.08))
 
@@ -183,8 +199,32 @@ func _make_actor_body(actor: CharacterBody3D, color: Color, bot: bool) -> void:
     if bot:
         _configure_bot_visual(torso)
     torso.material_override = body_material
+    torso.set_meta("skin_slot", "torso")
     torso.position = Vector3(0, 0.25, 0)
     actor.add_child(torso)
+
+    if not bot:
+        var chest_accent := MeshInstance3D.new()
+        chest_accent.name = "SkinChestAccent"
+        var chest_mesh := BoxMesh.new()
+        chest_mesh.size = Vector3(0.46, 0.12, 0.035)
+        chest_accent.mesh = chest_mesh
+        chest_accent.material_override = accent_material
+        chest_accent.position = Vector3(0, 0.30, -0.205)
+        chest_accent.set_meta("skin_slot", "accent")
+        actor.add_child(chest_accent)
+
+        var helmet := MeshInstance3D.new()
+        helmet.name = "SkinHelmet"
+        var helmet_mesh := SphereMesh.new()
+        helmet_mesh.radius = 0.27
+        helmet_mesh.height = 0.30
+        helmet.mesh = helmet_mesh
+        helmet.material_override = accent_material
+        helmet.position = Vector3(0, 1.03, 0)
+        helmet.scale = Vector3(1.0, 0.55, 1.0)
+        helmet.set_meta("skin_slot", "accent")
+        actor.add_child(helmet)
 
     var head := MeshInstance3D.new()
     var head_mesh := SphereMesh.new()
@@ -215,7 +255,8 @@ func _make_actor_body(actor: CharacterBody3D, color: Color, bot: bool) -> void:
         arm.mesh = arm_mesh
         if bot:
             _configure_bot_visual(arm)
-        arm.material_override = body_material
+        arm.material_override = arm_material
+        arm.set_meta("skin_slot", "arms")
         arm.position = Vector3(side * 0.46, 0.22, 0)
         arm.rotation_degrees.z = -side * 12.0
         actor.add_child(arm)
@@ -227,12 +268,15 @@ func _make_actor_body(actor: CharacterBody3D, color: Color, bot: bool) -> void:
         leg.mesh = leg_mesh
         if bot:
             _configure_bot_visual(leg)
-        leg.material_override = dark_material
+        leg.material_override = leg_material
+        leg.set_meta("skin_slot", "legs")
         leg.position = Vector3(side * 0.19, -0.48, 0)
         actor.add_child(leg)
 
 func _build_player_visual(actor: CharacterBody3D) -> void:
-    _make_actor_body(actor, Color(0.12, 0.38, 0.72), false)
+    var skin_data := PlayerSkinCatalog.get_skin(skin_index)
+    var torso_color: Color = skin_data.get("torso", Color(0.12, 0.38, 0.72))
+    _make_actor_body(actor, torso_color, false, skin_data)
     var pivot := Node3D.new()
     pivot.name = "CameraPivot"
     pivot.position.y = 1.25
@@ -247,6 +291,30 @@ func _build_player_visual(actor: CharacterBody3D) -> void:
     camera.position.z = 0.0
     camera.current = true
     arm.add_child(camera)
+
+func _apply_player_skin() -> void:
+    if not is_instance_valid(player):
+        return
+
+    var skin_data := PlayerSkinCatalog.get_skin(skin_index)
+    var torso_color: Color = skin_data["torso"]
+    var arm_color: Color = skin_data["arms"]
+    var leg_color: Color = skin_data["legs"]
+    var accent_color: Color = skin_data["accent"]
+
+    for child in player.get_children():
+        if not child is MeshInstance3D:
+            continue
+        var mesh := child as MeshInstance3D
+        match str(mesh.get_meta("skin_slot", "")):
+            "torso":
+                mesh.material_override = _make_material(torso_color)
+            "arms":
+                mesh.material_override = _make_material(arm_color)
+            "legs":
+                mesh.material_override = _make_material(leg_color)
+            "accent":
+                mesh.material_override = _make_material(accent_color)
 
 func _build_vehicle() -> void:
     vehicle = VehicleScript.new()
@@ -347,7 +415,7 @@ func _build_menu() -> void:
     shade.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
     menu_layer.add_child(shade)
     var panel := PanelContainer.new()
-    panel.custom_minimum_size = Vector2(500, 520)
+    panel.custom_minimum_size = Vector2(500, 590)
     panel.set_anchors_preset(Control.PRESET_CENTER)
     panel.position = Vector2(-250, -260)
     menu_panel = panel
@@ -387,6 +455,20 @@ func _build_menu() -> void:
     column.add_child(graphics_profile_hint)
     _update_graphics_profile_hint()
 
+    var skin_title := Label.new()
+    skin_title.text = "CHARACTER OUTFIT"
+    skin_title.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+    skin_title.add_theme_font_size_override("font_size", 18)
+    column.add_child(skin_title)
+
+    skin_option = OptionButton.new()
+    skin_option.custom_minimum_size.y = 48
+    for index in range(PlayerSkinCatalog.get_skin_count()):
+        skin_option.add_item(PlayerSkinCatalog.get_skin_name(index), index)
+    skin_option.select(skin_index)
+    skin_option.item_selected.connect(_on_player_skin_selected)
+    column.add_child(skin_option)
+
     var start := Button.new()
     start.text = "OFFLINE SOLO  •  49 BOTS"
     start.custom_minimum_size.y = 64
@@ -417,18 +499,26 @@ func _load_graphics_settings() -> void:
     var load_error := config.load(SETTINGS_PATH)
     if load_error == OK:
         graphics_profile = clampi(int(config.get_value("graphics", "profile", 0)), 0, 2)
+        skin_index = clampi(int(config.get_value("cosmetics", "player_skin", 0)), 0, PlayerSkinCatalog.get_skin_count() - 1)
     else:
         graphics_profile = 0
+        skin_index = 0
 
 func _save_graphics_settings() -> void:
     var config := ConfigFile.new()
     config.set_value("graphics", "profile", graphics_profile)
+    config.set_value("cosmetics", "player_skin", skin_index)
     var save_error := config.save(SETTINGS_PATH)
     if save_error != OK:
         push_warning("Could not save graphics profile settings: %s" % error_string(save_error))
 
 func _on_graphics_profile_selected(profile_index: int) -> void:
     _apply_graphics_profile(profile_index)
+    _save_graphics_settings()
+
+func _on_player_skin_selected(selected_index: int) -> void:
+    skin_index = clampi(selected_index, 0, PlayerSkinCatalog.get_skin_count() - 1)
+    _apply_player_skin()
     _save_graphics_settings()
 
 func _apply_graphics_profile(profile_index: int) -> void:
