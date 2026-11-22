@@ -6,6 +6,7 @@ const SafeZoneScript = preload("res://scripts/safe_zone.gd")
 const VehicleScript = preload("res://scripts/vehicle.gd")
 const AirdropPlaneScript = preload("res://scripts/airdrop_plane.gd")
 const PlayerSkinCatalog = preload("res://scripts/player_skin_catalog.gd")
+const PetCompanionScript = preload("res://scripts/pet_companion.gd")
 const BOT_COUNT := 49
 # Cull only distant bot render meshes; keep AI and collision active.
 const BOT_VISUAL_CULL_END := 44.0
@@ -52,6 +53,9 @@ var graphics_profile := 0
 var graphics_profile_hint: Label
 var skin_index := 0
 var skin_option: OptionButton
+var pet_index := 0
+var pet_option: OptionButton
+var pet_companion: Node3D
 const SETTINGS_PATH := "user://settings.cfg"
 var bot_visual_range := BOT_VISUAL_CULL_END
 var scenery_visual_range := STATIC_SCENERY_CULL_END
@@ -415,9 +419,9 @@ func _build_menu() -> void:
     shade.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
     menu_layer.add_child(shade)
     var panel := PanelContainer.new()
-    panel.custom_minimum_size = Vector2(500, 590)
+    panel.custom_minimum_size = Vector2(500, 670)
     panel.set_anchors_preset(Control.PRESET_CENTER)
-    panel.position = Vector2(-250, -260)
+    panel.position = Vector2(-250, -335)
     menu_panel = panel
     menu_layer.add_child(panel)
     var column := VBoxContainer.new()
@@ -469,6 +473,20 @@ func _build_menu() -> void:
     skin_option.item_selected.connect(_on_player_skin_selected)
     column.add_child(skin_option)
 
+    var pet_title := Label.new()
+    pet_title.text = "PET COMPANION"
+    pet_title.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+    pet_title.add_theme_font_size_override("font_size", 18)
+    column.add_child(pet_title)
+
+    pet_option = OptionButton.new()
+    pet_option.custom_minimum_size.y = 48
+    for index in range(PetCompanionScript.get_pet_count()):
+        pet_option.add_item(PetCompanionScript.get_pet_name(index), index)
+    pet_option.select(pet_index)
+    pet_option.item_selected.connect(_on_pet_selected)
+    column.add_child(pet_option)
+
     var start := Button.new()
     start.text = "OFFLINE SOLO  •  49 BOTS"
     start.custom_minimum_size.y = 64
@@ -500,14 +518,17 @@ func _load_graphics_settings() -> void:
     if load_error == OK:
         graphics_profile = clampi(int(config.get_value("graphics", "profile", 0)), 0, 2)
         skin_index = clampi(int(config.get_value("cosmetics", "player_skin", 0)), 0, PlayerSkinCatalog.get_skin_count() - 1)
+        pet_index = clampi(int(config.get_value("cosmetics", "pet_companion", 0)), 0, PetCompanionScript.get_pet_count() - 1)
     else:
         graphics_profile = 0
         skin_index = 0
+        pet_index = 0
 
 func _save_graphics_settings() -> void:
     var config := ConfigFile.new()
     config.set_value("graphics", "profile", graphics_profile)
     config.set_value("cosmetics", "player_skin", skin_index)
+    config.set_value("cosmetics", "pet_companion", pet_index)
     var save_error := config.save(SETTINGS_PATH)
     if save_error != OK:
         push_warning("Could not save graphics profile settings: %s" % error_string(save_error))
@@ -519,6 +540,10 @@ func _on_graphics_profile_selected(profile_index: int) -> void:
 func _on_player_skin_selected(selected_index: int) -> void:
     skin_index = clampi(selected_index, 0, PlayerSkinCatalog.get_skin_count() - 1)
     _apply_player_skin()
+    _save_graphics_settings()
+
+func _on_pet_selected(selected_index: int) -> void:
+    pet_index = clampi(selected_index, 0, PetCompanionScript.get_pet_count() - 1)
     _save_graphics_settings()
 
 func _apply_graphics_profile(profile_index: int) -> void:
@@ -791,6 +816,16 @@ func _start_airdrop() -> void:
     add_child(airdrop_plane)
     airdrop_plane.call("begin_route", player)
 
+func _spawn_pet_companion() -> void:
+    if not is_instance_valid(player):
+        return
+    var companion = PetCompanionScript.new()
+    companion.name = "PetCompanion"
+    companion.set("target", player)
+    companion.set("pet_index", pet_index)
+    add_child(companion)
+    pet_companion = companion
+
 func _spawn_loot() -> void:
     # Lightweight proximity pickups: green medkits and yellow rifle-ammo crates.
     var pickup_points := [Vector3(-34, 0.7, -25), Vector3(-8, 0.7, -28), Vector3(25, 0.7, -24), Vector3(35, 0.7, 12), Vector3(-30, 0.7, 24), Vector3(8, 0.7, 28), Vector3(0, 0.7, -8), Vector3(0, 0.7, 18)]
@@ -854,6 +889,7 @@ func start_match() -> void:
     hud_layer.show()
     _spawn_bots()
     _spawn_loot()
+    _spawn_pet_companion()
     # One human plus 49 bots gives the intended 50-participant offline test match.
     var safe_zone: Node3D = Node3D.new()
     safe_zone.name = "SafeZone"
