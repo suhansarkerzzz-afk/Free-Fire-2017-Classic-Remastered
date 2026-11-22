@@ -22,6 +22,8 @@ This is the active Android project, built with Godot 4.4.1 and the Compatibility
 - **New, not yet validated:** the main menu is now the first screen; the game no longer starts a match automatically. The player must tap Offline Solo to enter the match. The menu panel scales to fit smaller landscape viewports.
 - **New, not yet validated:** the menu offers Low (2 GB), Medium (4 GB) and High (6 GB) graphics profiles. Low is the default; profiles adjust bot/scenery visual distances and 3D MSAA. The selected profile is saved to `user://settings.cfg` and restored on the next launch. The RAM labels are manual guidance, not automatic device detection, and no device performance has been measured.
 - **New, not yet validated:** a low-poly procedural Jeep has a `CharacterBody3D` controller, forward/reverse acceleration, steering, braking-by-coasting, keyboard controls, touch-joystick input, and nearby enter/exit interaction. Front wheels steer, all wheels rotate, and the HUD shows speed. A 500 HP health value and impact-damage handler are now in source: horizontal impacts above 5 m/s deal up to 60 damage per hit with a 0.85-second cooldown; at 0 HP the Jeep stops and exits its driver, and the HUD displays vehicle health while occupied. Collision response, damage balance, handling, seat/camera alignment and mobile behaviour have not been tested.
+- **New, not yet validated:** a transport-plane route, player boarding, manual/automatic jump, freefall, parachute deployment and airborne steering are present in source. Landing, plane timing, controls and collision still require authorized runtime verification.
+- **New, not yet validated:** the menu offers three original procedural pet companions (Fox Companion, Robot Pup and Scout Drone). The selected pet is saved in `user://settings.cfg`; the visual-only follower trails the player with smoothed movement and hides while airborne, inside the Jeep or after player death. It has no navigation, collision, combat or gameplay bonuses.
 
 ## Last recorded CI result
 
@@ -36,7 +38,7 @@ This is the active Android project, built with Godot 4.4.1 and the Compatibility
 - Improve character outfits, weapon holding pose, hit/death animations, weapon models, effects and audio.
 - Validate the main-menu layout and profile selection at common Android landscape resolutions and safe-area sizes.
 - Measure actual FPS/RAM use on physical 2 GB / 4 GB / 6 GB devices; tune visual distances and MSAA from those results rather than assuming the profile labels guarantee compatibility.
-- Validate and tune Jeep handling, collision damage, seat/camera alignment, wheel animation, health/speed HUD and mobile interaction after authorization; then add additional vehicle types, parachute, pets, skins and custom rooms.
+- Validate and tune Jeep handling, collision damage, seat/camera alignment, wheel animation, health/speed HUD and mobile interaction after authorization. Also validate the existing plane/parachute, palette outfit and pet prototypes; add full character models/animations, additional vehicle types and custom rooms.
 - Add LAN/Wi-Fi/hotspot multiplayer only after offline gameplay is stable. Bluetooth may be used for optional device discovery only, not as gameplay transport.
 - Voice chat is explicitly out of scope.
 
