@@ -104,6 +104,10 @@ func _process(delta: float) -> void:
     var should_hide := bool(owner_player.get("is_dead")) or bool(owner_player.get("is_in_vehicle")) or int(owner_player.get("airdrop_state")) != 0
     visible = not should_hide
     if should_hide:
+        # Do not leave a short muzzle flash paused and visible after re-entering play.
+        muzzle_flash_time = 0.0
+        if is_instance_valid(muzzle_flash):
+            muzzle_flash.hide()
         return
 
     animation_time += delta
