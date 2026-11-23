@@ -11,6 +11,7 @@ The active Android project is **Godot 4.4.1** in `GodotPort/`. The earlier Unity
 - One human player plus **49 offline bots** (50 participants total).
 - Procedural low-poly island with roads, houses, trees and 12 district labels.
 - Third-person player, 200 HP, rifle magazine/reserve ammo, reload and raycast shooting.
+- **New, not yet validated:** a lightweight procedural rifle is attached to the camera pivot with a forward-reaching player arm pose, simple firing recoil, a brief low-cost muzzle flash and a magazine movement during reload. It uses primitive meshes only; weapon handling, visual alignment, animation timing and Android performance still need authorized runtime/device verification.
 - Bots with 200 HP, chase/separation movement, ranged hitscan attacks and close-range attacks.
 - **New, not yet validated:** distant bot render meshes are culled beyond a 44 m visibility range (4 m margin); AI and collision remain active. Actual performance gains have not been measured.
 - **New, not yet validated:** procedural houses, roofs and trees use a 76 m visual range while building collision remains; repeated props share materials by color to reduce duplicate resource allocations. Actual memory/FPS gains have not been measured.
@@ -30,7 +31,7 @@ This is still an early offline prototype, not a finished battle royale.
 
 ## Not implemented in the active Godot port
 
-- Custom rooms, additional vehicle types, full model-based character skins/animations and validated vehicle handling/collision balance. The three-choice procedural pet follower, initial plane/parachute insertion and four palette-based outfit choices are present in source but remain unvalidated.
+- Custom rooms, additional vehicle types, full model-based character skins/animations, hit/death animations and validated vehicle handling/collision balance. The new procedural rifle/holding animation, three-choice pet follower, initial plane/parachute insertion and four palette-based outfit choices are present in source but remain unvalidated.
 - LAN/Wi-Fi/hotspot gameplay networking and synchronized multiplayer.
 - Optional Bluetooth device discovery (discovery only; Bluetooth is not the gameplay transport).
 - Measured performance or compatibility on physical 2 GB / 4 GB / 6 GB phones.
