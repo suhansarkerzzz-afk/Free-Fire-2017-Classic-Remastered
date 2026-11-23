@@ -7,6 +7,7 @@ This is the active Android project, built with Godot 4.4.1 and the Compatibility
 - Procedural low-poly island ground, roads, houses, trees and 12 district labels.
 - Third-person player with desktop keyboard input and Android touch-drag movement/look.
 - Player health (200 HP), 30-round rifle magazine, reserve ammo, reload and raycast shooting.
+- **New, not yet validated:** a lightweight procedural rifle visual follows the camera pivot; the player's arms use a simple forward-reaching hold pose, while firing adds recoil/muzzle flash and reloading moves the magazine. This is a primitive-mesh prototype, not a full rigged weapon/character animation system.
 - 49 offline bots (50 participants including the player), each with 200 HP.
 - Bot chase movement, separation, ranged hitscan rifle attacks and close-range attacks.
 - **New, not yet validated:** neighbour-separation scans are staggered and refreshed about 5 times per second per bot instead of running on every physics frame, reducing repeated 49-bot proximity work.
@@ -35,7 +36,7 @@ This is the active Android project, built with Godot 4.4.1 and the Compatibility
 
 - Review the safe-zone implementation after the coding phase and validate its visual boundary, timing and damage behaviour.
 - Validate the new safe-area HUD positioning and tune scaling across phone aspect ratios and cutout layouts.
-- Improve character outfits, weapon holding pose, hit/death animations, weapon models, effects and audio.
+- Validate and tune the procedural rifle alignment, holding pose, recoil, muzzle flash and reload animation after authorization; then add full weapon models, rigged character animations, hit/death animations, effects and audio.
 - Validate the main-menu layout and profile selection at common Android landscape resolutions and safe-area sizes.
 - Measure actual FPS/RAM use on physical 2 GB / 4 GB / 6 GB devices; tune visual distances and MSAA from those results rather than assuming the profile labels guarantee compatibility.
 - Validate and tune Jeep handling, collision damage, seat/camera alignment, wheel animation, health/speed HUD and mobile interaction after authorization. Also validate the existing plane/parachute, palette outfit and pet prototypes; add full character models/animations, additional vehicle types and custom rooms.
