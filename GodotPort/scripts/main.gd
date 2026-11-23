@@ -253,6 +253,7 @@ func _make_actor_body(actor: CharacterBody3D, color: Color, bot: bool, skin_data
 
     for side in [-1.0, 1.0]:
         var arm := MeshInstance3D.new()
+        arm.name = "LeftArm" if side < 0.0 else "RightArm"
         var arm_mesh := CapsuleMesh.new()
         arm_mesh.radius = 0.13
         arm_mesh.height = 0.78
@@ -261,8 +262,13 @@ func _make_actor_body(actor: CharacterBody3D, color: Color, bot: bool, skin_data
             _configure_bot_visual(arm)
         arm.material_override = arm_material
         arm.set_meta("skin_slot", "arms")
-        arm.position = Vector3(side * 0.46, 0.22, 0)
-        arm.rotation_degrees.z = -side * 12.0
+        if bot:
+            arm.position = Vector3(side * 0.46, 0.22, 0)
+            arm.rotation_degrees.z = -side * 12.0
+        else:
+            # A simple forward-reaching pose keeps the player's hands near the rifle.
+            arm.position = Vector3(side * 0.34, 0.22, -0.12)
+            arm.rotation_degrees = Vector3(-58.0, 0.0, -side * 12.0)
         actor.add_child(arm)
 
         var leg := MeshInstance3D.new()
