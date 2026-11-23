@@ -1,5 +1,7 @@
 extends CharacterBody3D
 
+const WeaponVisualScript = preload("res://scripts/weapon_visual.gd")
+
 signal health_changed(current: float, maximum: float)
 signal ammo_changed(current: int, reserve: int)
 signal died
@@ -33,6 +35,7 @@ var is_dead := false
 var is_in_vehicle := false
 var airdrop_state := AIRDROP_GROUNDED
 var parachute_visual: Node3D
+var weapon_visual: Node3D
 
 @onready var pivot: Node3D = $CameraPivot
 @onready var spring_arm: SpringArm3D = $CameraPivot/SpringArm3D
@@ -41,9 +44,17 @@ var parachute_visual: Node3D
 func _ready() -> void:
     add_to_group("player")
     _build_parachute_visual()
+    _build_weapon_visual()
     health_changed.emit(health, MAX_HEALTH)
     ammo_changed.emit(ammo, reserve_ammo)
     camera.current = true
+
+func _build_weapon_visual() -> void:
+    weapon_visual = WeaponVisualScript.new()
+    weapon_visual.name = "WeaponVisual"
+    weapon_visual.position = Vector3(0.36, -0.76, -0.38)
+    weapon_visual.set("owner_player", self)
+    pivot.add_child(weapon_visual)
 
 func _build_parachute_visual() -> void:
     parachute_visual = Node3D.new()
@@ -229,6 +240,8 @@ func shoot() -> void:
     ammo -= 1
     fire_cooldown = 0.18
     ammo_changed.emit(ammo, reserve_ammo)
+    if is_instance_valid(weapon_visual):
+        weapon_visual.call("play_fire")
     var from := camera.global_position
     var to := from + (-camera.global_basis.z * 65.0)
     var query := PhysicsRayQueryParameters3D.create(from, to)
@@ -243,6 +256,8 @@ func reload_weapon() -> void:
     if reload_timer > 0.0 or ammo >= MAGAZINE_SIZE or reserve_ammo <= 0:
         return
     reload_timer = 1.5
+    if is_instance_valid(weapon_visual):
+        weapon_visual.call("play_reload")
 
 func take_damage(amount: float) -> void:
     if is_dead:
