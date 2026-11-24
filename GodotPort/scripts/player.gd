@@ -22,6 +22,11 @@ const FREEFALL_TERMINAL_SPEED := 18.0
 const PARACHUTE_DESCENT_SPEED := 4.6
 const AIRDROP_STEER_SPEED := 4.8
 const PARACHUTE_STEER_SPEED := 3.6
+# A fast, unassisted landing should hurt, while a deployed parachute keeps
+# the descent below the damage threshold.
+const FREEFALL_SAFE_LANDING_SPEED := 9.5
+const FREEFALL_DAMAGE_PER_SPEED := 15.0
+const FREEFALL_MAX_LANDING_DAMAGE := 140.0
 
 var health := MAX_HEALTH
 var ammo := MAGAZINE_SIZE
@@ -137,6 +142,14 @@ func deploy_parachute() -> void:
     if is_instance_valid(parachute_visual):
         parachute_visual.show()
 
+func _get_freefall_landing_damage(impact_speed: float) -> float:
+    if impact_speed <= FREEFALL_SAFE_LANDING_SPEED:
+        return 0.0
+    return minf(
+        (impact_speed - FREEFALL_SAFE_LANDING_SPEED) * FREEFALL_DAMAGE_PER_SPEED,
+        FREEFALL_MAX_LANDING_DAMAGE
+    )
+
 func _physics_airdrop(delta: float) -> void:
     var input_vector := move_input
     if not OS.has_feature("mobile"):
@@ -157,12 +170,19 @@ func _physics_airdrop(delta: float) -> void:
     else:
         velocity.y = move_toward(velocity.y, -PARACHUTE_DESCENT_SPEED, AIRDROP_GRAVITY * delta)
 
+    # Capture the downward speed before move_and_slide resolves the floor collision.
+    var was_freefalling := airdrop_state == AIRDROP_FREEFALL
+    var landing_impact_speed := maxf(0.0, -velocity.y) if was_freefalling else 0.0
     move_and_slide()
 
     if direction.length_squared() > 0.01:
         rotation.y = lerp_angle(rotation.y, atan2(-direction.x, -direction.z), delta * 5.0)
 
     if is_on_floor():
+        if was_freefalling:
+            var landing_damage := _get_freefall_landing_damage(landing_impact_speed)
+            if landing_damage > 0.0:
+                take_damage(landing_damage)
         airdrop_state = AIRDROP_GROUNDED
         velocity.y = -0.5
         if is_instance_valid(parachute_visual):
