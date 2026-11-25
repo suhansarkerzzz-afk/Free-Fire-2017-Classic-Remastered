@@ -5,6 +5,7 @@ This is the active Android project, built with Godot 4.4.1 and the Compatibility
 ## Implemented in source
 
 - Procedural low-poly island ground, roads, houses, trees and 12 district labels.
+- **New, not yet validated:** a top-down HUD minimap plots all 12 district names, the player's heading, active bot positions, the safe-zone radius and the transport-plane route/current position. It redraws at 5 Hz using simple Control drawing; label readability, responsive layout and runtime cost remain unverified.
 - Third-person player with desktop keyboard input and Android touch-drag movement/look.
 - Player health (200 HP), 30-round rifle magazine, reserve ammo, reload and raycast shooting.
 - **New, not yet validated:** a lightweight procedural rifle visual follows the camera pivot; the player's arms use a simple forward-reaching hold pose, while firing adds recoil/muzzle flash and reloading moves the magazine. This is a primitive-mesh prototype, not a full rigged weapon/character animation system.
@@ -30,7 +31,7 @@ This is the active Android project, built with Godot 4.4.1 and the Compatibility
 
 - [Godot Android APK Build #18](https://github.com/suhansarkerzzz-afk/Free-Fire-2017-Classic-Remastered/actions/runs/42053639599) succeeded on commit `85ba2032145bc8a03f46b051ff88bf96fcea8fb3`.
 - That run predates the safe-zone addition and must not be treated as validation of the current source.
-- No CI build, Godot runtime test, APK export or phone test has been started for the safe-zone, bot/scenery optimization, menu-first startup or selectable graphics-profile changes.
+- No CI build, Godot runtime test, APK export or phone test has been started for the safe-zone, bot/scenery optimization, menu-first startup, selectable graphics-profile or minimap changes.
 
 ## Remaining work
 
@@ -38,6 +39,7 @@ This is the active Android project, built with Godot 4.4.1 and the Compatibility
 - Validate the new safe-area HUD positioning and tune scaling across phone aspect ratios and cutout layouts.
 - Validate and tune the procedural rifle alignment, holding pose, recoil, muzzle flash and reload animation after authorization; then add full weapon models, rigged character animations, hit/death animations, effects and audio.
 - Validate the main-menu layout and profile selection at common Android landscape resolutions and safe-area sizes.
+- Verify minimap label readability and responsive placement, then confirm its 5 Hz redraw remains inexpensive on low-memory Android devices.
 - Measure actual FPS/RAM use on physical 2 GB / 4 GB / 6 GB devices; tune visual distances and MSAA from those results rather than assuming the profile labels guarantee compatibility.
 - Validate and tune Jeep handling, collision damage, seat/camera alignment, wheel animation, health/speed HUD and mobile interaction after authorization. Also validate the existing plane/parachute, palette outfit and pet prototypes; add full character models/animations, additional vehicle types and custom rooms.
 - Add LAN/Wi-Fi/hotspot multiplayer only after offline gameplay is stable. Bluetooth may be used for optional device discovery only, not as gameplay transport.
