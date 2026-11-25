@@ -10,6 +10,7 @@ The active Android project is **Godot 4.4.1** in `GodotPort/`. The earlier Unity
 
 - One human player plus **49 offline bots** (50 participants total).
 - Procedural low-poly island with roads, houses, trees and 12 district labels.
+- **New, not yet validated:** a lightweight top-down HUD minimap shows all 12 district names, the player's heading, live bot positions, the safe-zone ring and the transport-plane route/current marker. It uses procedural Control drawing and refreshes at 5 Hz; map readability, responsive placement and runtime cost still need authorized verification.
 - Third-person player, 200 HP, rifle magazine/reserve ammo, reload and raycast shooting.
 - **New, not yet validated:** a lightweight procedural rifle is attached to the camera pivot with a forward-reaching player arm pose, simple firing recoil, a brief low-cost muzzle flash and a magazine movement during reload. It uses primitive meshes only; weapon handling, visual alignment, animation timing and Android performance still need authorized runtime/device verification.
 - Bots with 200 HP, chase/separation movement, ranged hitscan attacks and close-range attacks.
@@ -40,7 +41,7 @@ This is still an early offline prototype, not a finished battle royale.
 
 ## Build and verification gate
 
-The most recent recorded successful Android CI run before the safe-zone change was [Godot Android APK Build #18](https://github.com/suhansarkerzzz-afk/Free-Fire-2017-Classic-Remastered/actions/runs/42053639599), on commit `85ba2032145bc8a03f46b051ff88bf96fcea8fb3`. It does **not** validate the newer safe-zone code.
+The most recent recorded successful Android CI run before the safe-zone change was [Godot Android APK Build #18](https://github.com/suhansarkerzzz-afk/Free-Fire-2017-Classic-Remastered/actions/runs/42053639599), on commit `85ba2032145bc8a03f46b051ff88bf96fcea8fb3`. It does **not** validate the newer safe-zone, minimap, menu, graphics-profile, vehicle, airdrop or landing-damage source changes.
 
 To respect the current coding-first phase, the Godot workflow is now **manual-only**. No build, gameplay test or phone test should be started until the user says coding is complete or explicitly authorizes testing. When authorized, open repository Actions, select **Godot Android APK Build**, and choose **Run workflow**.
 
@@ -48,4 +49,4 @@ Godot Android export does not require a Unity license. The legacy Unity workflow
 
 ## Verification limits
 
-Still unverified on a physical phone: installation, touch-control usability, landscape safe-area layout, gameplay balance, frame rate, memory use and battery impact. The 2 GB device target must be measured rather than assumed.
+Still unverified on a physical phone: installation, touch-control usability, landscape safe-area layout, minimap label readability, gameplay balance, frame rate, memory use and battery impact. The 2 GB device target must be measured rather than assumed.
