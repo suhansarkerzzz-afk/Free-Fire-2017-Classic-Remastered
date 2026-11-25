@@ -7,6 +7,7 @@ const VehicleScript = preload("res://scripts/vehicle.gd")
 const AirdropPlaneScript = preload("res://scripts/airdrop_plane.gd")
 const PlayerSkinCatalog = preload("res://scripts/player_skin_catalog.gd")
 const PetCompanionScript = preload("res://scripts/pet_companion.gd")
+const MinimapScript = preload("res://scripts/minimap.gd")
 const BOT_COUNT := 49
 # Cull only distant bot render meshes; keep AI and collision active.
 const BOT_VISUAL_CULL_END := 44.0
@@ -31,6 +32,7 @@ var zone_label: Label
 var safe_zone_controller: Node3D
 var zone_ui_timer := 0.0
 var bot_label: Label
+var minimap: Control
 var fire_button: Button
 var reload_button: Button
 var jump_button: Button
@@ -613,6 +615,14 @@ func _build_hud() -> void:
     bot_label.anchor_left = 1
     bot_label.anchor_right = 1
     bot_label.position.x = -320
+    minimap = MinimapScript.new()
+    minimap.name = "BattleRoyaleMinimap"
+    minimap.anchor_left = 1.0
+    minimap.anchor_right = 1.0
+    minimap.anchor_top = 0.0
+    minimap.anchor_bottom = 0.0
+    minimap.mouse_filter = Control.MOUSE_FILTER_IGNORE
+    hud_layer.add_child(minimap)
     status_label = _make_hud_label("SURVIVE", Vector2(0, 68), Vector2(300, 42), 20)
     status_label.anchor_left = 0.5
     status_label.anchor_right = 0.5
@@ -740,6 +750,11 @@ func _layout_hud() -> void:
     inventory_label.position = Vector2(safe_left + 24.0, safe_top + 116.0)
 
     bot_label.position = Vector2(-320.0 - safe_right, safe_top + 18.0)
+    if is_instance_valid(minimap):
+        var minimap_size := clampf(viewport_size.x * 0.17, 120.0, 190.0)
+        minimap_size = minf(minimap_size, maxf(120.0, viewport_size.y * 0.46))
+        minimap.size = Vector2(minimap_size, minimap_size)
+        minimap.position = Vector2(-minimap_size - 18.0 - safe_right, safe_top + 72.0)
 
     # Center status text inside the usable safe rectangle, not beneath a notch.
     var usable_width := maxf(1.0, viewport_size.x - safe_left - safe_right)
@@ -820,6 +835,8 @@ func _start_airdrop() -> void:
     airdrop_plane = AirdropPlaneScript.new()
     airdrop_plane.name = "TransportPlane"
     add_child(airdrop_plane)
+    if is_instance_valid(minimap):
+        minimap.call("set_plane", airdrop_plane)
     airdrop_plane.call("begin_route", player)
 
 func _spawn_pet_companion() -> void:
@@ -903,6 +920,8 @@ func start_match() -> void:
     safe_zone.set("player", player)
     add_child(safe_zone)
     safe_zone_controller = safe_zone
+    if is_instance_valid(minimap):
+        minimap.call("set_world_refs", player, safe_zone_controller)
     _update_zone_label()
     _update_bot_count()
     _start_airdrop()
